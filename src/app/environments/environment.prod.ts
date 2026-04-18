@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://mi-api.com/api',
+  apiUrl: 'https://gestion-pastoral-server-production.up.railway.app/api',
 };
