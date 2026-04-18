@@ -1,0 +1,85 @@
+<div class="flex flex-col gap-6">
+  <!-- Actions -->
+  <div class="flex items-center justify-between">
+    <div></div>
+  </div>
+
+  <!-- Table -->
+  <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden transition-colors">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
+          <th class="px-8 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Persona</th>
+          <th class="px-8 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Libro</th>
+          <th class="px-8 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest text-center">Tipo</th>
+          <th class="px-8 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Entrega</th>
+          <th class="px-8 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest text-center">Estado</th>
+          <th class="px-8 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-50 dark:divide-slate-800">
+        <tr *ngFor="let a of asignaciones" class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors group">
+          <td class="px-8 py-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-primary-50 dark:bg-primary-900/30 rounded-full flex items-center justify-center text-xs font-black text-primary-600 dark:text-primary-400 transition-colors">
+                {{ a.persona.nombre[0] }}{{ a.persona.apellido[0] }}
+              </div>
+              <div class="flex flex-col">
+                <span class="text-sm font-bold text-slate-800 dark:text-slate-100 transition-colors">{{ a.persona.nombre }} {{ a.persona.apellido }}</span>
+                <span class="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-tight transition-colors">{{ a.persona.tipoPersona?.nombre }}</span>
+              </div>
+            </div>
+          </td>
+          <td class="px-8 py-4">
+            <span class="text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors">{{ a.libro.nombre }}</span>
+          </td>
+          <td class="px-8 py-4 text-center">
+            <span class="text-[10px] font-black px-2.5 py-1 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 uppercase tracking-tight transition-colors">
+              {{ a.tipo }}
+            </span>
+          </td>
+          <td class="px-8 py-4">
+            <div class="flex flex-col">
+              <span class="text-xs font-bold text-slate-600 dark:text-slate-400 transition-colors">{{ a.fecha_entrega | date: 'dd/MM/yyyy' }}</span>
+              <span *ngIf="a.tipo === 'PRESTAMO' && a.estado === 'ENTREGADO'" 
+                    class="text-[10px] font-bold text-amber-600 dark:text-amber-500 transition-colors">
+                Vence: {{ a.fecha_devolucion_esperada | date: 'dd/MM/yyyy' }}
+              </span>
+            </div>
+          </td>
+          <td class="px-8 py-4 text-center">
+            <span [ngClass]="getEstadoClass(a.estado)" 
+                  class="px-4 py-1.5 rounded-full text-[10px] font-black border uppercase tracking-tighter shadow-sm transition-colors">
+              {{ a.estado }}
+            </span>
+          </td>
+          <td class="px-8 py-4 text-right">
+            <button *ngIf="a.estado === 'ENTREGADO'" 
+                    (click)="registrarDevolucion(a)"
+                    class="p-2 text-slate-400 dark:text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-xl transition-all"
+                    title="Registrar Devolución">
+              <span class="material-symbols-outlined text-xl">assignment_return</span>
+            </button>
+          </td>
+        </tr>
+
+        <!-- Empty State -->
+        <tr *ngIf="asignaciones.length === 0 && !loading">
+          <td colspan="6" class="px-8 py-20 text-center">
+            <div class="flex flex-col items-center gap-2 text-slate-400 dark:text-slate-600">
+              <span class="material-symbols-outlined text-4xl">assignment_late</span>
+              <p class="text-sm font-medium">No hay libros asignados actualmente.</p>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Loading -->
+        <tr *ngIf="loading">
+          <td colspan="6" class="px-8 py-4 text-center animate-pulse text-xs font-bold text-slate-400 dark:text-slate-600 uppercase">
+            Cargando asignaciones...
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

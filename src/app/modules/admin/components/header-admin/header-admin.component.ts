@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AuthService } from 'src/app/shared/services/auth.service';
+import { ThemeService } from 'src/app/shared/services/theme.service';
 
 @Component({
   selector: 'app-header-admin',
@@ -17,6 +18,7 @@ export class HeaderAdminComponent implements OnInit {
     private alertService: AlertService,
     private router: Router,
     private authService: AuthService,
+    public themeService: ThemeService,
   ) {}
 
   ngOnInit(): void {
@@ -53,6 +55,10 @@ export class HeaderAdminComponent implements OnInit {
       // Reload the page to refresh all data contextually
       window.location.reload();
     }
+  }
+
+  toggleDarkMode() {
+    this.themeService.toggle();
   }
 
   cerrarSesion() {

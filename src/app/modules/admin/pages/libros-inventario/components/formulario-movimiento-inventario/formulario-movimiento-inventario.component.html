@@ -1,0 +1,69 @@
+<div class="p-8 bg-white dark:bg-slate-900 rounded-3xl w-[500px] max-w-full relative transition-colors">
+  <!-- Close Button -->
+  <button [mat-dialog-close]="null" class="absolute right-6 top-6 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all">
+    <span class="material-symbols-outlined text-2xl">close</span>
+  </button>
+
+  <div class="mb-8">
+    <h3 class="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary-500 dark:text-primary-400 text-3xl">swap_horiz</span>
+      Nuevo Movimiento
+    </h3>
+    <p class="text-slate-500 dark:text-slate-400 font-medium text-sm">Registra una entrada o salida manual de stock.</p>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="guardar()" class="space-y-6">
+    <!-- Libro -->
+    <div>
+      <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Seleccionar Libro</label>
+      <select formControlName="libro_id" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 text-sm transition-all font-medium text-slate-700 dark:text-slate-100 h-[46px]">
+        <option [ngValue]="null">Elige un libro...</option>
+        <option *ngFor="let l of libros" [ngValue]="l.id">{{ l.nombre }} (Stock: {{ l.stock_actual }})</option>
+      </select>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <!-- Tipo -->
+      <div>
+        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Tipo</label>
+        <select formControlName="tipo" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 text-sm transition-all font-medium text-slate-700 dark:text-slate-100 h-[46px]">
+          <option *ngFor="let t of tipos" [ngValue]="t.value">{{ t.label }}</option>
+        </select>
+      </div>
+
+      <!-- Motivo -->
+      <div>
+        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Motivo</label>
+        <select formControlName="motivo" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 text-sm transition-all font-medium text-slate-700 dark:text-slate-100 h-[46px]">
+          <option *ngFor="let m of motivosActuales" [ngValue]="m.value">{{ m.label }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <!-- Cantidad -->
+      <div>
+        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Cantidad</label>
+        <input type="number" formControlName="cantidad" min="1" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 text-sm transition-all font-medium text-slate-700 dark:text-slate-100">
+      </div>
+
+      <!-- Fecha -->
+      <div>
+        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Fecha (Opcional)</label>
+        <input type="date" formControlName="fecha" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 text-sm transition-all font-medium text-slate-700 dark:text-slate-100">
+      </div>
+    </div>
+
+    <!-- Observaciones -->
+    <div>
+      <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Observaciones</label>
+      <textarea formControlName="observaciones" rows="3" placeholder="Detalles del movimiento..." class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 text-sm transition-all font-medium text-slate-700 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"></textarea>
+    </div>
+
+    <!-- Submit -->
+    <button type="submit" [disabled]="form.invalid" class="w-full py-4 bg-primary-600 hover:bg-primary-700 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-600 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-primary-200 dark:shadow-none transition-all flex items-center justify-center gap-2 mt-4">
+      <span class="material-symbols-outlined">save</span>
+      Registrar Movimiento
+    </button>
+  </form>
+</div>

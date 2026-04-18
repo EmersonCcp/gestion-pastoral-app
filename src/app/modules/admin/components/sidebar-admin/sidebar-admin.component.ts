@@ -18,6 +18,9 @@ export class SidebarAdminComponent implements OnInit {
   menuItems = [
     { label: 'Dashboard', icon: 'dashboard', route: 'dashboard' },
     // { label: 'Categorías', icon: 'category', route: 'categorias', permissions: ['categorias.read'] },
+    { label: 'Desarrollo de Clase', icon: 'history_edu', route: 'desarrollo-clase', permissions: ['desarrollo_clase.read'] },
+    { label: 'Libros', icon: 'menu_book', route: 'libros', permissions: ['libros.read'] },
+    { label: 'Inventario de Libros', icon: 'inventory_2', route: 'libros-inventario', permissions: ['libros.read'] },
     { label: 'Personas', icon: 'person', route: 'personas', permissions: ['personas.read'] },
     { label: 'Grupos', icon: 'account_tree', route: 'grupos', permissions: ['grupos.read'] },
     { label: 'Periodos', icon: 'date_range', route: 'periodos', permissions: ['periodos.read'] },
@@ -47,7 +50,8 @@ export class SidebarAdminComponent implements OnInit {
   }
 
   isActive(route: string): boolean {
-    return this.router.url.includes(route);
+    const currentRoute = this.router.url.split('/').pop();
+    return currentRoute === route;
   }
 
 }

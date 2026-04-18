@@ -1,0 +1,51 @@
+<app-table-admin
+  [loading]="loading"
+  searchPlaceholder="Buscar por nombre..."
+  [itemsLength]="libros.length"
+  [totalItems]="total_items"
+  entityName="libros"
+  (prev)="page = page - 1; loadData()"
+  (next)="page = page + 1; loadData()"
+>
+  <tr thead class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">N°</th>
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Libro</th>
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Categoría</th>
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Estado</th>
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Acciones</th>
+  </tr>
+
+  <ng-container tbody>
+    <tr *ngFor="let l of libros; let i = index" class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-50 dark:border-slate-800/50">
+      <td class="px-6 py-2 text-sm text-slate-500 dark:text-slate-400">
+        {{ (page - 1) * per_page + i + 1 }}
+      </td>
+      <td class="px-6 py-2">
+        <div class="flex flex-col">
+          <span class="text-sm font-medium text-slate-900 dark:text-slate-100">{{ l.nombre }}</span>
+          <span class="text-xs text-slate-500 dark:text-slate-400 truncate max-w-xs">{{ l.descripcion }}</span>
+        </div>
+      </td>
+      <td class="px-6 py-2">
+        <span class="inline-flex items-center px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-[11px] font-medium text-slate-700 dark:text-slate-300 border border-transparent dark:border-slate-700">
+          {{ l.tipoPersona?.nombre || 'N/A' | uppercase }}
+        </span>
+      </td>
+      <td class="px-6 py-2 text-sm">
+        <span class="rounded-md px-2 py-0.5 text-[10px] text-white font-bold" [ngClass]="{'bg-primary-500 dark:bg-primary-600': l.estado, 'bg-red-400 dark:bg-red-500': !l.estado}">
+          {{ l.estado ? 'ACTIVO' : 'INACTIVO' }}
+        </span>
+      </td>
+      <td class="px-6 py-2">
+        <div class="flex items-center gap-2">
+          <button *appHasPermission="'libros.update'" (click)="editar(l)" class="p-1.5 text-slate-400 hover:text-primary-700 dark:hover:text-primary-400 hover:bg-primary-100 dark:hover:bg-primary-900/30 rounded-full transition-colors" title="Editar">
+            <span class="material-symbols-outlined text-[20px]">edit</span>
+          </button>
+          <button *appHasPermission="'libros.delete'" (click)="eliminar(l)" class="p-1.5 text-slate-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-full transition-colors" title="Eliminar">
+            <span class="material-symbols-outlined text-[20px]">delete</span>
+          </button>
+        </div>
+      </td>
+    </tr>
+  </ng-container>
+</app-table-admin>

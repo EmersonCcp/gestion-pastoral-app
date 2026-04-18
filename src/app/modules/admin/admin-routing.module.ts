@@ -26,6 +26,11 @@ import { FormularioAsignacionComponent } from './pages/asignaciones/components/f
 import { AsistenciasComponent } from './pages/asistencias/asistencias.component';
 import { FormularioAsistenciaComponent } from './pages/asistencias/components/formulario-asistencia/formulario-asistencia.component';
 import { PersonaPerfilComponent } from './pages/personas/components/persona-perfil/persona-perfil.component';
+import { LibrosComponent } from './pages/libros/libros.component';
+import { FormularioLibroComponent } from './pages/libros/components/formulario-libro/formulario-libro.component';
+import { DesarrolloClaseComponent } from './pages/desarrollo-clase/desarrollo-clase.component';
+import { FormularioDesarrolloClaseComponent } from './pages/desarrollo-clase/components/formulario-desarrollo-clase/formulario-desarrollo-clase.component';
+import { LibrosInventarioComponent } from './pages/libros-inventario/libros-inventario.component';
 
 const routes: Routes = [
   {
@@ -173,6 +178,36 @@ const routes: Routes = [
         component: FormularioAsignacionComponent,
         canActivate: [permissionGuard],
         data: { permissions: ['asignaciones.read'] }
+      },
+      {
+        path: 'libros',
+        component: LibrosComponent,
+        canActivate: [permissionGuard],
+        data: { permissions: ['libros.read'] }
+      },
+      {
+        path: 'libros/:id/:mode',
+        component: FormularioLibroComponent,
+        canActivate: [permissionGuard],
+        data: { permissions: ['libros.read'] }
+      },
+      {
+        path: 'desarrollo-clase',
+        component: DesarrolloClaseComponent,
+        canActivate: [permissionGuard],
+        data: { permissions: ['desarrollo_clase.read'] }
+      },
+      {
+        path: 'desarrollo-clase/:id/:mode',
+        component: FormularioDesarrolloClaseComponent,
+        canActivate: [permissionGuard],
+        data: { permissions: ['desarrollo_clase.read'] }
+      },
+      {
+        path: 'libros-inventario',
+        component: LibrosInventarioComponent,
+        canActivate: [permissionGuard],
+        data: { permissions: ['libros.read'] }
       },
       {
         path: '',

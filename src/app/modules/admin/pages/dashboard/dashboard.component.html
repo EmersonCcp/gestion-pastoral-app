@@ -1,4 +1,4 @@
-<div class="min-h-screen p-8 space-y-8 animate-fade-in bg-slate-50">
+<div class="min-h-screen p-8 space-y-8 animate-fade-in bg-slate-50 dark:bg-slate-900 transition-colors">
 
   <!-- Welcome Header -->
   <div
@@ -22,15 +22,15 @@
 
   <!-- Primary Stats Grid -->
   <div *ngIf="loadingStats" class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-    <div *ngFor="let i of [1,2,3]" class="h-64 border bg-slate-100 animate-pulse rounded-3xl border-slate-200"></div>
+    <div *ngFor="let i of [1,2,3]" class="h-64 border bg-slate-100 dark:bg-slate-800 animate-pulse rounded-3xl border-slate-200 dark:border-slate-700"></div>
   </div>
 
   <div *ngIf="!loadingStats" class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
     <!-- Dynamic Cards per TipoPersona -->
     <div *ngFor="let s of stats"
-      class="relative p-8 overflow-hidden transition-all duration-500 bg-white border shadow-sm rounded-3xl border-slate-100 hover:shadow-xl group">
+      class="relative p-8 overflow-hidden transition-all duration-500 bg-white dark:bg-slate-800 border shadow-sm rounded-3xl border-slate-100 dark:border-slate-700 hover:shadow-xl group">
       <div class="absolute top-0 right-0 p-4 transition-opacity opacity-5 group-hover:opacity-10">
-        <span class="text-indigo-600 material-symbols-outlined text-8xl">{{ s.icon || 'person' }}</span>
+        <span class="text-indigo-600 dark:text-indigo-400 material-symbols-outlined text-8xl">{{ s.icon || 'person' }}</span>
       </div>
       <div class="relative z-10">
         <div class="flex items-center gap-4 mb-6">
@@ -38,25 +38,25 @@
             <span class="text-3xl material-symbols-outlined">{{ s.icon || 'group' }}</span>
           </div>
           <div class="flex-1 min-w-0">
-            <h3 class="text-slate-500 text-[10px] font-black uppercase tracking-widest truncate">Total {{ s.label }}
+            <h3 class="text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest truncate">Total {{ s.label }}
             </h3>
-            <p class="text-4xl font-black leading-none truncate text-slate-900">{{ s.total || 0 }}</p>
+            <p class="text-4xl font-black leading-none truncate text-slate-900 dark:text-slate-100">{{ s.total || 0 }}</p>
           </div>
         </div>
         <div class="grid grid-cols-2 gap-4">
-          <div class="p-4 border bg-blue-50 rounded-2xl border-blue-100/50">
+          <div class="p-4 border bg-blue-50 dark:bg-blue-900/20 rounded-2xl border-blue-100/50 dark:border-blue-800/50">
             <div class="flex items-center gap-2 mb-1">
-              <span class="text-lg text-blue-600 material-symbols-outlined">male</span>
-              <span class="text-[10px] font-black text-blue-700 uppercase tracking-tighter">Hombres</span>
+              <span class="text-lg text-blue-600 dark:text-blue-400 material-symbols-outlined">male</span>
+              <span class="text-[10px] font-black text-blue-700 dark:text-blue-300 uppercase tracking-tighter">Hombres</span>
             </div>
-            <p class="text-2xl font-black text-blue-900">{{ s.masculino || 0 }}</p>
+            <p class="text-2xl font-black text-blue-900 dark:text-blue-100">{{ s.masculino || 0 }}</p>
           </div>
-          <div class="p-4 border bg-rose-50 rounded-2xl border-rose-100/50">
+          <div class="p-4 border bg-rose-50 dark:bg-rose-900/20 rounded-2xl border-rose-100/50 dark:border-rose-800/50">
             <div class="flex items-center gap-2 mb-1">
-              <span class="text-lg material-symbols-outlined text-rose-600">female</span>
-              <span class="text-[10px] font-black text-rose-700 uppercase tracking-tighter">Mujeres</span>
+              <span class="text-lg material-symbols-outlined text-rose-600 dark:text-rose-400">female</span>
+              <span class="text-[10px] font-black text-rose-700 dark:text-rose-300 uppercase tracking-tighter">Mujeres</span>
             </div>
-            <p class="text-2xl font-black text-rose-900">{{ s.femenino || 0 }}</p>
+            <p class="text-2xl font-black text-rose-900 dark:text-rose-100">{{ s.femenino || 0 }}</p>
           </div>
         </div>
       </div>
@@ -64,22 +64,22 @@
   </div>
 
   <!-- Birthday Section -->
-  <div class="pb-8 overflow-hidden bg-white border shadow-sm rounded-3xl border-slate-100">
-    <div class="flex flex-wrap items-center justify-between gap-6 p-8 border-b border-slate-50">
+  <div class="pb-8 overflow-hidden bg-white dark:bg-slate-800 border shadow-sm rounded-3xl border-slate-100 dark:border-slate-700">
+    <div class="flex flex-wrap items-center justify-between gap-6 p-8 border-b border-slate-50 dark:border-slate-700">
       <div class="flex items-center gap-4">
-        <div class="p-3 bg-amber-100 rounded-2xl text-amber-600">
+        <div class="p-3 bg-amber-100 dark:bg-amber-900/30 rounded-2xl text-amber-600 dark:text-amber-400">
           <span class="text-2xl material-symbols-outlined">cake</span>
         </div>
         <div>
-          <h2 class="text-2xl font-black tracking-tight text-slate-800">Cumpleañeros del Mes</h2>
-          <p class="text-sm font-medium text-slate-400">Celebremos la vida de nuestra comunidad.</p>
+          <h2 class="text-2xl font-black tracking-tight text-slate-800 dark:text-slate-100">Cumpleañeros del Mes</h2>
+          <p class="text-sm font-medium text-slate-400 dark:text-slate-500">Celebremos la vida de nuestra comunidad.</p>
         </div>
       </div>
 
       <div class="flex items-center gap-3">
         <label class="text-xs font-black tracking-widest uppercase text-slate-400">Filtrar Mes:</label>
         <select
-          class="font-bold select select-bordered select-sm rounded-xl border-slate-200 text-slate-700 focus:ring-primary-500"
+          class="font-bold select select-bordered select-sm rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 focus:ring-primary-500"
           [(ngModel)]="selectedMonth" (change)="onMonthChange()">
           <option *ngFor="let m of months" [value]="m.id">{{ m.name }}</option>
         </select>
@@ -89,46 +89,46 @@
     <!-- Birthday Content -->
     <div class="p-8">
       <div *ngIf="loadingBirthdays" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <div *ngFor="let i of [1,2,3,4]" class="h-48 border bg-slate-50 animate-pulse rounded-3xl border-slate-100">
+        <div *ngFor="let i of [1,2,3,4]" class="h-48 border bg-slate-50 dark:bg-slate-900 animate-pulse rounded-3xl border-slate-100 dark:border-slate-700">
         </div>
       </div>
 
       <div *ngIf="birthdays.length === 0 && !loadingBirthdays"
         class="flex flex-col items-center gap-4 py-20 text-center">
-        <div class="p-6 rounded-full bg-slate-50">
-          <span class="text-6xl material-symbols-outlined text-slate-200">celebration</span>
+        <div class="p-6 rounded-full bg-slate-50 dark:bg-slate-900">
+          <span class="text-6xl material-symbols-outlined text-slate-200 dark:text-slate-700">celebration</span>
         </div>
-        <p class="font-bold text-slate-400">No hay cumpleaños registrados para este mes.</p>
+        <p class="font-bold text-slate-400 dark:text-slate-500">No hay cumpleaños registrados para este mes.</p>
       </div>
 
       <div *ngIf="birthdays.length > 0" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         <div *ngFor="let b of birthdays"
-          class="p-5 transition-all duration-300 bg-white border shadow-sm border-slate-100 rounded-3xl hover:shadow-xl hover:-translate-y-1 group ring-1 ring-slate-100 hover:ring-primary-100">
+          class="p-5 transition-all duration-300 bg-white dark:bg-slate-800 border shadow-sm border-slate-100 dark:border-slate-700 rounded-3xl hover:shadow-xl hover:-translate-y-1 group ring-1 ring-slate-100 dark:ring-slate-700 hover:ring-primary-100 dark:hover:ring-primary-900">
           <div class="flex items-start justify-between mb-4">
             <div
-              class="flex items-center justify-center text-xl font-black text-white shadow-lg size-14 bg-gradient-to-br from-primary-500 to-indigo-600 rounded-2xl shadow-primary-200">
+              class="flex items-center justify-center text-xl font-black text-white shadow-lg size-14 bg-gradient-to-br from-primary-500 to-indigo-600 rounded-2xl shadow-primary-200 dark:shadow-primary-900/20">
               {{ b.dia_cumple }}
             </div>
             <div
-              class="bg-amber-50 text-amber-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter border border-amber-100">
+              class="bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter border border-amber-100 dark:border-amber-800/50">
               {{ b.edad_cumple }} años
             </div>
           </div>
 
           <h4
-            class="mb-1 text-lg font-black leading-tight tracking-tight uppercase transition-colors text-slate-800 group-hover:text-primary-700">
+            class="mb-1 text-lg font-black leading-tight tracking-tight uppercase transition-colors text-slate-800 dark:text-slate-100 group-hover:text-primary-700 dark:group-hover:text-primary-400">
             {{ b.nombre }} {{ b.apellido }}
           </h4>
 
-          <div class="flex flex-col gap-2 pt-4 mt-4 border-t border-slate-50">
+          <div class="flex flex-col gap-2 pt-4 mt-4 border-t border-slate-50 dark:border-slate-700">
             <div class="flex items-center gap-2">
               <span class="material-symbols-outlined text-[16px] text-indigo-400">group</span>
-              <span class="text-[10px] font-black text-slate-500 uppercase tracking-tight truncate">{{ b.grupos
+              <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-tight truncate">{{ b.grupos
                 }}</span>
             </div>
             <div class="flex items-center gap-2">
               <span class="material-symbols-outlined text-[16px] text-primary-400">event</span>
-              <span class="text-[10px] font-bold text-slate-400">{{ months[b.mes_cumple - 1].name }}</span>
+              <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500">{{ months[b.mes_cumple - 1].name }}</span>
             </div>
           </div>
         </div>

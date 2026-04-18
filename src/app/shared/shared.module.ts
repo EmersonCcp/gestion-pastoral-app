@@ -17,6 +17,7 @@ import { HasPermissionDirective } from './directives/has-permission.directive';
   exports: [
     CommonModule,
     HasPermissionDirective,
+    MatDialogModule
   ],
   imports: [
     CommonModule,

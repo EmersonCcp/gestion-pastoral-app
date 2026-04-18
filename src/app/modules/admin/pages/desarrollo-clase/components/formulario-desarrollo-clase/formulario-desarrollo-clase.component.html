@@ -1,0 +1,208 @@
+<div class="flex-1 overflow-y-auto p-8">
+  <div class="max-w-6xl mx-auto">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8 pb-8 border-b border-slate-100 dark:border-slate-800 transition-colors">
+      <div>
+        <h2 class="text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tight">{{ editMode ? 'Editar Clase' : 'Registrar Nueva
+          Clase' }}</h2>
+        <p class="text-slate-500 dark:text-slate-400 font-medium">Planifica los temas a desarrollar y toma asistencia de forma integrada.
+        </p>
+      </div>
+      <button (click)="goBack()"
+        class="flex items-center gap-2 px-6 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-bold text-sm shadow-sm">
+        <span class="material-symbols-outlined text-xl">arrow_back</span>
+        Cancelar
+      </button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-8">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <!-- Left Column: Settings -->
+        <div class="lg:col-span-1 space-y-6">
+          <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm space-y-4 transition-colors">
+            <h3 class="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 border-b border-slate-50 dark:border-slate-800 pb-3 transition-colors">
+              <span class="material-symbols-outlined text-primary-500 dark:text-primary-400">settings</span>
+              Configuración de Sesión
+            </h3>
+
+            <app-form-input-admin label="Fecha de Sesión" type="date"
+              [control]="$any(form.get('fecha'))"></app-form-input-admin>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Periodo Lectivo*</label>
+              <select formControlName="periodo_id" (change)="checkLoadAttendance()"
+                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 text-sm transition-all font-medium text-slate-700 dark:text-slate-100">
+                <option [value]="null">Seleccione Periodo</option>
+                <option *ngFor="let p of periodos" [value]="p.id">{{ p.nombre }}</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Grupo Pastoral*</label>
+              <select formControlName="grupo_id" (change)="onGrupoChange()"
+                class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 text-sm transition-all font-medium text-slate-700 dark:text-slate-100">
+                <option [value]="null">Seleccione Grupo</option>
+                <option *ngFor="let g of grupos" [value]="g.id">{{ g.nombre }}</option>
+              </select>
+            </div>
+
+            <div *ngIf="librosAsignados.length > 0">
+              <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Material / Libro*</label>
+              <select formControlName="libro_id" (change)="onLibroChange()"
+                class="w-full px-4 py-2.5 bg-primary-50/30 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 text-sm transition-all font-bold text-primary-800 dark:text-primary-300">
+                <option [value]="null">Seleccione Libro</option>
+                <option *ngFor="let l of librosAsignados" [value]="l.id">{{ l.nombre }}</option>
+              </select>
+            </div>
+
+            <div *ngIf="form.get('grupo_id')?.value && librosAsignados.length === 0"
+              class="p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800/50 rounded-xl transition-colors">
+              <p class="text-xs text-amber-800 dark:text-amber-300 flex items-start gap-2">
+                <span class="material-symbols-outlined text-sm">warning</span>
+                Este grupo no tiene libros asignados. Ve a Gestión de Grupos para asignar material.
+              </p>
+            </div>
+
+            <!-- Global Observations -->
+            <div>
+              <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Observaciones Generales</label>
+              <textarea formControlName="observaciones" rows="4"
+                placeholder="Escribe aquí los logros, dudas o novedades de la sesión..."
+                class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 text-sm transition-all font-medium text-slate-700 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-600"></textarea>
+            </div>
+          </div>
+
+          <div class="bg-slate-900 dark:bg-slate-950 text-white p-6 rounded-2xl shadow-lg transition-colors border border-transparent dark:border-slate-800">
+            <h4 class="font-bold mb-2 flex items-center gap-2">
+              <span class="material-symbols-outlined text-amber-400">info</span>
+              Resumen
+            </h4>
+            <ul class="text-xs space-y-3 text-slate-300 dark:text-slate-400">
+              <li class="flex justify-between"><span>Temas Seleccionados:</span> <strong class="text-white">{{
+                  selectedTemaIds.length }}</strong></li>
+              <li class="flex justify-between"><span>Alumnos en Lista:</span> <strong class="text-white">{{
+                  asistenciaPersonas.length }}</strong></li>
+            </ul>
+            <button type="submit" [disabled]="form.invalid || selectedTemaIds.length === 0"
+              class="w-full mt-6 py-3 bg-primary-500 hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 rounded-xl font-bold transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+              <span class="material-symbols-outlined">save</span>
+              Confirmar y Guardar
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Column: Content -->
+        <div class="lg:col-span-2 space-y-8">
+
+          <!-- Topics Section -->
+          <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm min-h-[300px] transition-colors">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="text-xl font-black text-slate-800 dark:text-slate-100 flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary-500 dark:text-primary-400">import_contacts</span>
+                Temas a Desarrollar
+              </h3>
+              <span class="text-xs font-bold px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-full"
+                *ngIf="temasDelLibro.length > 0">
+                {{ temasDelLibro.length }} temas disponibles
+              </span>
+            </div>
+
+            <div *ngIf="temasDelLibro.length > 0"
+              class="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
+              <div *ngFor="let t of temasDelLibro" (click)="toggleTema(t.id)"
+                class="group flex items-start gap-4 p-4 border rounded-2xl cursor-pointer transition-all hover:shadow-md"
+                [ngClass]="isTemaSelected(t.id) ? 'border-primary-500 bg-primary-50/50 dark:bg-primary-900/20 shadow-sm' : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900'">
+
+                <div
+                  class="w-10 h-10 rounded-2xl flex items-center justify-center text-sm font-black shrink-0 transition-colors"
+                  [ngClass]="isTemaSelected(t.id) ? 'bg-primary-500 text-white' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 group-hover:bg-slate-100 dark:group-hover:bg-slate-700'">
+                  {{ t.numero_tema }}
+                </div>
+
+                <div class="flex-1 min-w-0">
+                  <h4 class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1 leading-tight transition-colors">{{ t.titulo }}</h4>
+                  <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed transition-colors">{{ t.descripcion }}</p>
+                </div>
+
+                <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors"
+                  [ngClass]="isTemaSelected(t.id) ? 'bg-primary-500 border-primary-500 text-white' : 'border-slate-200 dark:border-slate-700 group-hover:border-slate-300 dark:group-hover:border-slate-600'">
+                  <span *ngIf="isTemaSelected(t.id)" class="material-symbols-outlined text-[16px]">check</span>
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="temasDelLibro.length === 0"
+              class="flex flex-col items-center justify-center py-20 text-slate-300 dark:text-slate-700 transition-colors">
+              <span class="material-symbols-outlined text-6xl mb-4">menu_book</span>
+              <p class="font-medium">Selecciona un libro para ver sus temas.</p>
+            </div>
+          </div>
+
+          <!-- Attendance Section -->
+          <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm transition-colors">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="text-xl font-black text-slate-800 dark:text-slate-100 flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary-500 dark:text-primary-400">assignment_turned_in</span>
+                Toma de Asistencia
+              </h3>
+              <div *ngIf="loadingPersonas" class="flex items-center gap-2 text-primary-500 dark:text-primary-400">
+                <span class="animate-spin material-symbols-outlined text-sm">refresh</span>
+                <span class="text-xs font-bold">Cargando lista...</span>
+              </div>
+            </div>
+
+            <div class="overflow-hidden border border-slate-100 dark:border-slate-800 rounded-2xl">
+              <table class="w-full text-left">
+                <thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 uppercase text-[10px] font-black tracking-widest transition-colors">
+                  <tr>
+                    <th class="px-6 py-4">Persona / Integrante</th>
+                    <th class="px-6 py-4 text-center">Estado</th>
+                    <th class="px-6 py-4 whitespace-nowrap">Nota / Observación</th>
+                  </tr>
+                </thead>
+                <tbody formArrayName="asistencia_personas" class="divide-y divide-slate-50 dark:divide-slate-800">
+                  <tr *ngFor="let p of asistenciaPersonas.controls; let i = index" [formGroupName]="i"
+                    class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                    <td class="px-6 py-4">
+                      <div class="flex flex-col">
+                        <span class="text-sm font-bold text-slate-800 dark:text-slate-100 transition-colors">{{ p.get('nombre_completo')?.value }}</span>
+                        <span class="text-[10px] text-primary-600 dark:text-primary-400 font-bold uppercase tracking-tight transition-colors">Miembro</span>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4">
+                      <div class="flex items-center justify-center gap-1 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl transition-colors">
+                        <label *ngFor="let estado of estadosAsistencia" class="flex-1 relative cursor-pointer group">
+                          <input type="radio" formControlName="estado" [value]="estado" class="peer sr-only">
+                          <div
+                            class="px-4 py-2 text-[10px] font-black text-center rounded-xl transition-all duration-200"
+                            [ngClass]="{
+                                 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300': p.get('estado')?.value !== estado,
+                                 'bg-emerald-500 text-white shadow-lg shadow-emerald-200 dark:shadow-none ring-2 ring-emerald-100 dark:ring-emerald-900/30 scale-105': p.get('estado')?.value === 'PRESENTE' && estado === 'PRESENTE',
+                                 'bg-rose-500 text-white shadow-lg shadow-rose-200 dark:shadow-none ring-2 ring-rose-100 dark:ring-rose-900/30 scale-105': p.get('estado')?.value === 'AUSENTE' && estado === 'AUSENTE',
+                                 'bg-amber-500 text-white shadow-lg shadow-amber-200 dark:shadow-none ring-2 ring-amber-100 dark:ring-amber-900/30 scale-105': p.get('estado')?.value === 'JUSTIFICADO' && estado === 'JUSTIFICADO'
+                               }">
+                            {{ estado }}
+                          </div>
+                        </label>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4">
+                      <input type="text" formControlName="observacion" placeholder="Ej: Llegó tarde"
+                        class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 text-xs transition-all font-medium text-slate-700 dark:text-slate-100 placeholder:text-slate-300 dark:placeholder:text-slate-600">
+                    </td>
+                  </tr>
+                  <tr *ngIf="asistenciaPersonas.length === 0 && !loadingPersonas">
+                    <td colspan="2" class="px-6 py-12 text-center text-slate-400 dark:text-slate-600 italic text-sm transition-colors">
+                      Completa la configuración para cargar la lista de asistencia.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

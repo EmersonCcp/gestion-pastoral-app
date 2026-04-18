@@ -3,8 +3,74 @@
 @tailwind components;
 @tailwind utilities;
 @plugin "daisyui";
-html, body { height: 100%; }
+html, body { 
+  height: 100%; 
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+}
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* ── Dark Mode Transitions ── */
+*, *::before, *::after {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+/* ── Dark Mode Surface Tokens ── */
+:root {
+  --bg-page: #f1f5f9;          /* slate-100 (gray-100 fallback) */
+  --bg-card: #ffffff;
+  --bg-sidebar: #ffffff;
+  --bg-header: #ffffff;
+  --border-color: #e2e8f0;     /* slate-200 */
+  --text-primary: #0f172a;     /* slate-900 */
+  --text-muted: #64748b;      /* slate-500 */
+  --bg-input: #ffffff;
+  --bg-table-head: #f8fafc;    /* slate-50 */
+  --bg-skeleton: #e2e8f0;      /* slate-200 */
+}
+
+.dark {
+  --bg-page: #0f172a;         /* slate-900 */
+  --bg-card: #1e293b;         /* slate-800 */
+  --bg-sidebar: #0f172a;      /* slate-900 */
+  --bg-header: #0f172a;       /* slate-900 */
+  --border-color: #334155;    /* slate-700 */
+  --text-primary: #f1f5f9;    /* slate-100 */
+  --text-muted: #94a3b8;      /* slate-400 */
+  --bg-input: #1e293b;        /* slate-800 */
+  --bg-table-head: #1e293b;   /* slate-800 */
+  --bg-skeleton: #334155;     /* slate-700 */
+}
+
+/* ── Admin Helper Classes ── */
+.admin-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border-radius: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.admin-input {
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border-radius: 0.5rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.admin-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.text-main { color: var(--text-primary); }
+.text-muted { color: var(--text-muted); }
+
+.border-main { border-color: var(--border-color); }
+.bg-main { background-color: var(--bg-card); }
+
 
 @layer utilities {
   @media (max-width: 767px) {
@@ -25,8 +91,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
       tr {
         display: flex !important;
         flex-direction: column !important;
-        background-color: theme('colors.white');
-        border: 1px solid theme('colors.slate.200');
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-color);
         border-radius: 0.75rem !important;
         padding: 0.5rem !important;
         box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) !important;
@@ -39,7 +105,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
         width: 100% !important;
         box-sizing: border-box !important;
         padding: 0.75rem 1rem !important;
-        border-bottom: 1px solid theme('colors.slate.100') !important;
+        border-bottom: 1px solid var(--border-color) !important;
         text-align: left !important;
       }
 
@@ -48,4 +114,14 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
       }
     }
   }
+}
+
+/* ── MatDialog Dark Mode Fix ── */
+.dark .mat-mdc-dialog-container .mdc-dialog__surface {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark .mat-mdc-dialog-content {
+  color: var(--text-muted) !important;
 }

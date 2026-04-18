@@ -6,7 +6,9 @@ import { Grupo } from 'src/app/shared/interfaces/entities/grupo.entity';
 import { Movimiento } from 'src/app/shared/interfaces/entities/movimiento.entity';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { GrupoService } from 'src/app/shared/services/grupo.service';
+import { LibroService } from 'src/app/shared/services/libro.service';
 import { MovimientoService } from 'src/app/shared/services/movimiento.service';
+import { Libro } from 'src/app/shared/interfaces/entities/libro.entity';
 
 @Component({
   selector: 'app-formulario-grupo',
@@ -22,6 +24,8 @@ export class FormularioGrupoComponent implements OnInit {
   editMode = false;
   movimientos: Movimiento[] = [];
   gruposPadre: Grupo[] = [];
+  libros: Libro[] = [];
+  selectedLibroIds: number[] = [];
 
   constructor(
     private service: GrupoService,
@@ -29,7 +33,8 @@ export class FormularioGrupoComponent implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private fb: FormBuilder,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private libroService: LibroService
   ) {
     this.form = this.initForm();
   }
@@ -37,6 +42,7 @@ export class FormularioGrupoComponent implements OnInit {
   ngOnInit() {
     this.loadMovimientos();
     this.loadGruposPadre();
+    this.loadLibros();
     this.activatedRoute.params.pipe(take(1)).subscribe((param) => {
       this.handleParams(param);
     });
@@ -63,6 +69,7 @@ export class FormularioGrupoComponent implements OnInit {
       this.loading = false;
       if (res.ok) {
         this.form.patchValue(res.data);
+        this.selectedLibroIds = res.data.libros ? res.data.libros.map((l: any) => l.id) : [];
       } else {
         const errorMsg = res?.error?.message || 'Error inesperado';
         this.alertService.successOrError('Ocurrió un error', errorMsg, 'error');
@@ -90,6 +97,22 @@ export class FormularioGrupoComponent implements OnInit {
         this.gruposPadre = res.data.filter((g: Grupo) => g.id !== this.id);
       }
     });
+  }
+
+  loadLibros() {
+    this.libroService.getAll({ page: 1, per_page: 500 }).subscribe((res: any) => {
+      if (res.ok) this.libros = res.data;
+    });
+  }
+
+  toggleLibro(id: number) {
+    const idx = this.selectedLibroIds.indexOf(id);
+    if (idx === -1) this.selectedLibroIds.push(id);
+    else this.selectedLibroIds.splice(idx, 1);
+  }
+
+  isLibroSelected(id: number): boolean {
+    return this.selectedLibroIds.includes(id);
   }
 
   initForm() {
@@ -149,7 +172,8 @@ export class FormularioGrupoComponent implements OnInit {
     const dto = {
       ...this.form.value,
       movimiento_id: Number(this.form.value.movimiento_id),
-      parent_id: this.form.value.parent_id && this.form.value.parent_id !== 'null' ? Number(this.form.value.parent_id) : null
+      parent_id: this.form.value.parent_id && this.form.value.parent_id !== 'null' ? Number(this.form.value.parent_id) : null,
+      libro_ids: this.selectedLibroIds
     };
     
     this.save(dto);

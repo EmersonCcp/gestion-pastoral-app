@@ -1,0 +1,79 @@
+<div class="flex-1 overflow-y-auto p-8">
+  <div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h2 class="text-2xl font-bold text-slate-800 dark:text-slate-100">{{ editMode ? 'Editar Libro' : 'Nuevo Libro' }}</h2>
+        <p class="text-slate-500 dark:text-slate-400 text-sm">Ingresa la información básica y luego gestiona sus temas.</p>
+      </div>
+      <button (click)="goBack()" class="flex items-center gap-2 px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+        <span class="material-symbols-outlined text-xl">arrow_back</span>
+        Volver
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Main Form -->
+      <div class="lg:col-span-2 space-y-6">
+        <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
+          <div class="p-6">
+            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
+              <div class="grid grid-cols-1 gap-4">
+                <app-form-input-admin
+                  label="Nombre del Libro"
+                  placeholder="Ej: Catecismo de la Iglesia Católica"
+                  [control]="$any(form.get('nombre'))"
+                ></app-form-input-admin>
+
+                <div>
+                  <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Categoría (Tipo de Persona)</label>
+                  <select formControlName="tipo_persona_id" class="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-sm transition-all">
+                    <option [value]="null">Seleccione una categoría</option>
+                    <option *ngFor="let tp of tiposPersonas" [value]="tp.id">{{ tp.nombre }}</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Descripción</label>
+                  <textarea formControlName="descripcion" rows="3" class="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-sm transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500" placeholder="Breve resumen del contenido..."></textarea>
+                </div>
+
+                <div class="flex items-center gap-3 py-2">
+                  <input type="checkbox" formControlName="estado" id="estado" class="w-4 h-4 text-primary-600 rounded border-gray-300 dark:border-slate-700 dark:bg-slate-800 focus:ring-primary-500">
+                  <label for="estado" class="text-sm font-medium text-slate-700 dark:text-slate-300">Libro Activo</label>
+                </div>
+              </div>
+
+              <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                <button type="submit" [disabled]="form.invalid || loading" class="px-6 py-2.5 bg-slate-800 dark:bg-slate-700 text-white rounded-lg font-semibold text-sm hover:bg-slate-900 dark:hover:bg-slate-600 transition-all shadow-sm flex items-center gap-2">
+                  <span class="material-symbols-outlined text-xl">save</span>
+                  {{ editMode ? 'Actualizar Libro' : 'Guardar y Continuar' }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Topics Section (Only if editMode) -->
+        <div *ngIf="editMode" class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 transition-colors">
+          <div class="p-6">
+            <app-temas [libroId]="id"></app-temas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Info/Help -->
+      <div class="space-y-6">
+        <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800/50 rounded-xl p-6 transition-colors">
+          <div class="flex items-center gap-3 mb-4 text-amber-800 dark:text-amber-400">
+            <span class="material-symbols-outlined">lightbulb</span>
+            <h3 class="font-bold">Sugerencia</h3>
+          </div>
+          <p class="text-sm text-amber-900/70 dark:text-amber-300/70 leading-relaxed">
+            Asigna el libro a la categoría correspondiente (ej. Catequistas) para que solo aparezca en los grupos de ese tipo.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

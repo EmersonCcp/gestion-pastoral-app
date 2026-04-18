@@ -55,6 +55,18 @@ import { AsistenciasComponent } from './pages/asistencias/asistencias.component'
 import { FormularioAsistenciaComponent } from './pages/asistencias/components/formulario-asistencia/formulario-asistencia.component';
 import { PersonaPerfilComponent } from './pages/personas/components/persona-perfil/persona-perfil.component';
 import { SkeletonFormAdminComponent } from './components/skeletons/skeleton-form-admin/skeleton-form-admin.component';
+import { LibrosComponent } from './pages/libros/libros.component';
+import { ListadoLibrosComponent } from './pages/libros/components/listado-libros/listado-libros.component';
+import { FormularioLibroComponent } from './pages/libros/components/formulario-libro/formulario-libro.component';
+import { TemasComponent } from './pages/libros/components/temas/temas.component';
+import { DesarrolloClaseComponent } from './pages/desarrollo-clase/desarrollo-clase.component';
+import { FormularioDesarrolloClaseComponent } from './pages/desarrollo-clase/components/formulario-desarrollo-clase/formulario-desarrollo-clase.component';
+import { LibrosInventarioComponent } from './pages/libros-inventario/libros-inventario.component';
+import { ListadoStockLibrosComponent } from './pages/libros-inventario/components/listado-stock-libros/listado-stock-libros.component';
+import { ListadoMovimientosInventarioComponent } from './pages/libros-inventario/components/listado-movimientos-inventario/listado-movimientos-inventario.component';
+import { ListadoAsignacionesLibrosComponent } from './pages/libros-inventario/components/listado-asignaciones-libros/listado-asignaciones-libros.component';
+import { FormularioMovimientoInventarioComponent } from './pages/libros-inventario/components/formulario-movimiento-inventario/formulario-movimiento-inventario.component';
+import { FormularioAsignacionLibroComponent } from './pages/libros-inventario/components/formulario-asignacion-libro/formulario-asignacion-libro.component';
 
 @NgModule({
   declarations: [
@@ -107,6 +119,18 @@ import { SkeletonFormAdminComponent } from './components/skeletons/skeleton-form
     FormularioAsistenciaComponent,
     PersonaPerfilComponent,
     SkeletonFormAdminComponent,
+    LibrosComponent,
+    ListadoLibrosComponent,
+    FormularioLibroComponent,
+    TemasComponent,
+    DesarrolloClaseComponent,
+    FormularioDesarrolloClaseComponent,
+    LibrosInventarioComponent,
+    ListadoStockLibrosComponent,
+    ListadoMovimientosInventarioComponent,
+    ListadoAsignacionesLibrosComponent,
+    FormularioMovimientoInventarioComponent,
+    FormularioAsignacionLibroComponent,
   ],
   imports: [CommonModule, ReactiveFormsModule, FormsModule, AdminRoutingModule, HttpClientModule, SharedModule, A11yModule],
   providers: [{

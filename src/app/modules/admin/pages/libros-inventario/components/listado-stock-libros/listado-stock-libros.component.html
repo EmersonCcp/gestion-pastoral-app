@@ -1,0 +1,55 @@
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  <div *ngFor="let libro of libros" 
+       class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300 group">
+    <div class="flex items-start justify-between mb-6">
+      <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl group-hover:bg-primary-50 dark:group-hover:bg-primary-900/30 transition-colors">
+        <span class="material-symbols-outlined text-3xl" 
+              [ngClass]="libro.stock_actual > 0 ? 'text-primary-500' : 'text-slate-400 dark:text-slate-600'">
+          menu_book
+        </span>
+      </div>
+      <div class="flex flex-col items-end">
+        <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Disponibilidad</span>
+        <div [ngClass]="getStockColor(libro.stock_actual)" 
+             class="px-4 py-1.5 rounded-full text-xs font-black border tracking-tight transition-colors">
+          {{ libro.stock_actual > 0 ? (libro.stock_actual + ' UNIDADES') : 'SIN STOCK' }}
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">{{ libro.nombre }}</h3>
+      <p class="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed mb-6">{{ libro.descripcion || 'Sin descripción disponible.' }}</p>
+    </div>
+
+    <div class="pt-6 border-t border-slate-50 dark:border-slate-800 flex items-center justify-between transition-colors">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+          <span class="material-symbols-outlined text-sm text-slate-500 dark:text-slate-400">category</span>
+        </div>
+        <span class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase">{{ libro.tipoPersona?.nombre || 'General' }}</span>
+      </div>
+      
+      <button class="flex items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-primary-600 dark:hover:text-primary-400 transition-colors group/btn">
+        <span class="text-[10px] font-black uppercase tracking-tighter">Detalles</span>
+        <span class="material-symbols-outlined text-lg group-hover/btn:translate-x-1 transition-transform">chevron_right</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <ng-container *ngIf="loading">
+    <div *ngFor="let i of [1,2,3,4,5,6]" class="bg-slate-50 dark:bg-slate-800 rounded-3xl h-64 animate-pulse border border-slate-100 dark:border-slate-800"></div>
+  </ng-container>
+
+  <!-- Empty State -->
+  <div *ngIf="libros.length === 0 && !loading" class="col-span-full py-20 text-center bg-slate-50 dark:bg-slate-800 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-700 transition-colors">
+    <div class="max-w-xs mx-auto flex flex-col items-center gap-4">
+      <div class="w-20 h-20 bg-white dark:bg-slate-900 rounded-full flex items-center justify-center shadow-sm">
+        <span class="material-symbols-outlined text-4xl text-slate-300 dark:text-slate-600">book_off</span>
+      </div>
+      <h4 class="text-xl font-bold text-slate-800 dark:text-slate-100">No se encontraron libros</h4>
+      <p class="text-slate-500 dark:text-slate-400 text-sm">Asegúrate de haber registrado libros en la sección "Libros" antes de gestionar el inventario.</p>
+    </div>
+  </div>
+</div>

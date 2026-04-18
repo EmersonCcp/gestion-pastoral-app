@@ -1,52 +1,47 @@
 <app-table-admin [loading]="loading" searchPlaceholder="Buscar por nombre, apellido o documento..."
   [itemsLength]="personas.length" [totalItems]="total_items" entityName="personas" (search)="onSearchChange($event)"
   (prev)="prevPage()" (next)="nextPage()">
-  <div header class="flex items-center gap-2 px-3 rounded-md bg-white cursor-pointer ">
+  <div header class="flex items-center gap-2 px-3 rounded-md bg-white dark:bg-slate-800 cursor-pointer ">
     <select
-      class="select select-bordered bg-white select-sm rounded-lg border-slate-200 text-[11px] font-bold text-slate-500 bg-slate-50/50 uppercase tracking-wider"
+      class="select select-bordered bg-white dark:bg-slate-800 select-sm rounded-lg border-slate-200 dark:border-slate-700 text-[11px] font-bold text-slate-500 dark:text-slate-400 bg-slate-50/50 dark:bg-slate-800/50 uppercase tracking-wider"
       [(ngModel)]="tipoPersonaSelected" (change)="page = 1; loadData()">
       <option [ngValue]="null">Todos los tipos</option>
       <option *ngFor="let t of tiposPersonas" [ngValue]="t.id">{{ t.nombre }}</option>
     </select>
   </div>
 
-  <tr thead class="bg-slate-50 border-b border-slate-200">
-    <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider text-left">N°</th>
-
-    <!-- <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider text-left">Documento</th> -->
-    <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider text-left">Nombre Completo</th>
-    <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider text-left">Tipo</th>
-    <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider text-left">Contacto</th>
-    <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider text-left">Acciones</th>
+  <tr thead class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-left">N°</th>
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-left">Nombre Completo</th>
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-left">Tipo</th>
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-left">Contacto</th>
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-left">Acciones</th>
   </tr>
 
   <ng-container tbody>
-    <tr *ngFor="let p of personas; let i = index" class="hover:bg-slate-50 transition-colors">
-      <!-- <td class="px-6 py-2">
-        <span class="text-xs font-mono text-slate-600">{{ p.documento }}</span>
-      </td> -->
+    <tr *ngFor="let p of personas; let i = index" class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-50 dark:border-slate-800/50">
       <td class="px-6 py-2">
-        <div class="inline-flex items-center px-2.5 py-1 rounded-md text-xs">
+        <div class="inline-flex items-center px-2.5 py-1 rounded-md text-xs text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800">
           {{ (page - 1) * per_page + i + 1 }}
         </div>
       </td>
       <td class="px-6 py-2">
         <div class="flex flex-col">
-          <span class="text-slate-900  text-sm">{{ p.nombre }} {{ p.apellido }}</span>
+          <span class="text-slate-900 dark:text-slate-100 text-sm font-medium">{{ p.nombre }} {{ p.apellido }}</span>
         </div>
       </td>
       <td class="px-6 py-2">
         <span
-          class="inline-flex items-center px-2 py-0.5 rounded bg-indigo-50 text-[10px] font-bold text-indigo-700 border border-indigo-100 uppercase">
+          class="inline-flex items-center px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/30 text-[10px] font-bold text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-800/50 uppercase">
           {{ p.tipoPersona?.nombre || 'S/T' }}
         </span>
       </td>
       <td class="px-6 py-2">
         <div class="flex flex-col gap-0.5">
-          <span class="text-[11px] text-slate-500 flex items-center gap-1" *ngIf="p.email">
+          <span class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1" *ngIf="p.email">
             <span class="material-symbols-outlined text-[14px]">mail</span> {{ p.email }}
           </span>
-          <span class="text-[11px] text-slate-500 flex items-center gap-1" *ngIf="p.telefono">
+          <span class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1" *ngIf="p.telefono">
             <span class="material-symbols-outlined text-[14px]">call</span> {{ p.telefono }}
           </span>
         </div>
@@ -54,17 +49,17 @@
       <td class="px-6 py-2">
         <div class="flex items-center gap-2">
           <button (click)="verPerfil(p)"
-            class="p-1.5 text-slate-400 hover:text-green-600 hover:bg-green-100 rounded-full transition-colors"
+            class="p-1.5 text-slate-400 hover:text-green-600 dark:hover:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-full transition-colors"
             title="Ver Perfil">
             <span class="material-symbols-outlined text-[20px]">account_circle</span>
           </button>
           <button *appHasPermission="'personas.update'" (click)="editar(p)"
-            class="p-1.5 text-slate-400 hover:text-primary-700 hover:bg-primary-100 rounded-full transition-colors"
+            class="p-1.5 text-slate-400 hover:text-primary-700 dark:hover:text-primary-400 hover:bg-primary-100 dark:hover:bg-primary-900/30 rounded-full transition-colors"
             title="Editar">
             <span class="material-symbols-outlined text-[20px]">edit</span>
           </button>
           <button *appHasPermission="'personas.delete'" (click)="eliminar(p)"
-            class="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-100 rounded-full transition-colors"
+            class="p-1.5 text-slate-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-full transition-colors"
             title="Eliminar">
             <span class="material-symbols-outlined text-[20px]">delete</span>
           </button>

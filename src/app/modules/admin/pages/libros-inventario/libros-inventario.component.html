@@ -1,0 +1,69 @@
+<div class="flex-1 overflow-y-auto p-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8 pb-8 border-b border-slate-100">
+      <div>
+        <h2 class="text-3xl font-black text-slate-800 tracking-tight flex items-center gap-3">
+          <span class="material-symbols-outlined text-primary-500 text-4xl">inventory_2</span>
+          Inventario de Libros
+        </h2>
+        <p class="text-slate-500 font-medium">Control de stock, asignaciones a personas y movimientos de almacén.</p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button *ngIf="activeTab === 'movimientos' || activeTab === 'stock'"
+                (click)="nuevoMovimiento()"
+                class="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-primary-200 active:scale-95">
+          <span class="material-symbols-outlined">add_circle</span>
+          Nuevo Movimiento
+        </button>
+        <button *ngIf="activeTab === 'asignaciones'"
+                (click)="nuevaAsignacion()"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-indigo-200 active:scale-95">
+          <span class="material-symbols-outlined">person_add</span>
+          Nueva Asignación
+        </button>
+      </div>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="flex items-center gap-2 p-1.5 bg-slate-100/50 rounded-2xl w-fit mb-8">
+      <button (click)="setTab('stock')" 
+              [ngClass]="activeTab === 'stock' ? 'bg-white text-primary-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'"
+              class="px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2">
+        <span class="material-symbols-outlined text-xl">list_alt</span>
+        Stock Actual
+      </button>
+      <button (click)="setTab('movimientos')" 
+              [ngClass]="activeTab === 'movimientos' ? 'bg-white text-primary-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'"
+              class="px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2">
+        <span class="material-symbols-outlined text-xl">history</span>
+        Movimientos
+      </button>
+      <button (click)="setTab('asignaciones')" 
+              [ngClass]="activeTab === 'asignaciones' ? 'bg-white text-primary-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'"
+              class="px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2">
+        <span class="material-symbols-outlined text-xl">assignment_ind</span>
+        Asignaciones
+      </button>
+    </div>
+
+    <!-- Tab Content -->
+    <div [ngSwitch]="activeTab">
+      <!-- Stock Section -->
+      <div *ngSwitchCase="'stock'" class="animate-in fade-in slide-in-from-bottom-4">
+        <app-listado-stock-libros></app-listado-stock-libros>
+      </div>
+
+      <!-- Movements Section -->
+      <div *ngSwitchCase="'movimientos'" class="animate-in fade-in slide-in-from-bottom-4">
+        <app-listado-movimientos-inventario></app-listado-movimientos-inventario>
+      </div>
+
+      <!-- Assignments Section -->
+      <div *ngSwitchCase="'asignaciones'" class="animate-in fade-in slide-in-from-bottom-4">
+        <app-listado-asignaciones-libros></app-listado-asignaciones-libros>
+      </div>
+    </div>
+  </div>
+</div>

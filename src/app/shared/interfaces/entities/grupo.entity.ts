@@ -1,3 +1,4 @@
+import { Libro } from './libro.entity';
 import { Movimiento } from './movimiento.entity';
 
 export interface Grupo {
@@ -10,6 +11,8 @@ export interface Grupo {
   parent_id?: number;
   parent?: Grupo;
   subgrupos?: Grupo[];
+  libro_ids?: number[];
+  libros?: Libro[];
   created_at: string;
   updated_at: string;
 }
