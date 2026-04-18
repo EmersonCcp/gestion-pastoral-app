@@ -1,0 +1,12 @@
+<div class="flex-1 overflow-y-auto p-8">
+    <app-list-header-admin
+      *appHasPermission="'usuarios.create'"
+      title="Listado de Usuarios"
+      subtitle="Gestiona los usuarios del sistema."
+      buttonLabel="Agregar Nuevo Usuario"
+      buttonIcon="add"
+      (buttonClick)="crear()"
+    ></app-list-header-admin>
+
+    <app-listado-usuarios></app-listado-usuarios>
+</div>

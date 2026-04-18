@@ -1,0 +1,29 @@
+<div class="p-6 w-[400px]">
+  <h2 class="text-xl font-semibold mb-4">
+    {{ data ? 'Editar Permiso' : 'Nuevo Permiso' }}
+  </h2>
+
+  <form [formGroup]="form" class="flex flex-col gap-4">
+
+    
+
+    <app-form-input-admin label="Sujeto*" placeholder="Ej. roles"
+    [control]="sujetoControl"></app-form-input-admin>
+
+    <app-form-input-admin label="Accion*" placeholder="Ej. create"
+    [control]="accionControl"></app-form-input-admin>
+
+    <app-form-input-admin label="Descripcion" placeholder="Ej. creacion de roles"
+    [control]="descripcionControl"></app-form-input-admin>
+   
+
+    <!-- Botones -->
+    <div class="flex justify-end gap-2 mt-4">
+      
+      <app-button-admin label="Cancelar" (onClick)="cerrar()"></app-button-admin>
+
+      <app-button-admin label="Guardar" (onClick)="guardar()" [disabled]="form.invalid"></app-button-admin>
+    </div>
+
+  </form>
+</div>

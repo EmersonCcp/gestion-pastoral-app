@@ -1,0 +1,137 @@
+<div class="p-8 max-w-5xl mx-auto">
+  <!-- Header -->
+  <div class="flex items-center gap-4 mb-10">
+    <button (click)="goBack()" class="p-2 border border-slate-200 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-all">
+      <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+    </button>
+    <div class="flex flex-col gap-0.5">
+      <h2 class="text-2xl font-black text-slate-900 tracking-tight">Perfil de Miembro</h2>
+      <p class="text-slate-500 font-medium text-sm">Información detallada y resumen académico.</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+    
+    <!-- Sidebar: Personal Data -->
+    <div class="md:col-span-4 lg:col-span-4 space-y-6">
+      <div class="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center text-center">
+        <div class="w-24 h-24 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined text-[48px]">person</span>
+        </div>
+        <h3 class="text-xl font-black text-slate-800 leading-tight">{{ persona?.apellido }}, {{ persona?.nombre }}</h3>
+        <p class="text-sm font-bold text-primary-500 uppercase tracking-wide mt-1">{{ persona?.tipoPersona?.nombre || 'Persona' }}</p>
+        
+        <div class="w-full mt-8 pt-8 border-t border-slate-50 space-y-4 text-left">
+          <div class="flex flex-col gap-0.5">
+            <span class="text-[10px] font-bold text-slate-400 uppercase">Documento</span>
+            <span class="text-sm font-semibold text-slate-700">{{ persona?.documento || 'No registrado' }}</span>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span class="text-[10px] font-bold text-slate-400 uppercase">Fecha de Nacimiento</span>
+            <span class="text-sm font-semibold text-slate-700">{{ (persona?.fecha_nacimiento | date: 'dd/MM/yyyy') || '—' }}</span>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span class="text-[10px] font-bold text-slate-400 uppercase">Dirección</span>
+            <span class="text-sm font-semibold text-slate-700">{{ persona?.direccion || '—' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main: Activities and Summary -->
+    <div class="md:col-span-8 lg:col-span-8 space-y-8">
+      
+      <!-- Grupos Asignados -->
+      <section>
+        <div class="flex items-center gap-2 mb-4">
+          <span class="material-symbols-outlined text-indigo-500">group_work</span>
+          <h4 class="text-lg font-black text-slate-800">Grupos Asignados</h4>
+        </div>
+
+        <div *ngIf="loadingAsignaciones" class="flex gap-4 overflow-x-auto pb-2">
+          <div *ngFor="let i of [1,2]" class="min-w-[200px] h-24 bg-slate-50 animate-pulse rounded-2xl border border-slate-100"></div>
+        </div>
+
+        <div *ngIf="asignaciones.length === 0 && !loadingAsignaciones" class="bg-white p-6 rounded-2xl border border-dashed border-slate-200 text-center text-slate-400 text-sm font-medium">
+          No tiene grupos asignados actualmente.
+        </div>
+
+        <div class="flex flex-wrap gap-4">
+          <div *ngFor="let asig of asignaciones" class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col gap-1 min-w-[220px] hover:shadow-md transition-all border-l-4 border-l-indigo-500">
+            <span class="text-sm font-black text-slate-800">{{ asig.grupo?.nombre }}</span>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ asig.periodo?.nombre }}</span>
+            <div class="flex items-center gap-2 mt-2">
+              <span class="material-symbols-outlined text-[14px] text-slate-300">schedule</span>
+              <span class="text-[11px] font-bold text-slate-500">{{ asig.hora_inicio }} - {{ asig.hora_fin }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Asistencias Summary -->
+      <section>
+        <div class="flex items-center gap-2 mb-4">
+          <span class="material-symbols-outlined text-primary-500">trending_up</span>
+          <h4 class="text-lg font-black text-slate-800">Estadísticas de Asistencia</h4>
+        </div>
+
+        <div *ngIf="loadingSummary" class="bg-white p-12 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center gap-4">
+          <span class="loading loading-spinner loading-lg text-primary-200"></span>
+          <p class="text-sm font-medium text-slate-400 animate-pulse">Calculando estadísticas...</p>
+        </div>
+
+        <div *ngIf="asistenciasSummary.length === 0 && !loadingSummary" class="bg-white p-10 rounded-2xl border border-slate-100 shadow-sm text-center">
+          <span class="material-symbols-outlined text-[48px] text-slate-200 mb-2">event_busy</span>
+          <p class="text-sm font-medium text-slate-400 italic">No hay registros de asistencia grabados para este miembro.</p>
+        </div>
+
+        <div *ngIf="asistenciasSummary.length > 0" class="grid grid-cols-1 gap-4">
+          <div *ngFor="let s of asistenciasSummary" class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:border-primary-100 transition-all group">
+            <div class="flex flex-wrap items-center justify-between gap-6">
+              <div class="flex flex-col">
+                <span class="text-lg font-black text-slate-800 group-hover:text-primary-600 transition-colors">{{ s.grupo }}</span>
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ s.periodo }}</span>
+              </div>
+              
+              <div class="flex items-center gap-8">
+                <!-- Stats circles -->
+                <div class="flex gap-6">
+                  <div class="flex flex-col items-center">
+                    <span class="px-2.5 py-1 bg-green-50 text-green-700 rounded-lg text-xs font-black border border-green-100">{{ s.presente }}</span>
+                    <span class="text-[9px] font-black text-slate-400 uppercase mt-1">Pres</span>
+                  </div>
+                  <div class="flex flex-col items-center">
+                    <span class="px-2.5 py-1 bg-red-50 text-red-700 rounded-lg text-xs font-black border border-red-100">{{ s.ausente }}</span>
+                    <span class="text-[9px] font-black text-slate-400 uppercase mt-1">Aus</span>
+                  </div>
+                  <div class="flex flex-col items-center">
+                    <span class="px-2.5 py-1 bg-yellow-50 text-yellow-700 rounded-lg text-xs font-black border border-yellow-100">{{ s.justificado }}</span>
+                    <span class="text-[9px] font-black text-slate-400 uppercase mt-1">Just</span>
+                  </div>
+                </div>
+
+                <!-- Percentage component (DaisyUI radial-progress) -->
+                <div class="flex items-center gap-4 bg-slate-50 px-5 py-3 rounded-2xl border border-slate-100 shadow-inner">
+                  <div class="radial-progress text-primary-500 font-black" 
+                       [style.--value]="s.porcentajeAsistencia" 
+                       [style.--size]="'3.5rem'" 
+                       [style.--thickness]="'6px'">
+                    <span class="text-xs text-slate-800">{{ s.porcentajeAsistencia }}%</span>
+                  </div>
+                  <div class="flex flex-col">
+                    <span class="text-[9px] font-black text-slate-400 uppercase leading-none mb-1">Porcentaje</span>
+                    <span class="text-xs font-black text-slate-800">Asistencia</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Placeholder: Academic history / other metrics -->
+      <!-- Add more sections here later if needed -->
+
+    </div>
+  </div>
+</div>

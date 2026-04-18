@@ -1,0 +1,116 @@
+<app-skeleton-form-admin *ngIf="loading"></app-skeleton-form-admin>
+
+<div *ngIf="!loading" class="p-8 max-w-5xl mx-auto">
+
+  <div class="flex flex-wrap items-center justify-between gap-6 mb-10 pb-10 border-b border-slate-50">
+    <div class="flex flex-col gap-1">
+      <h2 class="text-3xl font-black text-slate-900 tracking-tight">Toma de Asistencia</h2>
+      <p class="text-slate-500 font-medium text-sm">Registra la participación de los miembros en sus respectivos grupos.
+      </p>
+    </div>
+    <div class="flex gap-3">
+      <button (click)="goBack()"
+        class="px-5 py-2.5 border border-slate-300 rounded-lg text-slate-700 text-sm font-bold hover:bg-slate-50 transition-all">
+        Cancelar
+      </button>
+      <app-button-admin (onClick)="guardar()" icon="how_to_reg" label="Guardar Asistencia"></app-button-admin>
+    </div>
+  </div>
+
+  <form [formGroup]="form" class="space-y-8">
+    <!-- Configuración -->
+    <div class="bg-white p-10 rounded-3xl border border-slate-100 shadow-sm space-y-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="flex flex-col gap-2">
+          <label
+            class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Fecha*</label>
+          <input type="date" formControlName="fecha" (change)="onSelectionChange()"
+            class="w-full px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-sm font-bold text-slate-700">
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Grupo /
+            Curso*</label>
+          <select formControlName="grupo_id" (change)="onSelectionChange()"
+            class="w-full select px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-sm font-medium">
+            <option [ngValue]="null" disabled>Selecciona un grupo</option>
+            <option *ngFor="let g of grupos" [ngValue]="g.id">{{ g.nombre }}</option>
+          </select>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label
+            class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Periodo*</label>
+          <select formControlName="periodo_id" (change)="onSelectionChange()"
+            class="w-full select px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-sm font-medium">
+            <option [ngValue]="null" disabled>Selecciona un periodo</option>
+            <option *ngFor="let p of periodos" [ngValue]="p.id">{{ p.nombre }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="h-px bg-slate-50"></div>
+
+      <div class="flex flex-col gap-2">
+        <label
+          class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Observaciones
+          Generales</label>
+        <textarea formControlName="observacion" rows="2"
+          class="w-full px-4 py-3 bg-slate-50/50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-sm"
+          placeholder="Notas adicionales sobre la jornada..."></textarea>
+      </div>
+    </div>
+
+    <!-- Listado de Personas -->
+    <div class="space-y-6">
+      <div class="flex items-center justify-between px-2">
+        <label class="text-xl font-black text-slate-900 tracking-tight">Lista de Asistencia</label>
+        <span *ngIf="loadingPersonas" class="loading loading-spinner loading-sm text-primary-500"></span>
+      </div>
+
+      <div *ngIf="personaEstados.length === 0 && !loadingPersonas"
+        class="bg-white p-12 rounded-3xl border-2 border-dashed border-slate-100 text-center space-y-3">
+        <span class="material-symbols-outlined text-[48px] text-slate-200">groups</span>
+        <p class="text-slate-400 font-medium italic">Selecciona un grupo y periodo para cargar la lista de
+          participantes.</p>
+      </div>
+
+      <!-- Grid de Asistencia -->
+      <div class="grid grid-cols-1 gap-4" formArrayName="persona_estados">
+        <div *ngFor="let ctrl of personaEstados.controls; let i = index" [formGroupName]="i"
+          class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-wrap items-center gap-6">
+
+          <!-- Info Persona -->
+          <div class="flex-1 min-w-[200px]">
+            <div class="flex items-center gap-3">
+              <span class="text-sm font-black text-slate-800">{{ ctrl.get('nombre_completo')?.value }}</span>
+              <span
+                class="px-2 py-0.5 rounded bg-slate-100 text-[9px] font-black text-slate-500 uppercase tracking-widest border border-slate-200">{{
+                ctrl.get('tipo')?.value }}</span>
+            </div>
+          </div>
+
+          <!-- Selector de Estado -->
+          <div class="flex items-center gap-2">
+            <label *ngFor="let e of estados" class="cursor-pointer">
+              <input type="radio" [formControlName]="'estado'" [value]="e" class="hidden peer">
+              <div class="px-4 py-1.5 rounded-full text-[10px] font-black border transition-all uppercase tracking-widest
+                    peer-checked:bg-primary-500 peer-checked:text-white peer-checked:border-primary-500
+                    bg-white text-slate-400 border-slate-100 hover:bg-slate-50">
+                {{ e }}
+              </div>
+            </label>
+          </div>
+
+          <!-- Observación Individual -->
+          <div class="w-full md:w-[300px]">
+            <input type="text" formControlName="observacion"
+              class="w-full px-4 py-1.5 bg-slate-50/50 border border-slate-100 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary-500/20 text-[11px]"
+              placeholder="Nota (opcional)">
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </form>
+</div>

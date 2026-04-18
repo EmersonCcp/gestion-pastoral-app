@@ -1,0 +1,72 @@
+<header *ngIf="!loading"
+  class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 bg-white px-6 py-3 lg:px-10">
+  <div class="flex items-center gap-4 text-primary-700">
+    <!-- <div class="size-10 flex items-center justify-center">
+      <img
+        alt="Logo Universidad Central del Paraguay"
+        class="h-full object-contain"
+        data-alt="Official logo of Universidad Central del Paraguay"
+        src="https://cones.gov.py/wp-content/uploads/2024/12/asd.png"
+      />
+    </div> -->
+    <div class="flex flex-col">
+      <h2 class="text-lg font-bold leading-tight tracking-tight">
+        {{ user.parroquia || "Gestión Pastoral" }}
+      </h2>
+      <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Sistema de Gestión</span>
+    </div>
+  </div>
+
+  <div class="flex ml-6 items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5"
+    *ngIf="movimientos.length > 0">
+    <span class="material-symbols-outlined text-slate-400 text-lg">sync_alt</span>
+    <div class="flex flex-col">
+      <span class="text-[10px] font-bold text-slate-400 uppercase leading-none mb-1">Movimiento Activo</span>
+      <select
+        class="bg-white select select-sm border-none bg-transparent font-bold text-slate-700 outline-none cursor-pointer"
+        [(ngModel)]="selectedMovimientoId" (change)="onMovimientoChange()">
+        <option *ngFor="let mov of movimientos" [value]="mov.id">
+          {{ mov.nombre }}
+        </option>
+      </select>
+    </div>
+  </div>
+  <div class="flex flex-1 justify-end gap-4 items-center">
+    <div class="flex gap-2">
+      <button
+        class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors">
+        <span class="material-symbols-outlined">notifications</span>
+      </button>
+      <button
+        class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors">
+        <span class="material-symbols-outlined">settings</span>
+      </button>
+    </div>
+    <div class="h-10 w-px bg-slate-200 mx-2"></div>
+
+    <button style="anchor-name: --anchor-1" popovertarget="popover-1" class="flex items-center gap-3">
+      <div class="text-right hidden sm:block">
+        <p class="text-[13px] font-bold text-slate-800 leading-none">
+          {{ user.nombre | titlecase }}
+        </p>
+        <p class="text-[11px] font-semibold text-primary-700 mt-1 uppercase">
+          {{ user.rol || "USUARIO" }}
+        </p>
+        <!-- <p class="text-[10px] text-slate-400 mt-0.5">{{sede.nombre || 'SEDE'}}</p> -->
+      </div>
+      <div
+        class="bg-primary-700/10 rounded-full size-10 flex items-center justify-center border-2 border-primary-700/20"
+        data-alt="Avatar circular del administrador">
+        <span class="material-symbols-outlined text-primary-700">person</span>
+      </div>
+    </button>
+
+    <ul class="dropdown menu w-52 rounded-box bg-base-100 shadow-sm" popover id="popover-1"
+      style="position-anchor: --anchor-1">
+      <!-- <li><a>Item 1</a></li> -->
+      <li (click)="cerrarSesion()"><a>Cerrar Sesión</a></li>
+    </ul>
+  </div>
+</header>
+
+<app-skeleton-header-admin *ngIf="loading"></app-skeleton-header-admin>

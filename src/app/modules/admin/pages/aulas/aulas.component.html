@@ -1,0 +1,57 @@
+<div class="p-8 max-w-5xl mx-auto">
+  <app-list-header-admin
+    title="Gestión de Aulas"
+    subtitle="Administra los salones y espacios físicos de cada parroquia."
+    buttonLabel="Nueva Aula"
+    buttonIcon="add_home"
+    (buttonClick)="agregar()"
+  ></app-list-header-admin>
+
+  <div class="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden mt-6">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="bg-slate-50 border-b border-slate-200">
+          <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Aula</th>
+          <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Parroquia</th>
+          <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Capacidad</th>
+          <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Ubicación</th>
+          <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let a of aulas" class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary-500 text-[20px]">meeting_room</span>
+              <span class="font-bold text-slate-800">{{ a.nombre }}</span>
+            </div>
+          </td>
+          <td class="px-6 py-4 text-sm text-slate-600">
+            <span class="px-2 py-1 bg-slate-100 rounded text-[11px] font-bold uppercase">{{ a.parroquia?.nombre || 'S/P' }}</span>
+          </td>
+          <td class="px-6 py-4 text-sm text-center font-mono text-slate-500">
+            {{ a.capacidad || '-' }}
+          </td>
+          <td class="px-6 py-4 text-sm text-slate-500 italic">
+            {{ a.ubicacion || '-' }}
+          </td>
+          <td class="px-6 py-4 text-right">
+            <div class="flex justify-end gap-2">
+              <button (click)="editar(a)" class="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+                <span class="material-symbols-outlined text-[20px]">edit</span>
+              </button>
+              <button (click)="eliminar(a)" class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                <span class="material-symbols-outlined text-[20px]">delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="aulas.length === 0 && !loading">
+          <td colspan="5" class="px-6 py-12 text-center text-slate-400 font-medium italic">
+            No hay aulas registradas.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

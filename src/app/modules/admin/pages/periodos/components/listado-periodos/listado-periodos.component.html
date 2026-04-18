@@ -1,0 +1,56 @@
+<app-table-admin
+  [loading]="loading"
+  searchPlaceholder="Buscar por nombre..."
+  [itemsLength]="periodos.length"
+  [totalItems]="total_items"
+  entityName="periodos"
+  (search)="onSearchChange($event)"
+  (prev)="prevPage()"
+  (next)="nextPage()"
+>
+  <tr thead class="bg-slate-50 border-b border-slate-200">
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider text-left">N°</th>
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider text-left">Nombre</th>
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider text-left">Inicio</th>
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider text-left">Fin</th>
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider text-left">Estado</th>
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider text-left">Acciones</th>
+  </tr>
+
+  <ng-container tbody>
+    <tr *ngFor="let p of periodos; let i = index" class="hover:bg-slate-50 transition-colors">
+      <td class="px-6 py-2">
+        <div class="inline-flex items-center px-2.5 py-1 rounded-md text-xs">
+          {{ (page - 1) * per_page + i + 1 }}
+        </div>
+      </td>
+      <td class="px-6 py-2">
+        <span class="text-slate-900 font-medium">{{ p.nombre }}</span>
+      </td>
+      <td class="px-6 py-2 text-xs text-slate-600">
+        {{ p.fecha_inicio | date:'dd/MM/yyyy' }}
+      </td>
+      <td class="px-6 py-2 text-xs text-slate-600">
+        {{ p.fecha_fin | date:'dd/MM/yyyy' }}
+      </td>
+      <td class="px-6 py-2 text-sm">
+        <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold text-white" 
+              [ngClass]="{'bg-primary-500': p.activo, 'bg-slate-400': !p.activo}">
+          {{ p.activo ? 'ACTIVO' : 'CERRADO' }}
+        </span>
+      </td>
+      <td class="px-6 py-2">
+        <div class="flex items-center gap-2">
+          <button *appHasPermission="'periodos.update'" (click)="editar(p)" 
+                  class="p-1.5 text-slate-400 hover:text-primary-700 hover:bg-primary-100 rounded-full transition-colors" title="Editar">
+            <span class="material-symbols-outlined text-[20px]">edit</span>
+          </button>
+          <button *appHasPermission="'periodos.delete'" (click)="eliminar(p)" 
+                  class="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-100 rounded-full transition-colors" title="Eliminar">
+            <span class="material-symbols-outlined text-[20px]">delete</span>
+          </button>
+        </div>
+      </td>
+    </tr>
+  </ng-container>
+</app-table-admin>

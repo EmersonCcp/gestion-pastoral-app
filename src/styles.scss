@@ -1,0 +1,51 @@
+/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@plugin "daisyui";
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+@layer utilities {
+  @media (max-width: 767px) {
+    .responsive-table {
+      display: block !important;
+      width: 100% !important;
+
+      thead {
+        display: none !important;
+      }
+
+      tbody {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1rem !important;
+      }
+
+      tr {
+        display: flex !important;
+        flex-direction: column !important;
+        background-color: theme('colors.white');
+        border: 1px solid theme('colors.slate.200');
+        border-radius: 0.75rem !important;
+        padding: 0.5rem !important;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) !important;
+      }
+
+      td {
+        display: flex !important;
+        justify-content: flex-start !important;
+        align-items: center !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 0.75rem 1rem !important;
+        border-bottom: 1px solid theme('colors.slate.100') !important;
+        text-align: left !important;
+      }
+
+      td:last-child {
+        border-bottom: none !important;
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+<div class="flex-1 overflow-y-auto p-8">
+    <app-list-header-admin
+      *appHasPermission="'parroquias.create'"
+      title="Listado de Parroquias"
+      subtitle="Gestiona las parroquias conectadas al sistema."
+      buttonLabel="Agregar Nueva Parroquia"
+      buttonIcon="add"
+      (buttonClick)="crear()"
+    ></app-list-header-admin>
+
+    <app-listado-parroquias></app-listado-parroquias>
+</div>

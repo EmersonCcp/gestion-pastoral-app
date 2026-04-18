@@ -1,0 +1,60 @@
+<app-table-admin
+  [loading]="loading"
+  searchPlaceholder="Buscar por sujeto..."
+  [itemsLength]="permisos.length"
+  [totalItems]="total_items"
+  entityName="permisos"
+  (search)="onSearchChange($event)"
+  (prev)="prevPage()"
+  (next)="nextPage()"
+>
+  <tr thead class="bg-slate-50  border-b border-slate-200">
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider">N°</th>
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Sujeto</th>
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Accion</th>
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Fecha de creacion</th>
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Acciones</th>
+  </tr>
+
+  <ng-container tbody>
+    <tr *ngFor="let p of permisos; let i = index" class="hover:bg-slate-50 transition-colors">
+      <td class="px-6 py-2">
+        <div class="inline-flex items-center px-2.5 py-1 rounded-md text-xs">
+          {{ (page - 1) * per_page + i + 1 }}
+        </div>
+      </td>
+      <td class="px-6 py-2">
+        <div class="flex items-center gap-3">
+          <span class="text-slate-900">{{ p.sujeto | titlecase }}</span>
+        </div>
+      </td>
+      <td class="px-6 py-2 text-sm font-medium">
+        <span class="rounded-md p-0.5 text-white" [ngClass]="{
+            'bg-primary-500': p.accion === 'read',
+            'bg-green-500': p.accion === 'create',
+            'bg-yellow-500': p.accion === 'update',
+            'bg-red-400': p.accion === 'delete',
+            'bg-black': p.accion === '*'
+          }">
+          {{ p.accion }}
+        </span>
+      </td>
+      <td class="px-6 py-2">
+        <div class="inline-flex items-center px-2.5 py-1 rounded-md text-xs">
+          {{ p.createdAt | date }}
+        </div>
+      </td>
+      <td class="px-6 py-2">
+        <div class="flex items-center gap-2">
+          <button (click)="editar(p)" class="p-1.5 text-slate-400 hover:text-primary-700 hover:bg-primary-100 rounded-full transition-colors">
+            <span class="material-symbols-outlined text-[20px]">edit</span>
+          </button>
+          <button (click)="remove(p)" class="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-100 rounded-full transition-colors">
+            <span class="material-symbols-outlined text-[20px]">delete</span>
+          </button>
+        </div>
+      </td>
+    </tr>
+  </ng-container>
+</app-table-admin>
+

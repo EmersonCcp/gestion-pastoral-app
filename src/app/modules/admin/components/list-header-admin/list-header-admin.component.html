@@ -1,0 +1,23 @@
+<div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+  
+  <!-- Título -->
+  <div>
+    <h2 class="text-3xl font-extrabold text-slate-900  tracking-tight">
+      {{ title }}
+    </h2>
+
+    <p *ngIf="subtitle" class="text-slate-500 mt-1">
+      {{ subtitle }}
+    </p>
+  </div>
+
+  <!-- Botón opcional -->
+  <div *ngIf="buttonLabel" class="flex gap-3">
+    <app-button-admin
+      [label]="buttonLabel"
+      [icon]="buttonIcon"
+      (onClick)="handleClick()"
+    ></app-button-admin>
+  </div>
+
+</div>

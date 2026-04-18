@@ -1,0 +1,12 @@
+<div class="flex-1 overflow-y-auto p-8">
+    <app-list-header-admin
+      *appHasPermission="'personas.create'"
+      title="Padrón de Personas"
+      subtitle="Gestiona la información de todos los miembros de la comunidad parroquial."
+      buttonLabel="Registrar Persona"
+      buttonIcon="person_add"
+      (buttonClick)="crear()"
+    ></app-list-header-admin>
+
+    <app-listado-personas></app-listado-personas>
+</div>

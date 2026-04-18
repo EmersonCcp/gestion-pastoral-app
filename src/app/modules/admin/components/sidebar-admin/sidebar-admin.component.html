@@ -1,0 +1,27 @@
+<nav [ngClass]="isCollapsed ? 'w-[80px]' : 'w-[250px]'" class="px-4 py-4 border-r-2 h-full flex flex-col transition-all duration-300 relative bg-white">
+  <!-- Top: Menu Icon -->
+  <div class="flex items-center mb-6" [ngClass]="isCollapsed ? 'justify-center' : 'justify-between'">
+    <span *ngIf="!isCollapsed" class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-2">Menú</span>
+    <button (click)="toggleSidebar()" class="p-2 hover:bg-slate-100 rounded-lg text-slate-500 transition-colors flex items-center justify-center">
+      <span class="material-symbols-outlined">menu</span>
+    </button>
+  </div>
+
+  <div class="space-y-2 flex-1 overflow-y-auto" style="scrollbar-width: thin; scrollbar-color: transparent transparent;">
+    <a
+      *ngFor="let item of filteredMenuItems"
+      (click)="goTo(item.route)"
+      class="flex items-center py-2 rounded-lg transition-colors cursor-pointer group hover:bg-primary-500 hover:text-white"
+      [ngClass]="{
+        'justify-center px-0': isCollapsed, 
+        'px-3 gap-3': !isCollapsed,
+        'bg-primary-500 text-white shadow-md': isActive(item.route),
+        'text-slate-600': !isActive(item.route)
+      }"
+      [attr.title]="isCollapsed ? item.label : null"
+    >
+      <span class="material-symbols-outlined text-xl">{{ item.icon }}</span>
+      <span *ngIf="!isCollapsed" class="text-sm font-medium">{{ item.label }}</span>
+    </a>
+  </div>
+</nav>

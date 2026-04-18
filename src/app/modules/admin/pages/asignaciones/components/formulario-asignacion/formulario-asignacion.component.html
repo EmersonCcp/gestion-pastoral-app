@@ -1,0 +1,146 @@
+<app-skeleton-form-admin *ngIf="loading"></app-skeleton-form-admin>
+
+<div *ngIf="!loading" class="p-8 max-w-5xl mx-auto">
+  <div class="flex flex-wrap items-center justify-between gap-6 mb-10 pb-10 border-b border-slate-50">
+    <div class="flex flex-col gap-1">
+      <h2 class="text-3xl font-black text-slate-900 tracking-tight">Asignación de Grupo</h2>
+      <p class="text-slate-500 font-medium text-sm">Gestiona los horarios, lugares y participantes de cada curso.</p>
+    </div>
+    <div class="flex gap-3">
+      <button (click)="goBack()"
+        class="px-5 py-2.5 border border-slate-300 rounded-lg text-slate-700 text-sm font-bold hover:bg-slate-50 transition-all">
+        Cancelar
+      </button>
+      <app-button-admin (onClick)="guardar()" icon="save" label="Guardar Asignación"></app-button-admin>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <!-- Main Form -->
+    <div class="lg:col-span-12 space-y-8">
+      <form [formGroup]="form" class="bg-white p-10 rounded-3xl border border-slate-100 shadow-sm space-y-10">
+
+        <!-- Info Principal -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="flex flex-col gap-2">
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Grupo /
+              Curso*</label>
+            <select formControlName="grupo_id"
+              class="w-full select px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-sm font-medium">
+              <option [ngValue]="null" disabled>Selecciona un grupo</option>
+              <option *ngFor="let g of grupos" [ngValue]="g.id">{{ g.nombre }}</option>
+            </select>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label
+              class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Periodo*</label>
+            <select formControlName="periodo_id"
+              class="w-full select px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-sm font-medium">
+              <option [ngValue]="null" disabled>Selecciona un periodo</option>
+              <option *ngFor="let p of periodos" [ngValue]="p.id">{{ p.nombre }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="h-px bg-slate-50"></div>
+
+        <!-- Horarios y Lugar -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="flex flex-col gap-2">
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Aula /
+              Lugar</label>
+            <select formControlName="aula_id"
+              class="w-full select px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-sm font-medium">
+              <option [ngValue]="null">SIN AULA ASIGNADA</option>
+              <option *ngFor="let a of aulas" [ngValue]="a.id">{{ a.nombre }}</option>
+            </select>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Día de
+              Reunión</label>
+            <select formControlName="dia_reunion"
+              class="w-full select px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-sm font-medium">
+              <option [ngValue]="null">NO DEFINIDO</option>
+              <option *ngFor="let d of dias" [ngValue]="d">{{ d }}</option>
+            </select>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label
+              class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Frecuencia</label>
+            <select formControlName="frecuencia"
+              class="w-full select px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-sm font-medium">
+              <option [ngValue]="null">NO DEFINIDO</option>
+              <option *ngFor="let f of frecuencias" [ngValue]="f">{{ f }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <app-form-input-admin [control]="form.get('hora_inicio')!" label="Hora de Inicio" type="time"
+            placeholder="--:--"></app-form-input-admin>
+          <app-form-input-admin [control]="form.get('hora_fin')!" label="Hora de Fin" type="time"
+            placeholder="--:--"></app-form-input-admin>
+        </div>
+
+        <!-- Gestión de Personas -->
+        <div class="space-y-6 pt-10 border-t border-slate-50">
+          <label class="text-lg font-black text-slate-800 block">Participantes y Catequistas</label>
+
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+            <input [formControl]="searchControl" type="text"
+              class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all font-medium text-sm"
+              placeholder="Busca por nombre o apellido para aguegar al grupo...">
+
+            <!-- Dropdown de resultados -->
+            <div *ngIf="searchResultsAgrupados.length > 0"
+              class="absolute z-10 w-full mt-2 bg-white border border-slate-100 rounded-2xl shadow-xl overflow-hidden max-h-[300px] overflow-y-auto">
+              <div *ngFor="let grupo of searchResultsAgrupados" class="border-b last:border-0 border-slate-50">
+                <div class="bg-slate-50 px-4 py-1.5 text-[10px] font-black text-slate-400 uppercase tracking-widest">{{
+                  grupo.tipo }}</div>
+                <div *ngFor="let p of grupo.personas" (click)="agregarPersona(p)"
+                  class="px-4 py-3 hover:bg-primary-50 cursor-pointer flex items-center justify-between group">
+                  <div class="flex flex-col">
+                    <span class="text-sm font-bold text-slate-700">{{ p.nombre }} {{ p.apellido }}</span>
+                    <span class="text-[10px] text-slate-400">{{ p.documento }}</span>
+                  </div>
+                  <span class="material-symbols-outlined text-[18px] text-primary-500 opacity-0 group-hover:opacity-100">add_circle</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Listado de seleccionados -->
+          <div class="space-y-6">
+            <div *ngIf="selectedAgrupados.length === 0"
+              class="p-10 border-2 border-dashed border-slate-100 rounded-3xl text-center">
+              <span class="material-symbols-outlined text-[48px] text-slate-200 mb-2">person_add</span>
+              <p class="text-sm font-medium text-slate-400 italic">No hay personas seleccionadas aún.</p>
+            </div>
+
+            <div *ngFor="let grupo of selectedAgrupados" class="space-y-3">
+              <h5 class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">{{ grupo.tipo }}</h5>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div *ngFor="let p of grupo.personas"
+                  class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between hover:shadow-md transition-all group">
+                  <div class="flex flex-col">
+                    <span class="text-sm font-black text-slate-800">{{ p.nombre }} {{ p.apellido }}</span>
+                    <span class="text-[10px] font-bold text-slate-400">{{ p.documento }}</span>
+                  </div>
+                  <button (click)="quitarPersona(p)"
+                    class="p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

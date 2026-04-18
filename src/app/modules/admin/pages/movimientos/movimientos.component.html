@@ -1,0 +1,12 @@
+<div class="flex-1 overflow-y-auto p-8">
+    <app-list-header-admin
+      *appHasPermission="'movimientos.create'"
+      title="Listado de Movimientos"
+      subtitle="Gestiona los movimientos asociados a las parroquias."
+      buttonLabel="Agregar Nuevo Movimiento"
+      buttonIcon="add"
+      (buttonClick)="crear()"
+    ></app-list-header-admin>
+
+    <app-listado-movimientos></app-listado-movimientos>
+</div>

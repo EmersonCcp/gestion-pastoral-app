@@ -1,0 +1,82 @@
+<div class="p-8">
+  <div class="flex flex-wrap justify-between items-end gap-4 mb-8">
+    <div class="flex flex-col gap-1">
+      <h2 class="text-3xl font-black text-slate-900 tracking-tight">
+        Gestión de Roles
+      </h2>
+      <p class="text-slate-500 font-medium">Agrega o edita un rol</p>
+    </div>
+    <div class="flex gap-3">
+      <button (click)="goBack()"
+        class="px-5 py-2.5 border border-slate-300 rounded-lg text-slate-700 text-sm font-bold hover:bg-slate-50 transition-all"
+      >
+        Cancelar
+      </button>
+
+      <app-button-admin (onClick)="onSubmit()" icon="save" label="Guardar Rol"></app-button-admin>
+    </div>
+  </div>
+
+  <form [formGroup]="form" class="flex flex-col gap-6">
+    <app-form-input-admin
+      label="Nombre*"
+      placeholder="Ej. admin"
+      [control]="nombreControl"
+    ></app-form-input-admin>
+
+    <app-form-input-admin
+      label="Descripcion"
+      placeholder="Ej. creacion de roles"
+      [control]="descripcionControl"
+    ></app-form-input-admin>
+
+    <div class="flex flex-col items-start gap-3">
+      <label class="block text-sm font-semibold text-slate-700 mb-2">
+        Estado
+      </label>
+      <input class="ml-3" type="checkbox" formControlName="estado" />
+    </div>
+
+    <!-- PERMISOS CON ACORDEÓN -->
+    <div
+      *ngFor="let sujeto of permisoGroups"
+      class="border border-gray-200 rounded-md bg-white"
+    >
+      <!-- Header -->
+      <button
+        class="w-full flex items-center cursor-pointer justify-between p-3 font-bold text-lg capitalize"
+        (click)="toggleSubject(sujeto)"
+      >
+        {{ sujeto }}
+
+        <span>
+          {{ openSubject[sujeto] ? "▲" : "▼" }}
+        </span>
+      </button>
+
+      <!-- Contenido -->
+      <div
+        *ngIf="openSubject[sujeto]"
+        class="p-3 border-t bg-white grid grid-cols-1 md:grid-cols-2 gap-2"
+      >
+        <label
+          *ngFor="let perm of groupedPermisos[sujeto]"
+          class="flex items-center gap-2"
+        >
+          <input
+            type="checkbox"
+            [checked]="selectedPermisos.includes(perm.id)"
+            (change)="togglePermisos(perm.id)"
+          />
+
+          <div class="flex flex-col">
+            <span>{{ perm.accion }}</span>
+            <span class="text-sm text-gray-500">
+              {{ perm.descripcion }}
+            </span>
+          </div>
+        </label>
+      </div>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,61 @@
+<app-table-admin
+  [loading]="loading"
+  searchPlaceholder="Buscar por nombre..."
+  [itemsLength]="grupos.length"
+  [totalItems]="total_items"
+  entityName="grupos"
+  (search)="onSearchChange($event)"
+  (prev)="prevPage()"
+  (next)="nextPage()"
+>
+  <tr thead class="bg-slate-50 border-b border-slate-200">
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider text-left">N°</th>
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider text-left">Nombre</th>
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider text-left">Movimiento</th>
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider text-left">Padre</th>
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider text-left">Estado</th>
+    <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider text-left">Acciones</th>
+  </tr>
+
+  <ng-container tbody>
+    <tr *ngFor="let g of grupos; let i = index" class="hover:bg-slate-50 transition-colors">
+      <td class="px-6 py-2">
+        <div class="inline-flex items-center px-2.5 py-1 rounded-md text-xs">
+          {{ (page - 1) * per_page + i + 1 }}
+        </div>
+      </td>
+      <td class="px-6 py-2">
+        <span class="text-slate-900 font-medium">{{ g.nombre }}</span>
+      </td>
+      <td class="px-6 py-2">
+        <span class="inline-flex items-center px-2 py-1 rounded bg-blue-50 text-[11px] font-medium text-blue-700 border border-blue-100 uppercase">
+          {{ g.movimiento?.nombre || 'S/M' }}
+        </span>
+      </td>
+      <td class="px-6 py-2">
+        <span class="text-slate-500 text-xs italic" *ngIf="g.parent">
+          {{ g.parent.nombre }}
+        </span>
+        <span class="text-slate-400 text-xs" *ngIf="!g.parent">-</span>
+      </td>
+      <td class="px-6 py-2 text-sm">
+        <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold text-white" 
+              [ngClass]="{'bg-primary-500': g.estado, 'bg-red-400': !g.estado}">
+          {{ g.estado ? 'ACTIVO' : 'INACTIVO' }}
+        </span>
+      </td>
+      <td class="px-6 py-2">
+        <div class="flex items-center gap-2">
+          <button *appHasPermission="'grupos.update'" (click)="editar(g)" 
+                  class="p-1.5 text-slate-400 hover:text-primary-700 hover:bg-primary-100 rounded-full transition-colors" title="Editar">
+            <span class="material-symbols-outlined text-[20px]">edit</span>
+          </button>
+          <button *appHasPermission="'grupos.delete'" (click)="eliminar(g)" 
+                  class="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-100 rounded-full transition-colors" title="Eliminar">
+            <span class="material-symbols-outlined text-[20px]">delete</span>
+          </button>
+        </div>
+      </td>
+    </tr>
+  </ng-container>
+</app-table-admin>

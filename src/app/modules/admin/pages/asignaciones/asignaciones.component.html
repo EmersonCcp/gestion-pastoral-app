@@ -1,0 +1,84 @@
+<div class="p-8 max-w-6xl mx-auto">
+  <app-list-header-admin
+    title="Asignaciones"
+    subtitle="Gestiona las reuniones de catequesis: grupo, período, aula y miembros."
+    buttonLabel="Nueva Asignación"
+    buttonIcon="add_task"
+    (buttonClick)="nueva()"
+  ></app-list-header-admin>
+
+  <!-- Filters -->
+  <div class="flex items-center gap-4 mt-6 mb-4">
+    <div class="flex flex-col gap-1">
+      <label class="text-xs font-bold text-slate-500 uppercase">Filtrar por Período</label>
+      <select class="select select-sm border border-slate-200 rounded-lg text-sm" [(ngModel)]="selectedPeriodoId" (change)="onFilterChange()">
+        <option [ngValue]="null">Todos los períodos</option>
+        <option *ngFor="let p of periodos" [ngValue]="p.id">{{ p.nombre }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="bg-slate-50 border-b border-slate-200">
+          <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Grupo</th>
+          <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Período</th>
+          <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Día / Frecuencia</th>
+          <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Aula</th>
+          <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Personas</th>
+          <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let a of asignaciones" class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+          <td class="px-6 py-4">
+            <div class="flex flex-col">
+              <span class="font-bold text-slate-800">{{ a.grupo?.nombre || '—' }}</span>
+              <span class="text-xs text-slate-400">{{ a.grupo?.movimiento?.nombre || '' }}</span>
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <span class="px-2 py-1 bg-primary-50 text-primary-700 rounded text-[11px] font-bold uppercase">
+              {{ a.periodo?.nombre || '—' }}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-sm text-slate-600">
+            <span *ngIf="a.dia_reunion" class="font-semibold">{{ a.dia_reunion }}</span>
+            <span *ngIf="a.frecuencia" class="text-slate-400 ml-1">({{ a.frecuencia }})</span>
+            <span *ngIf="!a.dia_reunion && !a.frecuencia" class="text-slate-300 italic">Sin definir</span>
+          </td>
+          <td class="px-6 py-4 text-sm text-slate-500 italic">
+            {{ a.aula?.nombre || '—' }}
+          </td>
+          <td class="px-6 py-4 text-center">
+            <span class="inline-flex items-center gap-1 px-2 py-1 bg-slate-100 rounded-full text-xs font-bold text-slate-600">
+              <span class="material-symbols-outlined text-[14px]">group</span>
+              {{ getPersonasCount(a) }}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-right">
+            <div class="flex justify-end gap-2">
+              <button (click)="editar(a)" class="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+                <span class="material-symbols-outlined text-[20px]">edit</span>
+              </button>
+              <button (click)="eliminar(a)" class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                <span class="material-symbols-outlined text-[20px]">delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="asignaciones.length === 0 && !loading">
+          <td colspan="6" class="px-6 py-16 text-center">
+            <div class="flex flex-col items-center gap-2 text-slate-400">
+              <span class="material-symbols-outlined text-[48px]">assignment</span>
+              <p class="font-medium">No hay asignaciones registradas.</p>
+              <p class="text-sm">Crea una nueva para comenzar.</p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

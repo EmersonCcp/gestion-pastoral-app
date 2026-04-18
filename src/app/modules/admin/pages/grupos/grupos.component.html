@@ -1,0 +1,12 @@
+<div class="flex-1 overflow-y-auto p-8">
+    <app-list-header-admin
+      *appHasPermission="'grupos.create'"
+      title="Listado de Grupos y Subgrupos"
+      subtitle="Gestiona los grupos y sus subdivisiones dentro de cada movimiento."
+      buttonLabel="Agregar Nuevo Grupo"
+      buttonIcon="add"
+      (buttonClick)="crear()"
+    ></app-list-header-admin>
+
+    <app-listado-grupos></app-listado-grupos>
+</div>

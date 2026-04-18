@@ -1,0 +1,57 @@
+<div *ngIf="loading" class="p-6 w-[400px]">
+  <h2 class="text-xl font-semibold mb-4">
+    {{ data ? 'Editar Autor #ID'+data.id : 'Nuevo Autor' }}
+  </h2>
+
+  <form [formGroup]="form" class="flex flex-col gap-4">
+
+    
+
+    <app-form-input-admin label="Nombre*" placeholder="Ej. Jose"
+    [control]="nombreControl"></app-form-input-admin>
+
+    <div class="flex flex-col items-start gap-3">
+      <label class="block text-sm font-semibold text-slate-700 mb-2">
+        Estado
+      </label>
+      <input class="ml-3" type="checkbox" formControlName="estado" />
+    </div>
+   
+
+    <div class="flex justify-end gap-2 mt-4">
+      
+      <app-button-admin label="Cancelar" (onClick)="cerrar()"></app-button-admin>
+
+      <app-button-admin label="Guardar" (onClick)="guardar()" [disabled]="form.invalid"></app-button-admin>
+    </div>
+
+  </form>
+
+</div>
+
+<div *ngIf="!loading" class="p-6 w-[400px] animate-pulse">
+  <!-- Título -->
+  <div class="h-6 bg-slate-300 rounded w-2/3 mb-6"></div>
+
+  <form class="flex flex-col gap-4">
+    
+    <!-- Input Nombre -->
+    <div>
+      <div class="h-4 bg-slate-300 rounded w-1/4 mb-2"></div>
+      <div class="h-10 bg-slate-300 rounded w-full"></div>
+    </div>
+
+    <!-- Checkbox Estado -->
+    <div class="flex flex-col gap-2">
+      <div class="h-4 bg-slate-300 rounded w-1/4"></div>
+      <div class="h-5 w-5 bg-slate-300 rounded"></div>
+    </div>
+
+    <!-- Botones -->
+    <div class="flex justify-end gap-2 mt-4">
+      <div class="h-10 w-24 bg-slate-300 rounded"></div>
+      <div class="h-10 w-24 bg-slate-300 rounded"></div>
+    </div>
+
+  </form>
+</div>

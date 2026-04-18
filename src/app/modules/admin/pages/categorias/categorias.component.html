@@ -1,0 +1,18 @@
+<div  class="flex-1 overflow-y-auto p-8">
+
+    <app-list-header-admin
+      *appHasPermission="'categorias.create'"
+      title="Listado de Categorias"
+      subtitle="Distintas categorias."
+      buttonLabel="Agregar Nueva Categoria"
+      buttonIcon="add"
+      (buttonClick)="crear()"
+    ></app-list-header-admin>
+
+    <app-listado-categorias [refreshTrigger]="refresh"></app-listado-categorias>
+
+</div>
+
+
+
+

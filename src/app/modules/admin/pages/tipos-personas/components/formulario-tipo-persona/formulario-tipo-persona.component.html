@@ -1,0 +1,46 @@
+<div class="p-6 bg-white rounded-xl shadow-lg border border-slate-100 max-w-md mx-auto">
+  <div class="mb-6">
+    <h2 class="text-2xl font-black text-slate-800 tracking-tight">{{ data ? 'Editar Tipo' : 'Nuevo Tipo' }}</h2>
+    <p class="text-slate-500 font-medium text-sm">Define la categoría para los miembros de la parroquia.</p>
+  </div>
+
+  <form [formGroup]="form" class="space-y-4">
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-bold text-slate-700">Nombre*</label>
+      <input 
+        formControlName="nombre" 
+        class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-sm font-medium" 
+        placeholder="Ej: ALUMNO, CATEQUISTA"
+      >
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-bold text-slate-700">Descripción</label>
+      <textarea 
+        formControlName="descripcion" 
+        rows="3"
+        class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-sm font-medium" 
+        placeholder="Breve descripción opcional..."
+      ></textarea>
+    </div>
+
+    <div class="flex justify-end gap-3 pt-6 border-t border-slate-50">
+      <button 
+        type="button" 
+        (click)="cerrar()" 
+        class="px-5 py-2 text-slate-600 text-sm font-bold border border-slate-200 rounded-lg hover:bg-slate-50 transition-all"
+      >
+        Cancelar
+      </button>
+      <button 
+        type="submit" 
+        (click)="guardar()" 
+        [disabled]="form.invalid || loading"
+        class="px-5 py-2 bg-primary-600 text-white text-sm font-bold rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shadow-primary-500/20 flex items-center gap-2"
+      >
+        <span class="material-symbols-outlined text-[18px]">save</span>
+        {{ data ? 'Actualizar' : 'Guardar' }}
+      </button>
+    </div>
+  </form>
+</div>

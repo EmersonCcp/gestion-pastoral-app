@@ -1,0 +1,12 @@
+<div class="flex-1 overflow-y-auto p-8">
+    <app-list-header-admin
+      *appHasPermission="'periodos.create'"
+      title="Gestión de Periodos"
+      subtitle="Define los ciclos lectivos, semestres o temporadas de la parroquia."
+      buttonLabel="Agregar Nuevo Periodo"
+      buttonIcon="calendar_today"
+      (buttonClick)="crear()"
+    ></app-list-header-admin>
+
+    <app-listado-periodos></app-listado-periodos>
+</div>
