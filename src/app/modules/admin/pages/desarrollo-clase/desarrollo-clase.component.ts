@@ -46,7 +46,11 @@ export class DesarrolloClaseComponent implements OnInit {
 
   eliminar(s: DesarrolloClase) {
     this.alertService.confirmDelete(() => {
+      this.alertService.loader()
       this.service.delete(s.id).subscribe((res: any) => {
+        console.log(res);
+        
+        this.alertService.close()
         if (res.ok) {
           this.alertService.successOrError('Sesión eliminada');
           this.loadData();

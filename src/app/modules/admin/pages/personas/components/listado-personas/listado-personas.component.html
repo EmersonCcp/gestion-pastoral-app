@@ -31,10 +31,13 @@
         </div>
       </td>
       <td class="px-6 py-2">
-        <span
-          class="inline-flex items-center px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/30 text-[10px] font-bold text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-800/50 uppercase">
-          {{ p.tipoPersona?.nombre || 'S/T' }}
-        </span>
+        <div class="flex flex-wrap gap-1">
+          <span *ngFor="let t of p.tiposPersonas"
+            class="inline-flex items-center px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/30 text-[10px] font-bold text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-800/50 uppercase">
+            {{ t.nombre }}
+          </span>
+          <span *ngIf="!p.tiposPersonas || p.tiposPersonas.length === 0" class="text-[10px] text-slate-400 italic">S/T</span>
+        </div>
       </td>
       <td class="px-6 py-2">
         <div class="flex flex-col gap-0.5">

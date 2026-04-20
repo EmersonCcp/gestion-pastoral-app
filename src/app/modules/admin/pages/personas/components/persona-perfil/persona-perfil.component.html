@@ -19,7 +19,16 @@
           <span class="material-symbols-outlined text-[48px]">person</span>
         </div>
         <h3 class="text-xl font-black text-slate-800 dark:text-slate-100 leading-tight">{{ persona?.apellido }}, {{ persona?.nombre }}</h3>
-        <p class="text-sm font-bold text-primary-500 dark:text-primary-400 uppercase tracking-wide mt-1">{{ persona?.tipoPersona?.nombre || 'Persona' }}</p>
+        <div class="flex flex-wrap justify-center gap-1.5 mt-2">
+          <span *ngFor="let t of persona?.tiposPersonas"
+                class="px-2.5 py-0.5 bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 rounded text-[10px] font-black border border-primary-100 dark:border-primary-800/50 uppercase tracking-wider">
+            {{ t.nombre }}
+          </span>
+          <span *ngIf="!persona?.tiposPersonas || persona?.tiposPersonas?.length === 0"
+                class="text-sm font-bold text-primary-500 dark:text-primary-400 uppercase tracking-wide">
+            Persona
+          </span>
+        </div>
         
         <div class="w-full mt-8 pt-8 border-t border-slate-50 dark:border-slate-800 space-y-4 text-left">
           <div class="flex flex-col gap-0.5">
@@ -129,8 +138,160 @@
         </div>
       </section>
 
-      <!-- Placeholder: Academic history / other metrics -->
-      <!-- Add more sections here later if needed -->
+      <!-- Documentos (Nube) -->
+      <section>
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-amber-500 dark:text-amber-400">folder_shared</span>
+            <h4 class="text-lg font-black text-slate-800 dark:text-slate-100">Documentos Respaldados</h4>
+          </div>
+          
+          <div class="flex items-center gap-2">
+            <input 
+              type="file" 
+              class="hidden" 
+              #fileInput 
+              (change)="onFileSelected($event)">
+            <button 
+              (click)="fileInput.click()" 
+              [disabled]="uploadingDoc"
+              class="btn btn-xs normal-case bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800/50 transition-all">
+              <span class="material-symbols-outlined text-[16px]" *ngIf="!uploadingDoc">upload_file</span>
+              <span class="loading loading-spinner loading-xs" *ngIf="uploadingDoc"></span>
+              {{ uploadingDoc ? 'Subiendo...' : 'Subir Documento' }}
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="loadingDocs" class="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col items-center gap-2">
+          <span class="loading loading-spinner loading-md text-amber-200 dark:text-amber-800"></span>
+        </div>
+
+        <div *ngIf="documentos.length === 0 && !loadingDocs" class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 text-center text-slate-400 dark:text-slate-500 text-sm font-medium">
+          No hay documentos asociados a este perfil.
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" *ngIf="documentos.length > 0">
+          <div *ngFor="let doc of documentos" class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all flex items-center justify-between group">
+            <div class="flex items-center gap-3 overflow-hidden">
+              <div class="w-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:text-amber-500 transition-colors">
+                <span class="material-symbols-outlined text-[24px]">description</span>
+              </div>
+              <div class="flex flex-col overflow-hidden">
+                <span class="text-xs font-black text-slate-800 dark:text-slate-100 truncate pr-2" [title]="doc.nombre">{{ doc.nombre }}</span>
+                <span class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase">{{ doc.created_at | date: 'dd/MM/yyyy' }}</span>
+              </div>
+            </div>
+            
+            <div class="flex items-center gap-1">
+              <a [href]="doc.url" target="_blank" class="p-1.5 text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/30 rounded-lg transition-all" title="Ver / Descargar">
+                <span class="material-symbols-outlined text-[18px]">download</span>
+              </a>
+              <button (click)="eliminarDocumento(doc)" class="p-1.5 text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-all" title="Eliminar">
+                <span class="material-symbols-outlined text-[18px]">delete</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Núcleo Familiar / Relaciones -->
+      <app-persona-relaciones *ngIf="persona"
+        [personaId]="persona.id"
+        [relaciones]="persona.relaciones || []"
+        [parienteDe]="persona.parienteDe || []"
+        (refresh)="loadPersona(persona.id)">
+      </app-persona-relaciones>
+
+      <!-- Historial Detallado de Asistencias -->
+      <section>
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-slate-500 dark:text-slate-400">calendar_month</span>
+            <h4 class="text-lg font-black text-slate-800 dark:text-slate-100">Historial de Asistencias</h4>
+          </div>
+          <span *ngIf="historyTotal > 0" class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+            Total: {{ historyTotal }} registros
+          </span>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden transition-colors">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 transition-colors">
+                  <th class="px-6 py-4 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Fecha</th>
+                  <th class="px-6 py-4 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Grupo</th>
+                  <th class="px-6 py-4 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Periodo</th>
+                  <th class="px-6 py-4 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Estado</th>
+                  <th class="px-6 py-4 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Observación</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-50 dark:divide-slate-800 transition-colors">
+                <tr *ngIf="loadingHistory" class="animate-pulse">
+                  <td colspan="5" class="px-6 py-12 text-center">
+                    <span class="loading loading-spinner loading-md text-slate-200 dark:text-slate-700"></span>
+                  </td>
+                </tr>
+                <tr *ngIf="history.length === 0 && !loadingHistory">
+                  <td colspan="5" class="px-6 py-12 text-center text-slate-400 dark:text-slate-600 italic text-sm">
+                    No hay registros detallados para mostrar.
+                  </td>
+                </tr>
+                <tr *ngFor="let h of history" class="hover:bg-slate-50/30 dark:hover:bg-slate-800/30 transition-colors">
+                  <td class="px-6 py-4">
+                    <span class="text-sm font-bold text-slate-700 dark:text-slate-300">{{ h.asistencia?.fecha | date: 'dd/MM/yyyy' }}</span>
+                  </td>
+                  <td class="px-6 py-4">
+                    <span class="text-xs font-black text-indigo-600 dark:text-indigo-400">{{ h.asistencia?.grupo?.nombre }}</span>
+                  </td>
+                  <td class="px-6 py-4">
+                    <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tight">{{ h.asistencia?.periodo?.nombre }}</span>
+                  </td>
+                  <td class="px-6 py-4">
+                    <span [ngClass]="{
+                      'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border-green-100 dark:border-green-800/50': h.estado === 'PRESENTE',
+                      'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border-red-100 dark:border-red-800/50': h.estado === 'AUSENTE',
+                      'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 border-yellow-100 dark:border-yellow-800/50': h.estado === 'JUSTIFICADO'
+                    }" class="px-2 py-0.5 rounded text-[9px] font-black border uppercase tracking-wide">
+                      {{ h.estado }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 max-w-[200px]">
+                    <span class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 italic" [title]="h.observacion || ''">
+                      {{ h.observacion || '—' }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div *ngIf="historyTotal > historyPerPage" class="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/50 flex items-center justify-between border-t border-slate-100 dark:border-slate-800 transition-colors">
+            <div class="flex items-center gap-1.5">
+              <button 
+                (click)="onHistoryPageChange(historyPage - 1)" 
+                [disabled]="historyPage === 1 || loadingHistory"
+                class="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 disabled:opacity-30 hover:bg-white dark:hover:bg-slate-900 transition-all">
+                <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+              </button>
+              <span class="text-[11px] font-black text-slate-500 dark:text-slate-400 px-3">
+                Página {{ historyPage }} de {{ totalPages }}
+              </span>
+              <button 
+                (click)="onHistoryPageChange(historyPage + 1)" 
+                [disabled]="historyPage * historyPerPage >= historyTotal || loadingHistory"
+                class="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 disabled:opacity-30 hover:bg-white dark:hover:bg-slate-900 transition-all">
+                <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+              </button>
+            </div>
+            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+              {{ (historyPage - 1) * historyPerPage + 1 }}-{{ (historyPage * historyPerPage > historyTotal) ? historyTotal : (historyPage * historyPerPage) }} de {{ historyTotal }}
+            </span>
+          </div>
+        </div>
+      </section>
 
     </div>
   </div>

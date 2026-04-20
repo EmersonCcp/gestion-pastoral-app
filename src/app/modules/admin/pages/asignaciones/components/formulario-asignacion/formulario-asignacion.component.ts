@@ -166,7 +166,9 @@ export class FormularioAsignacionComponent implements OnInit, OnDestroy {
   agruparPorTipo(personas: Persona[]): PersonaAgrupada[] {
     const map = new Map<string, Persona[]>();
     personas.forEach((p) => {
-      const tipo = p.tipoPersona?.nombre || 'SIN TIPO';
+      const tipo = p.tiposPersonas && p.tiposPersonas.length > 0
+        ? p.tiposPersonas.map(t => t.nombre).join(', ')
+        : 'SIN TIPO';
       if (!map.has(tipo)) map.set(tipo, []);
       map.get(tipo)!.push(p);
     });

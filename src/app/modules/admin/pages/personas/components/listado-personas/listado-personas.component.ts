@@ -4,6 +4,7 @@ import { Persona } from 'src/app/shared/interfaces/entities/persona.entity';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { PersonaService } from 'src/app/shared/services/persona.service';
 import { TipoPersonaService } from 'src/app/shared/services/tipo-persona.service';
+import { AuthService } from 'src/app/shared/services/auth.service';
 
 @Component({
   selector: 'app-listado-personas',
@@ -24,6 +25,7 @@ export class ListadoPersonasComponent implements OnInit {
   constructor(
     private service: PersonaService,
     private tipoPersonaService: TipoPersonaService,
+    private authService: AuthService,
     private alertService: AlertService,
     private router: Router
   ) { }
@@ -34,7 +36,9 @@ export class ListadoPersonasComponent implements OnInit {
   }
 
   loadTipos() {
-    this.tipoPersonaService.getAll().subscribe((res: any) => {
+    const movId = this.authService.getSelectedMovimientoId();
+    if (!movId) return;
+    this.tipoPersonaService.getAll({ movimiento_id: movId }).subscribe((res: any) => {
       if (res.ok) {
         this.tiposPersonas = res.data;
       }

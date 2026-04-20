@@ -1,21 +1,17 @@
 import { Injectable } from '@angular/core';
-import { IStorageService } from '../interfaces/storage/storage.interface';
-import { FirebaseStorageService } from './firebase-storage.service';
+import { SupabaseStorageService } from './supabase-storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class StorageAdapterService implements IStorageService {
+export class StorageAdapterService {
+  constructor(private storageService: SupabaseStorageService) { }
 
-  constructor(
-    private firebaseStorage: FirebaseStorageService
-  ) {}
-
-  upload(file: File, path: string): Promise<string> {
-    return this.firebaseStorage.upload(file, path);
+  async upload(file: File, path: string): Promise<string> {
+    return this.storageService.upload(file, path);
   }
 
-  delete(path: string): Promise<void> {
-    return this.firebaseStorage.delete(path);
+  async delete(path: string): Promise<void> {
+    return this.storageService.delete(path);
   }
 }

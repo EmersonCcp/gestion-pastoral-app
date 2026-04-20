@@ -1,0 +1,96 @@
+<section class="space-y-6">
+  <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-rose-500 dark:text-rose-400">family_history</span>
+      <h4 class="text-lg font-black text-slate-800 dark:text-slate-100">Núcleo Familiar y Relaciones</h4>
+    </div>
+    
+    <button (click)="openVinculoModal()"
+      class="btn btn-xs normal-case bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100 dark:bg-rose-900/20 dark:text-rose-400 dark:border-rose-800/50 transition-all">
+      <span class="material-symbols-outlined text-[16px]">person_add</span>
+      Vincular Familiar
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col items-center gap-2">
+    <span class="loading loading-spinner loading-md text-rose-200 dark:text-rose-800"></span>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && relaciones.length === 0 && parienteDe.length === 0" 
+    class="bg-white dark:bg-slate-900 p-10 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 text-center transition-colors">
+    <span class="material-symbols-outlined text-[48px] text-slate-200 dark:text-slate-700 mb-2">family_restroom</span>
+    <p class="text-sm font-medium text-slate-400 dark:text-slate-500 italic">
+      No hay vínculos familiares registrados para esta persona.
+    </p>
+  </div>
+
+  <!-- List of Relatives (Mis Parientes) -->
+  <div *ngIf="relaciones.length > 0" class="space-y-3">
+    <h5 class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest px-1">Familiares / Parientes</h5>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div *ngFor="let rel of relaciones" 
+        class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all flex items-center justify-between group">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:bg-rose-50 group-hover:text-rose-500 transition-colors">
+            <span class="material-symbols-outlined text-[24px]">person</span>
+          </div>
+          <div class="flex flex-col">
+            <span (click)="goToProfile(rel.pariente_id)" class="text-sm font-bold text-slate-800 dark:text-slate-100 hover:text-primary-600 cursor-pointer transition-colors">
+              {{ rel.pariente?.nombre }} {{ rel.pariente?.apellido }}
+            </span>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 rounded text-[9px] font-black border border-rose-100 dark:border-rose-800/50 uppercase tracking-wider">
+                {{ rel.parentesco }}
+              </span>
+              <span *ngIf="rel.es_responsable_legal" class="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5">
+                <span class="material-symbols-outlined text-[12px]">verified</span>
+                Responsable
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+          <button (click)="goToProfile(rel.pariente_id)" 
+            class="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/30 rounded-xl transition-all"
+            title="Ver Perfil">
+            <span class="material-symbols-outlined text-[20px]">visibility</span>
+          </button>
+          
+          <button (click)="eliminarVinculo(rel.id)" 
+            class="p-2 text-slate-300 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-xl transition-all"
+            title="Eliminar Vínculo">
+            <span class="material-symbols-outlined text-[20px]">link_off</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- List of Inverse Relationships (Soy pariente de) -->
+  <div *ngIf="parienteDe.length > 0" class="space-y-3 mt-8">
+    <h5 class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest px-1">Es pariente de (Vínculos Inversos)</h5>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div *ngFor="let rel of parienteDe" 
+        class="bg-slate-50/50 dark:bg-slate-800/20 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center justify-between group grayscale hover:grayscale-0 transition-all">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-full bg-white dark:bg-slate-900 flex items-center justify-center text-slate-300">
+            <span class="material-symbols-outlined text-[24px]">person</span>
+          </div>
+          <div class="flex flex-col">
+            <span (click)="goToProfile(rel.persona_id)" class="text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-primary-600 cursor-pointer transition-colors">
+              {{ rel.persona?.nombre }} {{ rel.persona?.apellido }}
+            </span>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase italic">
+                Es su {{ getInverseParentesco(rel.parentesco) }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

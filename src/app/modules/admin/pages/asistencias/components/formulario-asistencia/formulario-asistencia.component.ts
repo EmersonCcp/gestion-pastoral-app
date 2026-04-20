@@ -119,7 +119,7 @@ export class FormularioAsistenciaComponent implements OnInit {
     this.personaEstados.push(this.fb.group({
       persona_id: [persona.id],
       nombre_completo: [`${persona.apellido}, ${persona.nombre}`],
-      tipo: [persona.tipoPersona?.nombre],
+      tipo: [persona.tiposPersonas?.map((t: any) => t.nombre).join(', ') || 'S/T'],
       estado: [estado, Validators.required],
       observacion: [obs]
     }));

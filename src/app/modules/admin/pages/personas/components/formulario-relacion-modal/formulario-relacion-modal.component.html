@@ -1,0 +1,93 @@
+<div class="p-6">
+  <div class="flex items-center justify-between mb-6">
+    <h3 class="text-xl font-black text-slate-800 dark:text-slate-100 flex items-center gap-2">
+      <span class="material-symbols-outlined text-rose-500">link</span>
+      Vincular Familiar
+    </h3>
+    <button mat-dialog-close class="text-slate-400 hover:text-slate-600 transition-colors">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
+    
+    <!-- Search Person -->
+    <div class="space-y-2">
+      <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest px-1">Buscar Persona (Pariente)</label>
+      <div class="relative">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+        <input type="text" 
+          [formControl]="searchControl"
+          placeholder="Nombre, Apellido o Documento..."
+          class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 text-sm font-medium transition-all">
+      </div>
+
+      <!-- Search Results -->
+      <div *ngIf="isSearching" class="p-4 flex justify-center">
+        <span class="loading loading-spinner loading-sm text-rose-500"></span>
+      </div>
+
+      <div *ngIf="personasFound.length > 0" class="max-h-40 overflow-y-auto border border-slate-50 dark:border-slate-800 rounded-xl divide-y divide-slate-50 dark:divide-slate-800 shadow-inner">
+        <div *ngFor="let p of personasFound" 
+          (click)="selectPersona(p)"
+          [class.bg-rose-50]="form.get('pariente_id')?.value === p.id"
+          class="p-3 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-all flex items-center justify-between">
+          <div class="flex flex-col">
+            <span class="text-sm font-bold text-slate-700 dark:text-slate-200">{{ p.nombre }} {{ p.apellido }}</span>
+            <span class="text-[10px] font-medium text-slate-400">{{ p.documento || 'Sin doc' }}</span>
+          </div>
+          <span *ngIf="form.get('pariente_id')?.value === p.id" class="material-symbols-outlined text-rose-500 text-sm">check_circle</span>
+        </div>
+      </div>
+      
+      <div *ngIf="!isSearching && searchControl.value && personasFound.length === 0" class="p-3 text-center text-xs text-slate-400 italic">
+        No se encontraron resultados.
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 pt-2 border-t border-slate-50 dark:border-slate-800" *ngIf="form.get('pariente_id')?.value">
+      
+      <!-- Parentesco -->
+      <div class="space-y-2">
+        <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest px-1">Vínculo / Parentesco</label>
+        <select formControlName="parentesco"
+          class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 text-sm font-bold text-slate-700 dark:text-slate-200 uppercase transition-all">
+          <option *ngFor="let type of parentescoTypes" [value]="type">{{ type }}</option>
+        </select>
+      </div>
+
+      <!-- Options -->
+      <div class="flex flex-col gap-3">
+        <label class="flex items-center gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-800 cursor-pointer hover:bg-slate-50 transition-all">
+          <input type="checkbox" formControlName="es_responsable_legal" class="checkbox checkbox-rose checkbox-sm">
+          <div class="flex flex-col">
+            <span class="text-xs font-bold text-slate-700 dark:text-slate-200">Es Responsable Legal</span>
+            <span class="text-[9px] text-slate-400">Puede firmar documentos y autorizaciones.</span>
+          </div>
+        </label>
+
+        <label class="flex items-center gap-3 p-3 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-800 cursor-pointer hover:bg-slate-50 transition-all">
+          <input type="checkbox" formControlName="es_contacto_emergencia" class="checkbox checkbox-rose checkbox-sm">
+          <div class="flex flex-col">
+            <span class="text-xs font-bold text-slate-700 dark:text-slate-200">Contacto de Emergencia</span>
+            <span class="text-[9px] text-slate-400">Notificar primero en caso de incidencias.</span>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex items-center gap-3 pt-6">
+      <button type="button" mat-dialog-close class="flex-1 py-2.5 px-4 text-sm font-bold text-slate-500 hover:bg-slate-50 rounded-xl transition-all">
+        Cancelar
+      </button>
+      <button type="submit" 
+        [disabled]="form.invalid || loading"
+        class="flex-[2] py-2.5 px-4 bg-rose-500 hover:bg-rose-600 dark:bg-rose-600 dark:hover:bg-rose-700 text-white rounded-xl font-bold transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50">
+        <span *ngIf="loading" class="loading loading-spinner loading-xs"></span>
+        <span *ngIf="!loading" class="material-symbols-outlined text-sm">link</span>
+        Crear Vínculo
+      </button>
+    </div>
+  </form>
+</div>

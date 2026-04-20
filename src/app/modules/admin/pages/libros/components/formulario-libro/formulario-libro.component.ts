@@ -7,6 +7,7 @@ import { TipoPersona } from 'src/app/shared/interfaces/entities/persona.entity';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { LibroService } from 'src/app/shared/services/libro.service';
 import { TipoPersonaService } from 'src/app/shared/services/tipo-persona.service';
+import { AuthService } from 'src/app/shared/services/auth.service';
 
 @Component({
   selector: 'app-formulario-libro',
@@ -22,6 +23,7 @@ export class FormularioLibroComponent implements OnInit {
   constructor(
     private service: LibroService,
     private tipoPersonaService: TipoPersonaService,
+    private authService: AuthService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private fb: FormBuilder,
@@ -50,7 +52,9 @@ export class FormularioLibroComponent implements OnInit {
   }
 
   loadTiposPersonas() {
-    this.tipoPersonaService.getAll({ per_page: 100 }).subscribe((res: any) => {
+    const movId = this.authService.getSelectedMovimientoId();
+    if (!movId) return;
+    this.tipoPersonaService.getAll({ per_page: 100, movimiento_id: movId }).subscribe((res: any) => {
       if (res.ok) this.tiposPersonas = res.data;
     });
   }

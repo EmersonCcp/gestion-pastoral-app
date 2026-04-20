@@ -10,4 +10,12 @@ import { environment } from 'src/app/environments/environment';
 export class PersonaService extends BaseService<Persona> {
   protected override endpoint = `${environment.apiUrl}/personas`;
   constructor(http: HttpClient) { super(http); }
+
+  addRelacion(dto: any) {
+    return this.http.post(`${this.endpoint}/relaciones`, dto);
+  }
+
+  removeRelacion(id: number) {
+    return this.http.delete(`${this.endpoint}/relaciones/${id}`);
+  }
 }

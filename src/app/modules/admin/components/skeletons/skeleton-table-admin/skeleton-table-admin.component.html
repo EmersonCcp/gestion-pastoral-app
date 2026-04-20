@@ -1,17 +1,18 @@
-<div class="animate-pulse space-y-6">
+<div class="animate-pulse" [ngClass]="{'space-y-6': !rowsOnly}">
   <!-- Search Input Placeholder -->
-  <div class="h-10 w-full bg-slate-100 dark:bg-slate-800 rounded-xl mb-6 border border-slate-50 dark:border-slate-700"></div>
+  <div *ngIf="!rowsOnly" class="h-10 w-full bg-slate-100 dark:bg-slate-800 rounded-xl mb-6 border border-slate-50 dark:border-slate-700"></div>
 
   <!-- Table Placeholder -->
-  <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 overflow-hidden shadow-sm">
+  <div [ngClass]="{'bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 overflow-hidden shadow-sm': !rowsOnly}">
     <!-- Header -->
-    <div class="bg-slate-50 dark:bg-slate-800/50 h-10 border-b border-slate-100 dark:border-slate-800 flex items-center px-6 gap-4">
+    <div *ngIf="!rowsOnly" class="bg-slate-50 dark:bg-slate-800/50 h-10 border-b border-slate-100 dark:border-slate-800 flex items-center px-6 gap-4">
       <div *ngFor="let i of [1,2,3,4,5]" class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-full max-w-[120px]"></div>
     </div>
 
     <!-- Rows -->
     <div class="divide-y divide-slate-50 dark:divide-slate-800">
-      <div *ngFor="let i of [1,2,3,4,5,6,7,8]" class="p-6 flex items-center gap-6">
+      <div *ngFor="let i of [1,2,3,4,5,6,7,8]" 
+        [ngClass]="{'p-6 flex items-center gap-6': !rowsOnly, 'px-6 py-4 flex items-center gap-6 border-b border-slate-50 dark:border-slate-800/50': rowsOnly}">
         <div class="h-4 w-8 bg-slate-100 dark:bg-slate-800 rounded"></div>
         <div class="flex-1">
           <div class="h-4 w-48 bg-slate-100 dark:bg-slate-800 rounded mb-2"></div>
@@ -27,7 +28,7 @@
     </div>
 
     <!-- Pagination Footer -->
-    <div class="p-4 border-t border-slate-50 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-800/30 flex justify-between items-center">
+    <div *ngIf="!rowsOnly" class="p-4 border-t border-slate-50 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-800/30 flex justify-between items-center">
       <div class="h-3 w-40 bg-slate-100 dark:bg-slate-800 rounded"></div>
       <div class="flex gap-2">
         <div class="h-8 w-24 bg-slate-100 dark:bg-slate-800 rounded-lg"></div>

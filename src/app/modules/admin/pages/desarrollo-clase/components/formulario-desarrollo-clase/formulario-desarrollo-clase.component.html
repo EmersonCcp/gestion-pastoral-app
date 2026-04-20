@@ -48,11 +48,11 @@
             </div>
 
             <div *ngIf="librosAsignados.length > 0">
-              <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Material / Libro*</label>
+              <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Material / Libro (Opcional)</label>
               <select formControlName="libro_id" (change)="onLibroChange()"
                 class="w-full px-4 py-2.5 bg-primary-50/30 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 text-sm transition-all font-bold text-primary-800 dark:text-primary-300">
-                <option [value]="null">Seleccione Libro</option>
-                <option *ngFor="let l of librosAsignados" [value]="l.id">{{ l.nombre }}</option>
+                <option [ngValue]="null">Sin libro / Temas libres</option>
+                <option *ngFor="let l of librosAsignados" [ngValue]="l.id">{{ l.nombre }}</option>
               </select>
             </div>
 
@@ -84,7 +84,7 @@
               <li class="flex justify-between"><span>Alumnos en Lista:</span> <strong class="text-white">{{
                   asistenciaPersonas.length }}</strong></li>
             </ul>
-            <button type="submit" [disabled]="form.invalid || selectedTemaIds.length === 0"
+            <button type="submit" [disabled]="form.invalid || (form.value.libro_id && form.value.libro_id !== 'null' && selectedTemaIds.length === 0)"
               class="w-full mt-6 py-3 bg-primary-500 hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700 rounded-xl font-bold transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
               <span class="material-symbols-outlined">save</span>
               Confirmar y Guardar
@@ -135,7 +135,12 @@
             <div *ngIf="temasDelLibro.length === 0"
               class="flex flex-col items-center justify-center py-20 text-slate-300 dark:text-slate-700 transition-colors">
               <span class="material-symbols-outlined text-6xl mb-4">menu_book</span>
-              <p class="font-medium">Selecciona un libro para ver sus temas.</p>
+              <p class="font-medium">
+                {{ form.get('libro_id')?.value && form.get('libro_id')?.value !== 'null' ? 'Cargando temas...' : 'Registro de clase libre sin libro.' }}
+              </p>
+              <p class="text-xs mt-2" *ngIf="!form.get('libro_id')?.value || form.get('libro_id')?.value === 'null'">
+                Usa las observaciones para detallar lo desarrollado hoy.
+              </p>
             </div>
           </div>
 

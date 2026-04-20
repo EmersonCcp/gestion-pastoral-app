@@ -6,6 +6,18 @@ export interface TipoPersona {
   updated_at: string;
 }
 
+export interface DocumentoPersona {
+  id: number;
+  nombre: string;
+  url: string;
+  path: string;
+  tipo?: string;
+  persona_id: number;
+  movimiento_id: number;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Persona {
   id: number;
   nombre: string;
@@ -16,8 +28,11 @@ export interface Persona {
   direccion?: string;
   genero?: string;
   fecha_nacimiento?: string;
-  tipo_persona_id: number;
-  tipoPersona?: TipoPersona;
+  tipos_personas_ids?: number[];
+  tiposPersonas?: TipoPersona[];
+  documentos?: DocumentoPersona[];
+  relaciones?: any[];
+  parienteDe?: any[];
   created_at: string;
   updated_at: string;
 }

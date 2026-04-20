@@ -8,8 +8,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AdminModule } from './modules/admin/admin.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './shared/interceptors/jwt.interceptor';
-import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
-import { provideStorage, getStorage } from '@angular/fire/storage';
 import { ErrorInterceptor } from './shared/interceptors/error.interceptor';
 import { LoginComponent } from './modules/auth/pages/login/login.component';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -23,18 +21,6 @@ import { ReactiveFormsModule } from '@angular/forms';
     SweetAlert2Module.forRoot(),
     BrowserAnimationsModule,
     HttpClientModule,
-    provideFirebaseApp(() =>
-      initializeApp({
-        apiKey: 'AIzaSyAgK0h2g4T38oGdMcJvjDYdABh99zZHNsE',
-        authDomain: 'tapiceria-e4976.firebaseapp.com',
-        projectId: 'tapiceria-e4976',
-        storageBucket: 'tapiceria-e4976.appspot.com',
-        messagingSenderId: '839401029663',
-        appId: '1:839401029663:web:19385461e47be2f403552a',
-        measurementId: 'G-B22SSLQMPV',
-      }),
-    ),
-    provideStorage(() => getStorage()),
   ],
   providers: [
     {

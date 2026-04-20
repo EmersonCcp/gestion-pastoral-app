@@ -51,7 +51,7 @@ export class FormularioDesarrolloClaseComponent implements OnInit {
       fecha: [new Date().toISOString().split('T')[0], Validators.required],
       grupo_id: [null, Validators.required],
       periodo_id: [null, Validators.required],
-      libro_id: [null, Validators.required],
+      libro_id: [null],
       observaciones: [''],
       asistencia_personas: this.fb.array([])
     });
@@ -190,8 +190,11 @@ export class FormularioDesarrolloClaseComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.form.invalid || this.selectedTemaIds.length === 0) {
-      this.alertService.successOrError('Completa los campos y selecciona al menos un tema', '', 'warning');
+    const hasLibro = !!this.form.value.libro_id && this.form.value.libro_id !== 'null';
+    
+    // Si hay libro, debe haber al menos un tema. Si no hay libro, no es obligatorio.
+    if (this.form.invalid || (hasLibro && this.selectedTemaIds.length === 0)) {
+      this.alertService.successOrError('Completa los campos' + (hasLibro ? ' y selecciona al menos un tema' : ''), '', 'warning');
       return;
     }
 
@@ -206,6 +209,7 @@ export class FormularioDesarrolloClaseComponent implements OnInit {
         persona_estados: this.form.value.asistencia_personas
       }
     };
+
 
     const request$ = this.editMode ? this.service.update(this.id, payload) : this.service.create(payload);
     request$.subscribe((res: any) => {

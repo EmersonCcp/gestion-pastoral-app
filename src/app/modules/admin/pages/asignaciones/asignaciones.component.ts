@@ -5,6 +5,7 @@ import { Periodo } from 'src/app/shared/interfaces/entities/periodo.entity';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AsignacionService } from 'src/app/shared/services/asignacion.service';
 import { PeriodoService } from 'src/app/shared/services/periodo.service';
+import { AuthService } from 'src/app/shared/services/auth.service';
 
 @Component({
   selector: 'app-asignaciones',
@@ -23,6 +24,7 @@ export class AsignacionesComponent implements OnInit {
   constructor(
     private service: AsignacionService,
     private periodoService: PeriodoService,
+    private authService: AuthService,
     private alertService: AlertService,
     private router: Router
   ) { }
@@ -33,14 +35,18 @@ export class AsignacionesComponent implements OnInit {
   }
 
   loadPeriodos() {
-    this.periodoService.getAll({ per_page: 100 }).subscribe((res: any) => {
+    const movId = this.authService.getSelectedMovimientoId();
+    if (!movId) return;
+    this.periodoService.getAll({ per_page: 100, movimiento_id: movId }).subscribe((res: any) => {
       if (res.ok) this.periodos = res.data;
     });
   }
 
   loadData() {
-    this.loading = false;
+    this.loading = true;
+    const movId = this.authService.getSelectedMovimientoId();
     const filters: any = { per_page: this.per_page, page: this.page };
+    if (movId) filters.movimiento_id = movId;
     if (this.selectedPeriodoId) filters.periodo_id = this.selectedPeriodoId;
 
     this.service.getAll(filters).subscribe((res: any) => {
