@@ -26,6 +26,7 @@
   </div>
 
   <div *ngIf="!loadingStats" class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+    
     <!-- Dynamic Cards per TipoPersona -->
     <div *ngFor="let s of stats"
       class="relative p-8 overflow-hidden transition-all duration-500 bg-white dark:bg-slate-800 border shadow-sm rounded-3xl border-slate-100 dark:border-slate-700 hover:shadow-xl group">
@@ -101,36 +102,51 @@
         <p class="font-bold text-slate-400 dark:text-slate-500">No hay cumpleaños registrados para este mes.</p>
       </div>
 
-      <div *ngIf="birthdays.length > 0" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <div *ngFor="let b of birthdays"
-          class="p-5 transition-all duration-300 bg-white dark:bg-slate-800 border shadow-sm border-slate-100 dark:border-slate-700 rounded-3xl hover:shadow-xl hover:-translate-y-1 group ring-1 ring-slate-100 dark:ring-slate-700 hover:ring-primary-100 dark:hover:ring-primary-900">
-          <div class="flex items-start justify-between mb-4">
-            <div
-              class="flex items-center justify-center text-xl font-black text-white shadow-lg size-14 bg-gradient-to-br from-primary-500 to-indigo-600 rounded-2xl shadow-primary-200 dark:shadow-primary-900/20">
-              {{ b.dia_cumple }}
+      <div *ngIf="birthdays.length > 0" class="space-y-8">
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div *ngFor="let b of birthdays"
+            class="p-5 transition-all duration-300 bg-white dark:bg-slate-800 border shadow-sm border-slate-100 dark:border-slate-700 rounded-3xl hover:shadow-xl hover:-translate-y-1 group ring-1 ring-slate-100 dark:ring-slate-700 hover:ring-primary-100 dark:hover:ring-primary-900">
+            <div class="flex items-start justify-between mb-4">
+              <div
+                class="flex items-center justify-center text-xl font-black text-white shadow-lg size-14 bg-gradient-to-br from-primary-500 to-indigo-600 rounded-2xl shadow-primary-200 dark:shadow-primary-900/20">
+                {{ b.dia_cumple }}
+              </div>
+              <div
+                class="bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter border border-amber-100 dark:border-amber-800/50">
+                {{ b.edad_cumple }} años
+              </div>
             </div>
-            <div
-              class="bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter border border-amber-100 dark:border-amber-800/50">
-              {{ b.edad_cumple }} años
+
+            <h4
+              class="mb-1 text-lg font-black leading-tight tracking-tight uppercase transition-colors text-slate-800 dark:text-slate-100 group-hover:text-primary-700 dark:group-hover:text-primary-400">
+              {{ b.nombre }} {{ b.apellido }}
+            </h4>
+
+            <div class="flex flex-col gap-2 pt-4 mt-4 border-t border-slate-50 dark:border-slate-700">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[16px] text-indigo-400">group</span>
+                <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-tight truncate">{{ b.grupos
+                  }}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[16px] text-primary-400">event</span>
+                <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500">{{ months[b.mes_cumple - 1].name }}</span>
+              </div>
             </div>
           </div>
+        </div>
 
-          <h4
-            class="mb-1 text-lg font-black leading-tight tracking-tight uppercase transition-colors text-slate-800 dark:text-slate-100 group-hover:text-primary-700 dark:group-hover:text-primary-400">
-            {{ b.nombre }} {{ b.apellido }}
-          </h4>
-
-          <div class="flex flex-col gap-2 pt-4 mt-4 border-t border-slate-50 dark:border-slate-700">
-            <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-[16px] text-indigo-400">group</span>
-              <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-tight truncate">{{ b.grupos
-                }}</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-[16px] text-primary-400">event</span>
-              <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500">{{ months[b.mes_cumple - 1].name }}</span>
-            </div>
-          </div>
+        <!-- Paginator -->
+        <div class="pt-6 border-t border-slate-50 dark:border-slate-700">
+          <mat-paginator
+            [length]="totalItems"
+            [pageSize]="pageSize"
+            [pageIndex]="pageIndex"
+            [pageSizeOptions]="[4, 8, 12, 24]"
+            (page)="onPageChange($event)"
+            class="!bg-transparent dark:!text-slate-300"
+            aria-label="Seleccionar página de cumpleaños">
+          </mat-paginator>
         </div>
       </div>
     </div>

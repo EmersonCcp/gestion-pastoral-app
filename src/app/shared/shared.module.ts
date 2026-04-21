@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { AlertService } from './services/alert.service';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { HasPermissionDirective } from './directives/has-permission.directive';
 
 @NgModule({
@@ -17,7 +18,8 @@ import { HasPermissionDirective } from './directives/has-permission.directive';
   exports: [
     CommonModule,
     HasPermissionDirective,
-    MatDialogModule
+    MatDialogModule,
+    MatPaginatorModule
   ],
   imports: [
     CommonModule,
@@ -25,7 +27,8 @@ import { HasPermissionDirective } from './directives/has-permission.directive';
     ReactiveFormsModule,
     FormsModule,
     HttpClientModule,
-    MatDialogModule
+    MatDialogModule,
+    MatPaginatorModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

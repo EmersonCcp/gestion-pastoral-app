@@ -18,4 +18,10 @@ export class PersonaService extends BaseService<Persona> {
   removeRelacion(id: number) {
     return this.http.delete(`${this.endpoint}/relaciones/${id}`);
   }
+
+  uploadCsv(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post(`${this.endpoint}/upload-csv`, formData);
+  }
 }

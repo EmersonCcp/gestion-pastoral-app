@@ -69,6 +69,7 @@ import { FormularioMovimientoInventarioComponent } from './pages/libros-inventar
 import { FormularioAsignacionLibroComponent } from './pages/libros-inventario/components/formulario-asignacion-libro/formulario-asignacion-libro.component';
 import { PersonaRelacionesComponent } from './pages/personas/components/persona-relaciones/persona-relaciones.component';
 import { FormularioRelacionModalComponent } from './pages/personas/components/formulario-relacion-modal/formulario-relacion-modal.component';
+import { UploadCsvDialogComponent } from './pages/personas/components/upload-csv-dialog/upload-csv-dialog.component';
 
 @NgModule({
   declarations: [
@@ -135,6 +136,7 @@ import { FormularioRelacionModalComponent } from './pages/personas/components/fo
     FormularioAsignacionLibroComponent,
     PersonaRelacionesComponent,
     FormularioRelacionModalComponent,
+    UploadCsvDialogComponent,
   ],
   imports: [CommonModule, ReactiveFormsModule, FormsModule, AdminRoutingModule, HttpClientModule, SharedModule, A11yModule],
   providers: [{

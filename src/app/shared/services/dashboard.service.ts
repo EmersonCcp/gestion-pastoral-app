@@ -16,7 +16,7 @@ export class DashboardService {
     return this.http.get<ApiResponse<any> | ApiErrorResponse>(`${this.endpoint}/stats?movimientoId=${movimientoId}`);
   }
 
-  getBirthdays(month: number, movimientoId?: number): Observable<ApiResponse<any> | ApiErrorResponse> {
-    return this.http.get<ApiResponse<any> | ApiErrorResponse>(`${this.endpoint}/birthdays?month=${month}&movimientoId=${movimientoId}`);
+  getBirthdays(month: number, movimientoId?: number, page: number = 1, perPage: number = 8): Observable<ApiResponse<any> | ApiErrorResponse> {
+    return this.http.get<ApiResponse<any> | ApiErrorResponse>(`${this.endpoint}/birthdays?month=${month}&movimientoId=${movimientoId}&page=${page}&per_page=${perPage}`);
   }
 }

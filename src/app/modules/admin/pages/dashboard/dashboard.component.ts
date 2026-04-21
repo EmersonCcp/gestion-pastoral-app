@@ -13,7 +13,11 @@ export class DashboardComponent implements OnInit {
   selectedMonth: number = new Date().getMonth() + 1;
   loadingStats = false;
   loadingBirthdays = false;
-  movimiento_id: any;
+
+  // Pagination state
+  totalItems = 0;
+  pageSize = 8;
+  pageIndex = 0;
 
   months = [
     { id: 1, name: 'Enero' },
@@ -56,16 +60,24 @@ export class DashboardComponent implements OnInit {
     const movimiento_id: any = this.authService.getSelectedMovimientoId();
 
     this.dashboardService
-      .getBirthdays(this.selectedMonth, movimiento_id)
+      .getBirthdays(this.selectedMonth, movimiento_id, this.pageIndex + 1, this.pageSize)
       .subscribe((res: any) => {
         this.loadingBirthdays = false;
         if (res.ok) {
           this.birthdays = res.data;
+          this.totalItems = res.meta?.paging?.total_items || 0;
         }
       });
   }
 
   onMonthChange() {
+    this.pageIndex = 0;
+    this.loadBirthdays();
+  }
+
+  onPageChange(event: any) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
     this.loadBirthdays();
   }
 }

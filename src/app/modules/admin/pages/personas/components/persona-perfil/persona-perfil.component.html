@@ -195,6 +195,55 @@
         </div>
       </section>
 
+      <!-- Sacramentos -->
+      <section>
+        <div class="flex items-center gap-2 mb-4">
+          <span class="material-symbols-outlined text-rose-500 dark:text-rose-400">auto_awesome</span>
+          <h4 class="text-lg font-black text-slate-800 dark:text-slate-100">Estado Sacramental</h4>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <!-- Bautismo -->
+          <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3 transition-all"
+               [ngClass]="persona?.bautismo ? 'border-l-4 border-l-green-500' : 'border-l-4 border-l-slate-300 opacity-60'">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center"
+                 [ngClass]="persona?.bautismo ? 'bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400' : 'bg-slate-50 text-slate-400 dark:bg-slate-800'">
+              <span class="material-symbols-outlined text-[20px]">{{ persona?.bautismo ? 'check_circle' : 'circle' }}</span>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-xs font-black uppercase tracking-tight text-slate-800 dark:text-slate-100">Bautismo</span>
+              <span class="text-[10px] font-bold" [ngClass]="persona?.bautismo ? 'text-green-600 dark:text-green-400' : 'text-slate-400'">{{ persona?.bautismo ? 'Completado' : 'Pendiente' }}</span>
+            </div>
+          </div>
+
+          <!-- Primera Comunión -->
+          <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3 transition-all"
+               [ngClass]="persona?.primera_comunion ? 'border-l-4 border-l-green-500' : 'border-l-4 border-l-slate-300 opacity-60'">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center"
+                 [ngClass]="persona?.primera_comunion ? 'bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400' : 'bg-slate-50 text-slate-400 dark:bg-slate-800'">
+              <span class="material-symbols-outlined text-[20px]">{{ persona?.primera_comunion ? 'check_circle' : 'circle' }}</span>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-xs font-black uppercase tracking-tight text-slate-800 dark:text-slate-100">Primera Comunión</span>
+              <span class="text-[10px] font-bold" [ngClass]="persona?.primera_comunion ? 'text-green-600 dark:text-green-400' : 'text-slate-400'">{{ persona?.primera_comunion ? 'Completado' : 'Pendiente' }}</span>
+            </div>
+          </div>
+
+          <!-- Confirmación -->
+          <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3 transition-all"
+               [ngClass]="persona?.confirmacion ? 'border-l-4 border-l-green-500' : 'border-l-4 border-l-slate-300 opacity-60'">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center"
+                 [ngClass]="persona?.confirmacion ? 'bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400' : 'bg-slate-50 text-slate-400 dark:bg-slate-800'">
+              <span class="material-symbols-outlined text-[20px]">{{ persona?.confirmacion ? 'check_circle' : 'circle' }}</span>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-xs font-black uppercase tracking-tight text-slate-800 dark:text-slate-100">Confirmación</span>
+              <span class="text-[10px] font-bold" [ngClass]="persona?.confirmacion ? 'text-green-600 dark:text-green-400' : 'text-slate-400'">{{ persona?.confirmacion ? 'Completado' : 'Pendiente' }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Núcleo Familiar / Relaciones -->
       <app-persona-relaciones *ngIf="persona"
         [personaId]="persona.id"

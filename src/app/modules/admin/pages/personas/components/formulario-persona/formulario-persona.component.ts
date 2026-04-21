@@ -182,6 +182,9 @@ export class FormularioPersonaComponent implements OnInit {
       genero: [''],
       fecha_nacimiento: [''],
       tipos_personas_ids: [[], [Validators.required, Validators.minLength(1)]],
+      bautismo: [false],
+      primera_comunion: [false],
+      confirmacion: [false],
     });
   }
 
@@ -257,4 +260,7 @@ export class FormularioPersonaComponent implements OnInit {
   get direccionControl(): FormControl { return this.form.get('direccion') as FormControl; }
   get generoControl(): FormControl { return this.form.get('genero') as FormControl; }
   get fechaNacimientoControl(): FormControl { return this.form.get('fecha_nacimiento') as FormControl; }
+  get bautismoControl(): FormControl { return this.form.get('bautismo') as FormControl; }
+  get primeraComunionControl(): FormControl { return this.form.get('primera_comunion') as FormControl; }
+  get confirmacionControl(): FormControl { return this.form.get('confirmacion') as FormControl; }
 }

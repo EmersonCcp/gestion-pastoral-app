@@ -5,6 +5,8 @@ import { AlertService } from 'src/app/shared/services/alert.service';
 import { PersonaService } from 'src/app/shared/services/persona.service';
 import { TipoPersonaService } from 'src/app/shared/services/tipo-persona.service';
 import { AuthService } from 'src/app/shared/services/auth.service';
+import { MatDialog } from '@angular/material/dialog';
+import { UploadCsvDialogComponent } from '../upload-csv-dialog/upload-csv-dialog.component';
 
 @Component({
   selector: 'app-listado-personas',
@@ -27,7 +29,8 @@ export class ListadoPersonasComponent implements OnInit {
     private tipoPersonaService: TipoPersonaService,
     private authService: AuthService,
     private alertService: AlertService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -131,6 +134,20 @@ export class ListadoPersonasComponent implements OnInit {
           this.alertService.successOrError('Error', 'No se pudo eliminar la persona', 'error');
         },
       });
+    });
+  }
+
+  importarCSV() {
+    const dialogRef = this.dialog.open(UploadCsvDialogComponent, {
+      width: '500px',
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.page = 1;
+        this.loadData();
+      }
     });
   }
 }

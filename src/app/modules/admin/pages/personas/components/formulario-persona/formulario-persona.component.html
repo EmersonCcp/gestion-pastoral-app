@@ -73,11 +73,57 @@
         [control]="fechaNacimientoControl"></app-form-input-admin>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-4">
       <app-form-input-admin label="Teléfono / Celular" placeholder="+54..."
         [control]="telefonoControl"></app-form-input-admin>
       <app-form-input-admin label="Dirección" placeholder="Calle, Nro, Ciudad"
         [control]="direccionControl"></app-form-input-admin>
+    </div>
+
+    <!-- Sacramentos -->
+    <div class="pt-8 border-t border-slate-50 dark:border-slate-800">
+      <div class="flex items-center gap-2 mb-6">
+        <span class="material-symbols-outlined text-primary-500">auto_awesome</span>
+        <h3 class="text-lg font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">Sacramentos</h3>
+      </div>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <!-- Bautismo -->
+        <label
+          class="flex items-center gap-3 p-4 rounded-2xl border cursor-pointer transition-all hover:bg-slate-50 dark:hover:bg-slate-800 select-none"
+          [ngClass]="form.get('bautismo')?.value ? 'bg-primary-50/50 border-primary-200 dark:bg-primary-900/10 dark:border-primary-800/50' : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800'">
+          <input type="checkbox" formControlName="bautismo" class="checkbox checkbox-primary checkbox-sm rounded-md">
+          <div class="flex flex-col">
+            <span class="text-xs font-black uppercase tracking-wider"
+              [ngClass]="form.get('bautismo')?.value ? 'text-primary-700 dark:text-primary-400' : 'text-slate-700 dark:text-slate-300'">Bautismo</span>
+            <span class="text-[10px] text-slate-400 font-medium">¿Recibió el sacramento?</span>
+          </div>
+        </label>
+
+        <!-- Primera Comunión -->
+        <label
+          class="flex items-center gap-3 p-4 rounded-2xl border cursor-pointer transition-all hover:bg-slate-50 dark:hover:bg-slate-800 select-none"
+          [ngClass]="form.get('primera_comunion')?.value ? 'bg-primary-50/50 border-primary-200 dark:bg-primary-900/10 dark:border-primary-800/50' : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800'">
+          <input type="checkbox" formControlName="primera_comunion" class="checkbox checkbox-primary checkbox-sm rounded-md">
+          <div class="flex flex-col">
+            <span class="text-xs font-black uppercase tracking-wider"
+              [ngClass]="form.get('primera_comunion')?.value ? 'text-primary-700 dark:text-primary-400' : 'text-slate-700 dark:text-slate-300'">Primera Comunión</span>
+            <span class="text-[10px] text-slate-400 font-medium">¿Recibió el sacramento?</span>
+          </div>
+        </label>
+
+        <!-- Confirmación -->
+        <label
+          class="flex items-center gap-3 p-4 rounded-2xl border cursor-pointer transition-all hover:bg-slate-50 dark:hover:bg-slate-800 select-none"
+          [ngClass]="form.get('confirmacion')?.value ? 'bg-primary-50/50 border-primary-200 dark:bg-primary-900/10 dark:border-primary-800/50' : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800'">
+          <input type="checkbox" formControlName="confirmacion" class="checkbox checkbox-primary checkbox-sm rounded-md">
+          <div class="flex flex-col">
+            <span class="text-xs font-black uppercase tracking-wider"
+              [ngClass]="form.get('confirmacion')?.value ? 'text-primary-700 dark:text-primary-400' : 'text-slate-700 dark:text-slate-300'">Confirmación</span>
+            <span class="text-[10px] text-slate-400 font-medium">¿Recibió el sacramento?</span>
+          </div>
+        </label>
+      </div>
     </div>
 
     <!-- Gestión de Documentos (Solo Edición) -->

@@ -33,6 +33,9 @@ export interface Persona {
   documentos?: DocumentoPersona[];
   relaciones?: any[];
   parienteDe?: any[];
+  bautismo?: boolean;
+  primera_comunion?: boolean;
+  confirmacion?: boolean;
   created_at: string;
   updated_at: string;
 }
