@@ -1,65 +1,81 @@
 <div class="flex-1 overflow-y-auto p-8">
-    <app-list-header-admin
-      *appHasPermission="'desarrollo_clase.create'"
-      title="Desarrollo de Clases / Reuniones"
-      subtitle="Planifica y registra el desarrollo de temas y asistencia de cada sesión."
-      buttonLabel="Registrar Nueva Clase"
-      buttonIcon="history_edu"
-      (buttonClick)="nueva()"
-    ></app-list-header-admin>
+  <app-list-header-admin *appHasPermission="'desarrollo_clase.create'" title="Desarrollo de Clases / Reuniones"
+    subtitle="Planifica y registra el desarrollo de temas y asistencia de cada sesión."
+    buttonLabel="Registrar Nueva Clase" buttonIcon="history_edu" (buttonClick)="nueva()"></app-list-header-admin>
 
-    <app-table-admin
-      [loading]="loading"
-      searchPlaceholder="Buscar por grupo o fecha..."
-      [itemsLength]="sesiones.length"
-      [totalItems]="total_items"
-      entityName="desarrollo-clase"
-      (prev)="page = page - 1; loadData()"
-      (next)="page = page + 1; loadData()"
-    >
-      <tr thead class="bg-slate-50 border-b border-slate-200">
-        <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Fecha</th>
-        <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Grupo</th>
-        <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Libro</th>
-        <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Temas Desarrollados</th>
-        <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Asistencia</th>
-        <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Acciones</th>
-      </tr>
+  <app-table-admin [loading]="loading" searchPlaceholder="Buscar por grupo o fecha..." [itemsLength]="sesiones.length"
+    [totalItems]="total_items" entityName="desarrollo-clase" (prev)="page = page - 1; loadData()"
+    (next)="page = page + 1; loadData()">
+    <div header class="flex items-center gap-2">
+      <select
+        class="select select-bordered select-sm rounded-lg border-slate-200 text-[11px] font-bold text-slate-500 bg-slate-50/50 uppercase tracking-wider"
+        [(ngModel)]="selectedMovimientoId" (change)="onFilterChange()">
+        <option [ngValue]="null">Todos los movimientos</option>
+        <option *ngFor="let m of movimientos" [ngValue]="m.id">{{ m.nombre }}</option>
+      </select>
+    </div>
 
-      <ng-container tbody>
-        <tr *ngFor="let s of sesiones" class="hover:bg-slate-50 transition-colors">
-          <td class="px-6 py-2 text-sm text-slate-900 font-medium">
-            {{ s.fecha | date:'dd/MM/yyyy' }}
-          </td>
-          <td class="px-6 py-2 text-sm text-slate-600">
-            {{ s.grupo?.nombre }}
-          </td>
-          <td class="px-6 py-2 text-sm text-slate-600 italic">
-            {{ s.libro?.nombre }}
-          </td>
-          <td class="px-6 py-2">
-            <div class="flex flex-wrap gap-1">
-              <span *ngFor="let t of s.temas" class="px-2 py-0.5 bg-primary-100 text-primary-700 text-[10px] font-bold rounded">
-                Tema {{ t.numero_tema }}
-              </span>
-            </div>
-          </td>
-          <td class="px-6 py-2 text-sm">
-            <span class="text-xs font-medium text-slate-500">
-              {{ s.asistencia?.total_presente || 0 }} Presentes
+    <tr thead class="bg-slate-50 border-b border-slate-200">
+      <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Fecha</th>
+      <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Grupo</th>
+      <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Libro</th>
+      <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Temas Desarrollados</th>
+      <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Asistencia</th>
+      <th class="px-6 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Acciones</th>
+    </tr>
+
+    <ng-container tbody>
+      <tr *ngFor="let s of sesiones" class="hover:bg-slate-50 transition-colors">
+        <td class="px-6 py-2 text-sm text-slate-900 font-medium">
+          {{ s.fecha | date:'dd/MM/yyyy' }}
+        </td>
+        <td class="px-6 py-2 text-sm text-slate-600">
+          {{ s.grupo?.nombre }}
+        </td>
+        <td class="px-6 py-2 text-sm text-slate-600 italic">
+          {{ s.libro?.nombre }}
+        </td>
+        <td class="px-6 py-2">
+          <div class="flex flex-wrap gap-1">
+            <span *ngFor="let t of s.temas"
+              class="px-2 py-0.5 bg-primary-100 text-primary-700 text-[10px] font-bold rounded">
+              {{ t.titulo }}
             </span>
-          </td>
-          <td class="px-6 py-2">
-            <div class="flex items-center gap-2">
-              <button *appHasPermission="'desarrollo_clase.update'" (click)="editar(s)" class="p-1.5 text-slate-400 hover:text-primary-700 hover:bg-primary-100 rounded-full transition-colors" title="Editar">
-                <span class="material-symbols-outlined text-[20px]">edit</span>
-              </button>
-              <button *appHasPermission="'desarrollo_clase.delete'" (click)="eliminar(s)" class="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-100 rounded-full transition-colors" title="Eliminar">
-                <span class="material-symbols-outlined text-[20px]">delete</span>
-              </button>
-            </div>
-          </td>
-        </tr>
-      </ng-container>
-    </app-table-admin>
+          </div>
+        </td>
+        <td class="px-6 py-2">
+          <div class="flex items-center gap-1">
+            <span
+              class="px-2 py-0.5 bg-green-50 text-green-700 rounded-full text-[10px] font-black border border-green-100"
+              title="Presentes">
+              P: {{ s.asistencia?.total_presente || 0 }}
+            </span>
+            <span class="px-2 py-0.5 bg-red-50 text-red-700 rounded-full text-[10px] font-black border border-red-100"
+              title="Ausentes">
+              A: {{ s.asistencia?.total_ausente || 0 }}
+            </span>
+            <span
+              class="px-2 py-0.5 bg-yellow-50 text-yellow-700 rounded-full text-[10px] font-black border border-yellow-100"
+              title="Justificados">
+              J: {{ s.asistencia?.total_justificado || 0 }}
+            </span>
+          </div>
+        </td>
+        <td class="px-6 py-2">
+          <div class="flex items-center gap-2">
+            <button *appHasPermission="'desarrollo_clase.update'" (click)="editar(s)"
+              class="p-1.5 text-slate-400 hover:text-primary-700 hover:bg-primary-100 rounded-full transition-colors"
+              title="Editar">
+              <span class="material-symbols-outlined text-[20px]">edit</span>
+            </button>
+            <button *appHasPermission="'desarrollo_clase.delete'" (click)="eliminar(s)"
+              class="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-100 rounded-full transition-colors"
+              title="Eliminar">
+              <span class="material-symbols-outlined text-[20px]">delete</span>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </ng-container>
+  </app-table-admin>
 </div>

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { hasPermission } from 'src/app/shared/utils/auth.utils';
+import { AuthService } from 'src/app/shared/services/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-sidebar-admin',
@@ -8,8 +10,8 @@ import { hasPermission } from 'src/app/shared/utils/auth.utils';
   styleUrls: ['./sidebar-admin.component.scss']
 })
 export class SidebarAdminComponent implements OnInit {
-
   isCollapsed = false;
+  private sub?: Subscription;
 
   toggleSidebar() {
     this.isCollapsed = !this.isCollapsed;
@@ -20,7 +22,7 @@ export class SidebarAdminComponent implements OnInit {
     // { label: 'Categorías', icon: 'category', route: 'categorias', permissions: ['categorias.read'] },
     { label: 'Desarrollo de Clase', icon: 'history_edu', route: 'desarrollo-clase', permissions: ['desarrollo_clase.read'] },
     { label: 'Libros', icon: 'menu_book', route: 'libros', permissions: ['libros.read'] },
-    { label: 'Inventario de Libros', icon: 'inventory_2', route: 'libros-inventario', permissions: ['libros.read'] },
+    { label: 'Inventario de Libros', icon: 'inventory_2', route: 'libros-inventario', permissions: ['libros_inventario.read'] },
     { label: 'Personas', icon: 'person', route: 'personas', permissions: ['personas.read'] },
     { label: 'Grupos', icon: 'account_tree', route: 'grupos', permissions: ['grupos.read'] },
     { label: 'Periodos', icon: 'date_range', route: 'periodos', permissions: ['periodos.read'] },
@@ -37,12 +39,22 @@ export class SidebarAdminComponent implements OnInit {
 
   filteredMenuItems = [...this.menuItems];
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private authService: AuthService) { }
 
   ngOnInit() {
+    this.sub = this.authService.permissions$.subscribe(() => {
+      this.refreshMenu();
+    });
+  }
+
+  refreshMenu() {
     this.filteredMenuItems = this.menuItems.filter(item =>
       !item.permissions || hasPermission(item.permissions)
     );
+  }
+
+  ngOnDestroy() {
+    this.sub?.unsubscribe();
   }
 
   goTo(route: string) {

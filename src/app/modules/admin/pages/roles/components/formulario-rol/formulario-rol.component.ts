@@ -7,6 +7,7 @@ import { IRol } from 'src/app/shared/interfaces/entities/rol.entity';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { PermisoService } from 'src/app/shared/services/permiso.service';
 import { RolesService } from 'src/app/shared/services/roles.service';
+import { AuthService } from 'src/app/shared/services/auth.service';
 
 @Component({
   selector: 'app-formulario-rol',
@@ -34,7 +35,8 @@ export class FormularioRolComponent {
     private activatedRoute: ActivatedRoute,
     private fb: FormBuilder,
     private alertService: AlertService,
-    private permisosService: PermisoService
+    private permisosService: PermisoService,
+    private authService: AuthService
   ) {
     this.form = this.initForm();
   }
@@ -139,6 +141,10 @@ export class FormularioRolComponent {
         }
 
         this.alertService.successOrError('Registro guardado');
+        
+        // Refresh permissions instantly
+        this.authService.refreshPermissions().subscribe();
+        
         this.router.navigate([`admin/${this.sigla}`]);
       },
       error: async () => {

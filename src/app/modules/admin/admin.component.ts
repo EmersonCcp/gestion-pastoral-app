@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { AuthService } from 'src/app/shared/services/auth.service';
+import { SocketService } from 'src/app/shared/services/socket.service';
 import { filter, Subscription } from 'rxjs';
 
 @Component({
@@ -13,6 +14,7 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
+    private socketService: SocketService,
     private router: Router
   ) {}
 
@@ -37,5 +39,6 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.navSub?.unsubscribe();
+    this.socketService.disconnect();
   }
 }

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, Observable, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 import { LoginResponse } from 'src/app/modules/auth/interfaces/auth.interface';
 import * as CryptoJS from 'crypto-js';
 import { environment } from 'src/app/environments/environment';
@@ -15,6 +15,8 @@ export class AuthService {
   private tokenKey = 'accessToken';
   private userKey = 'current_user';
   private movimientoKey = 'selected_movimiento_id';
+  private permissionsSubject = new BehaviorSubject<string[]>(this.getPermissionsFromStorage());
+  public permissions$ = this.permissionsSubject.asObservable();
 
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -124,9 +126,22 @@ export class AuthService {
           localStorage.setItem('permisos', JSON.stringify(response.data.permissions));
           // También actualizamos el usuario encriptado
           this.encriptarUsuario(response.data);
+          
+          // Notificar cambios de permisos
+          this.permissionsSubject.next(response.data.permissions || []);
         }
       })
     );
+  }
+
+  private getPermissionsFromStorage(): string[] {
+    const permisosStr = localStorage.getItem('permisos');
+    if (!permisosStr) return [];
+    try {
+      return JSON.parse(permisosStr);
+    } catch {
+      return permisosStr.split(',');
+    }
   }
 
   getSelectedMovimientoId(): number | null {
