@@ -18,7 +18,7 @@
         <div class="w-24 h-24 bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 rounded-full flex items-center justify-center mb-4">
           <span class="material-symbols-outlined text-[48px]">person</span>
         </div>
-        <h3 class="text-xl font-black text-slate-800 dark:text-slate-100 leading-tight">{{ persona?.apellido }}, {{ persona?.nombre }}</h3>
+        <h3 class="text-xl font-black text-slate-800 dark:text-slate-100 leading-tight">{{ persona?.nombre }} {{ persona?.apellido }}</h3>
         <div class="flex flex-wrap justify-center gap-1.5 mt-2">
           <span *ngFor="let t of persona?.tiposPersonas"
                 class="px-2.5 py-0.5 bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 rounded text-[10px] font-black border border-primary-100 dark:border-primary-800/50 uppercase tracking-wider">

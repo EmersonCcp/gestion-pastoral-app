@@ -21,9 +21,17 @@
         {{ (page - 1) * per_page + i + 1 }}
       </td>
       <td class="px-6 py-2">
-        <div class="flex flex-col">
-          <span class="text-sm font-medium text-slate-900 dark:text-slate-100">{{ l.nombre }}</span>
-          <span class="text-xs text-slate-500 dark:text-slate-400 truncate max-w-xs">{{ l.descripcion }}</span>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-14 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 overflow-hidden flex-shrink-0">
+            <img *ngIf="l.imagen_url" [src]="l.imagen_url" class="w-full h-full object-cover">
+            <div *ngIf="!l.imagen_url" class="w-full h-full flex items-center justify-center text-slate-400">
+              <span class="material-symbols-outlined text-lg">book</span>
+            </div>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-sm font-medium text-slate-900 dark:text-slate-100">{{ l.nombre }}</span>
+            <span class="text-xs text-slate-500 dark:text-slate-400 truncate max-w-xs">{{ l.descripcion }}</span>
+          </div>
         </div>
       </td>
       <td class="px-6 py-2">

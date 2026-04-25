@@ -66,13 +66,22 @@ export class FormularioAsignacionLibroComponent implements OnInit {
       if (res.ok) this.libros = res.data.filter((l: any) => l.stock_actual > 0);
     });
 
-    // Cargar personas para el select
-    this.personaService.getAll({ page: 1, per_page: 200 }).subscribe((res: any) => {
-      this.loading = false;
+    // Cargar personas para el select (ya no cargamos 200 por defecto)
+    this.personas = [];
+    this.loading = false;
+  }
+
+  buscarPersonas(termino: string) {
+    if (termino.length < 3) {
+      this.personas = [];
+      return;
+    }
+
+    this.personaService.getAll({ page: 1, per_page: 20, nombre: termino }).subscribe((res: any) => {
       if (res.ok) {
         this.personas = res.data.map((p: any) => ({
           ...p,
-          nombre_completo: `${p.apellido}, ${p.nombre}`
+          nombre_completo: `${p.nombre} ${p.apellido}`
         }));
       }
     });

@@ -118,7 +118,7 @@ export class FormularioAsistenciaComponent implements OnInit {
   addPersonaControl(persona: any, estado = EstadoAsistencia.PRESENTE, obs = '') {
     this.personaEstados.push(this.fb.group({
       persona_id: [persona.id],
-      nombre_completo: [`${persona.apellido}, ${persona.nombre}`],
+      nombre_completo: [`${persona.nombre} ${persona.apellido}`],
       tipo: [persona.tiposPersonas?.map((t: any) => t.nombre).join(', ') || 'S/T'],
       estado: [estado, Validators.required],
       observacion: [obs]

@@ -4,6 +4,9 @@ import {
   forwardRef,
   Input,
   Output,
+  OnInit,
+  HostListener,
+  ElementRef,
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
@@ -19,7 +22,7 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
     },
   ],
 })
-export class SearchSelectAdminComponent {
+export class SearchSelectAdminComponent implements OnInit {
   @Input() items: any[] = [];
   @Input() labelKey: string = 'nombre';
   @Input() placeholder: string = 'Buscar...';
@@ -27,24 +30,47 @@ export class SearchSelectAdminComponent {
   @Input() label = '';
 
   @Output() add = new EventEmitter<void>();
+  @Output() search = new EventEmitter<string>();
+  @Input() filterOnType: boolean = true;
 
   open = false;
   filteredItems: any[] = [];
   displayValue = '';
-
   private value: any;
 
+  constructor(private eRef: ElementRef) {}
+
+  @HostListener('document:click', ['$event'])
+  clickout(event: any) {
+    if (!this.eRef.nativeElement.contains(event.target)) {
+      this.open = false;
+    }
+  }
+
   ngOnInit() {
-    setTimeout(() => {
+    if (!this.filterOnType) {
       this.filteredItems = this.items;
-    },1000)
-    
+    }
+  }
+
+  onFocus() {
+    if (!this.filterOnType || this.displayValue.length > 0) {
+      this.open = true;
+    }
   }
 
   // buscar
   onSearch(event: any) {
     const term = event.target.value.toLowerCase();
     this.displayValue = event.target.value;
+    this.open = true;
+
+    this.search.emit(term);
+
+    if (this.filterOnType && !term) {
+      this.filteredItems = [];
+      return;
+    }
 
     this.filteredItems = this.items.filter((item) =>
       item[this.labelKey].toLowerCase().includes(term),

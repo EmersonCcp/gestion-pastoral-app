@@ -7,6 +7,7 @@ export interface Libro {
   tipo_persona_id: number;
   tipoPersona?: TipoPersona;
   estado: boolean;
+  imagen_url?: string;
   created_at?: string;
   updated_at?: string;
 }

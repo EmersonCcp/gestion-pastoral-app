@@ -246,7 +246,7 @@ export class AsistenciasComponent implements OnInit {
     data.forEach(asig => {
       asig.personas?.forEach(ap => {
         if (!personMap.has(ap.persona_id)) {
-          const name = ap.persona ? `${ap.persona.apellido}, ${ap.persona.nombre}` : `S/N (${ap.persona_id})`;
+          const name = ap.persona ? `${ap.persona.nombre} ${ap.persona.apellido}` : `S/N (${ap.persona_id})`;
           personMap.set(ap.persona_id, {
             name,
             attendance: {},

@@ -1,33 +1,36 @@
-<div class="p-8 bg-white dark:bg-slate-900 rounded-3xl w-[550px] max-w-full relative transition-colors">
+<div class="p-6 bg-white dark:bg-slate-900 rounded-3xl w-[500px] max-w-full relative transition-colors">
   <!-- Close Button -->
   <button [mat-dialog-close]="null" class="absolute right-6 top-6 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all">
     <span class="material-symbols-outlined text-2xl">close</span>
   </button>
 
-  <div class="mb-8">
-    <h3 class="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight flex items-center gap-3">
+  <div class="mb-6 text-center">
+    <div class="w-16 h-16 bg-primary-50 dark:bg-primary-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
       <span class="material-symbols-outlined text-primary-500 dark:text-primary-400 text-3xl">person_add</span>
+    </div>
+    <h3 class="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight">
       Asignar Libro
     </h3>
     <p class="text-slate-500 dark:text-slate-400 font-medium text-sm">Registra la entrega de un libro a un integrante.</p>
   </div>
 
-  <form [formGroup]="form" (ngSubmit)="guardar()" class="space-y-6">
+  <form [formGroup]="form" (ngSubmit)="guardar()" class="space-y-4">
     <!-- Persona -->
     <div>
-      <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Integrante / Persona</label>
+      <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Integrante / Persona</label>
       <app-search-select-admin 
         formControlName="persona_id"
         [items]="personas"
         labelKey="nombre_completo"
         placeholder="Buscar integrante..."
         [showAdd]="false"
+        (search)="buscarPersonas($event)"
       ></app-search-select-admin>
     </div>
 
     <!-- Libro -->
     <div>
-      <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Libro a Entregar</label>
+      <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Libro a Entregar</label>
       <select formControlName="libro_id" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 text-sm transition-all font-medium text-slate-700 dark:text-slate-100 h-[46px]">
         <option [ngValue]="null">Elige un libro...</option>
         <option *ngFor="let l of libros" [ngValue]="l.id">{{ l.nombre }} (Stock: {{ l.stock_actual }})</option>
@@ -37,7 +40,7 @@
     <div class="grid grid-cols-2 gap-4">
       <!-- Tipo -->
       <div>
-        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Tipo de Trámite</label>
+        <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Tipo de Trámite</label>
         <div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
           <label *ngFor="let t of tipos" class="flex-1 cursor-pointer">
             <input type="radio" formControlName="tipo" [value]="t.value" class="sr-only">
@@ -51,25 +54,25 @@
 
       <!-- Fecha Entrega -->
       <div>
-        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Fecha Entrega</label>
+        <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Fecha Entrega</label>
         <input type="date" formControlName="fecha_entrega" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 text-sm transition-all font-medium text-slate-700 dark:text-slate-100">
       </div>
     </div>
 
     <!-- Fecha Devolución (Solo Préstamos) -->
     <div *ngIf="form.get('tipo')?.value === 'PRESTAMO'" class="animate-in fade-in zoom-in-95 duration-200">
-      <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Fecha Devolución Estimada</label>
+      <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Fecha Devolución Estimada</label>
       <input type="date" formControlName="fecha_devolucion_esperada" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 text-sm transition-all font-medium text-slate-700 dark:text-slate-100">
     </div>
 
     <!-- Observaciones -->
     <div>
-      <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Notas Adicionales</label>
+      <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Notas Adicionales</label>
       <textarea formControlName="observaciones" rows="2" placeholder="Ej: Libro en buen estado..." class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 text-sm transition-all font-medium text-slate-700 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"></textarea>
     </div>
 
     <!-- Submit -->
-    <button type="submit" [disabled]="form.invalid" class="w-full py-4 bg-primary-600 hover:bg-primary-700 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-600 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-primary-200 dark:shadow-none transition-all flex items-center justify-center gap-2 mt-4">
+    <button type="submit" [disabled]="form.invalid" class="w-full py-3 bg-primary-600 hover:bg-primary-700 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-600 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-primary-200 dark:shadow-none transition-all flex items-center justify-center gap-2 mt-2">
       <span class="material-symbols-outlined">how_to_reg</span>
       Confirmar Asignación
     </button>

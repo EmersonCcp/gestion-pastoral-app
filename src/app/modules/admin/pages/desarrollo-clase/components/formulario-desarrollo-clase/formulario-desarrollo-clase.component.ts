@@ -133,7 +133,7 @@ export class FormularioDesarrolloClaseComponent implements OnInit {
   addPersonaControl(persona: any, estado = EstadoAsistencia.PRESENTE) {
     this.asistenciaPersonas.push(this.fb.group({
       persona_id: [persona.id],
-      nombre_completo: [`${persona.apellido}, ${persona.nombre}`],
+      nombre_completo: [`${persona.nombre} ${persona.apellido}`],
       estado: [estado, Validators.required],
       observacion: ['']
     }));
@@ -179,7 +179,7 @@ export class FormularioDesarrolloClaseComponent implements OnInit {
           d.asistencia.personas.forEach((ap: any) => {
             this.asistenciaPersonas.push(this.fb.group({
               persona_id: [ap.persona_id],
-              nombre_completo: [`${ap.persona?.apellido}, ${ap.persona?.nombre}`],
+              nombre_completo: [`${ap.persona?.nombre} ${ap.persona?.apellido}`],
               estado: [ap.estado, Validators.required],
               observacion: [ap.observacion || '']
             }));

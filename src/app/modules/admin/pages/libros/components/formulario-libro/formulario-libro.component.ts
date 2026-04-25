@@ -8,6 +8,7 @@ import { AlertService } from 'src/app/shared/services/alert.service';
 import { LibroService } from 'src/app/shared/services/libro.service';
 import { TipoPersonaService } from 'src/app/shared/services/tipo-persona.service';
 import { AuthService } from 'src/app/shared/services/auth.service';
+import { StorageAdapterService } from 'src/app/shared/services/storage-adapter.service';
 
 @Component({
   selector: 'app-formulario-libro',
@@ -19,6 +20,8 @@ export class FormularioLibroComponent implements OnInit {
   form: FormGroup;
   editMode = false;
   tiposPersonas: TipoPersona[] = [];
+  selectedFile: File | null = null;
+  previewUrl: string | null = null;
 
   constructor(
     private service: LibroService,
@@ -27,7 +30,8 @@ export class FormularioLibroComponent implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private fb: FormBuilder,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private storageService: StorageAdapterService
   ) {
     this.form = this.initForm();
   }
@@ -64,23 +68,52 @@ export class FormularioLibroComponent implements OnInit {
       nombre: ['', [Validators.required]],
       descripcion: [''],
       tipo_persona_id: [null, [Validators.required]],
-      estado: [true]
+      estado: [true],
+      imagen_url: [null]
     });
   }
 
-  onSubmit() {
-    if (this.form.invalid) return;
-    this.alertService.loader();
-    const data = this.form.value;
-    const request$ = this.id === 0 ? this.service.create(data) : this.service.update(this.id, data);
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.previewUrl = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
 
-    request$.subscribe((res: any) => {
-      this.alertService.close();
-      if (res.ok) {
-        this.alertService.successOrError('Libro guardado');
-        this.router.navigate(['/admin/libros']);
+  async onSubmit() {
+    if (this.form.invalid) return;
+    this.loading = true;
+    this.alertService.loader();
+
+    try {
+      const data = { ...this.form.value };
+
+      if (this.selectedFile) {
+        const path = `libros/${Date.now()}_${this.selectedFile.name}`;
+        const imageUrl = await this.storageService.upload(this.selectedFile, path);
+        data.imagen_url = imageUrl;
       }
-    });
+
+      const request$ = this.id === 0 ? this.service.create(data) : this.service.update(this.id, data);
+
+      request$.subscribe((res: any) => {
+        this.loading = false;
+        this.alertService.close();
+        if (res.ok) {
+          this.alertService.successOrError('Libro guardado');
+          this.router.navigate(['/admin/libros']);
+        }
+      });
+    } catch (error: any) {
+      this.loading = false;
+      this.alertService.close();
+      this.alertService.successOrError('Error al subir la imagen', error.message, 'error');
+    }
   }
 
   goBack() {
