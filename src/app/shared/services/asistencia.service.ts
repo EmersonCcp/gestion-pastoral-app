@@ -29,4 +29,15 @@ export class AsistenciaService extends BaseService<Asistencia> {
   getReport(ids: number[]): Observable<ApiResponse<Asistencia[]> | ApiErrorResponse> {
     return this.http.post<ApiResponse<Asistencia[]> | ApiErrorResponse>(`${this.endpoint}/reporte`, { ids });
   }
+
+  getReportePlanilla(filters: { periodo_id: number; grupo_id: number; fecha_inicio: string; fecha_fin: string }): Observable<any> {
+    return this.http.get<any>(`${this.endpoint}/reporte-planilla/grilla`, {
+      params: {
+        periodo_id: filters.periodo_id.toString(),
+        grupo_id: filters.grupo_id.toString(),
+        fecha_inicio: filters.fecha_inicio,
+        fecha_fin: filters.fecha_fin
+      }
+    });
+  }
 }

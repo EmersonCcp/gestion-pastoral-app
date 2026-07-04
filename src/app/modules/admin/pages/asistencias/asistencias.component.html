@@ -38,6 +38,15 @@
         {{ selectedIds.size }} seleccionados
       </span>
     </div>
+
+    <!-- Generar Planilla Action -->
+    <div *ngIf="selectedIds.size === 0" class="ml-auto">
+      <button (click)="abrirPlanillaModal()"
+        class="btn btn-sm bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100 hover:border-indigo-300 flex items-center gap-2 normal-case font-black">
+        <span class="material-symbols-outlined text-[18px]">calendar_month</span>
+        Generar Planilla
+      </button>
+    </div>
   </div>
 
   <!-- Table -->
@@ -117,5 +126,131 @@
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- Modal para Generar Planilla de Asistencia -->
+  <div *ngIf="isPlanillaModalOpen" class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+    <div class="bg-white w-full max-w-4xl rounded-2xl border border-slate-100 shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-in zoom-in-95 duration-200">
+      
+      <!-- Header -->
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <div>
+          <h3 class="text-base font-bold text-slate-800">Generar Planilla de Asistencia</h3>
+          <p class="text-xs text-slate-500">Configurá el grupo y período para obtener la grilla imprimible.</p>
+        </div>
+        <button (click)="cerrarPlanillaModal()" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-200 rounded-lg transition-colors">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <!-- Content -->
+      <div class="p-6 overflow-y-auto flex-1 space-y-6">
+        
+        <!-- Formulario -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
+          <div class="flex flex-col gap-1">
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Período</label>
+            <select class="select select-sm border border-slate-200 rounded-lg text-sm bg-white" [(ngModel)]="planillaDto.periodo_id">
+              <option [ngValue]="null" disabled>Seleccionar...</option>
+              <option *ngFor="let p of periodos" [ngValue]="p.id">{{ p.nombre }}</option>
+            </select>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Grupo</label>
+            <select class="select select-sm border border-slate-200 rounded-lg text-sm bg-white" [(ngModel)]="planillaDto.grupo_id">
+              <option [ngValue]="null" disabled>Seleccionar...</option>
+              <option *ngFor="let g of grupos" [ngValue]="g.id">{{ g.nombre }}</option>
+            </select>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Fecha Inicio</label>
+            <input type="date" class="input input-sm border border-slate-200 rounded-lg text-sm bg-white" [(ngModel)]="planillaDto.fecha_inicio">
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Fecha Fin</label>
+            <input type="date" class="input input-sm border border-slate-200 rounded-lg text-sm bg-white" [(ngModel)]="planillaDto.fecha_fin">
+          </div>
+        </div>
+
+        <!-- Botones del Formulario -->
+        <div class="flex justify-end gap-2">
+          <button (click)="generarPlanilla()" [disabled]="planillaLoading"
+            class="btn btn-sm bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">preview</span>
+            Generar Vista Previa
+          </button>
+        </div>
+
+        <!-- Vista Previa de la Planilla -->
+        <div *ngIf="planillaData" class="border border-slate-200 rounded-xl p-6 bg-white shadow-sm space-y-6">
+          <!-- Datos superiores -->
+          <div class="text-center pb-4 border-b border-slate-100">
+            <h2 class="text-lg font-black text-indigo-900 uppercase">{{ planillaData.parroquia }}</h2>
+            <p class="text-xs text-slate-500 uppercase font-bold tracking-widest mt-1">Planilla de Asistencia</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 text-xs font-medium text-slate-600">
+            <div class="space-y-1">
+              <p>Etapa: <strong class="text-slate-800">{{ planillaData.movimiento }} - {{ planillaData.grupo }}</strong></p>
+              <p>Catequista: <strong class="text-slate-800">{{ planillaData.catequistas }}</strong></p>
+            </div>
+            <div class="space-y-1 text-right">
+              <p>Salón: <strong class="text-slate-800">{{ planillaData.salon }}</strong></p>
+              <p>Año: <strong class="text-slate-800">{{ planillaData.anio }}</strong></p>
+            </div>
+          </div>
+
+          <!-- Tabla de la Planilla -->
+          <div class="overflow-x-auto border border-slate-100 rounded-lg">
+            <table class="w-full text-[10px] text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-50 border-b border-slate-200 text-slate-700 font-bold">
+                  <th class="px-2 py-1.5 text-center border-r border-slate-200 w-8">N°</th>
+                  <th class="px-3 py-1.5 border-r border-slate-200 min-w-[150px]">Nombre y Apellido</th>
+                  <th *ngFor="let f of planillaData.fechas" class="px-1 py-1.5 text-center border-r border-slate-200 min-w-[35px]">
+                    {{ f | date: 'dd/MM' }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let a of planillaData.alumnos; let idx = index" class="border-b border-slate-100 hover:bg-slate-50">
+                  <td class="px-2 py-1 border-r border-slate-200 text-center font-bold text-slate-500">{{ idx + 1 }}</td>
+                  <td class="px-3 py-1 border-r border-slate-200 font-bold text-slate-700 uppercase">
+                    {{ a.nombre }} {{ a.apellido }}
+                  </td>
+                  <td *ngFor="let f of planillaData.fechas" class="px-1 py-1 border-r border-slate-200 text-center font-black">
+                    <span [ngClass]="{
+                      'text-green-600': a.asistencias[f] === 'PRESENTE',
+                      'text-red-500': a.asistencias[f] === 'AUSENTE',
+                      'text-yellow-600': a.asistencias[f] === 'JUSTIFICADO'
+                    }">
+                      {{ a.asistencias[f] === 'PRESENTE' ? 'P' : a.asistencias[f] === 'AUSENTE' ? 'A' : a.asistencias[f] === 'JUSTIFICADO' ? 'J' : '—' }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Botón de Descarga -->
+          <div class="flex justify-end pt-4">
+            <button (click)="descargarPlanillaPdf()"
+              class="btn bg-green-600 hover:bg-green-700 text-white font-black px-6 py-2.5 rounded-xl flex items-center gap-2 shadow-lg hover:shadow-green-500/20 transition-all">
+              <span class="material-symbols-outlined text-[20px]">picture_as_pdf</span>
+              Descargar Planilla en PDF
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="planillaLoading" class="flex flex-col items-center justify-center py-12 gap-3 text-slate-400">
+          <div class="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+          <p class="text-sm font-medium">Generando planilla, por favor espera...</p>
+        </div>
+
+      </div>
+    </div>
   </div>
 </div>

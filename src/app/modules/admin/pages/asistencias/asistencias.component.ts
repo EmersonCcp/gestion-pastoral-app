@@ -33,6 +33,17 @@ export class AsistenciasComponent implements OnInit {
   selectedIds = new Set<number>();
   exportLoading = false;
 
+  // Planilla de Asistencia
+  isPlanillaModalOpen = false;
+  planillaLoading = false;
+  planillaData: any = null;
+  planillaDto = {
+    periodo_id: null as number | null,
+    grupo_id: null as number | null,
+    fecha_inicio: '',
+    fecha_fin: ''
+  };
+
   constructor(
     private service: AsistenciaService,
     private periodoService: PeriodoService,
@@ -267,5 +278,138 @@ export class AsistenciasComponent implements OnInit {
 
     const rows = Array.from(personMap.values()).sort((a, b) => a.name.localeCompare(b.name));
     return { dates, rows };
+  }
+
+  abrirPlanillaModal() {
+    this.planillaDto = {
+      periodo_id: this.selectedPeriodoId,
+      grupo_id: this.selectedGrupoId,
+      fecha_inicio: dayjs().startOf('year').format('YYYY-MM-DD'),
+      fecha_fin: dayjs().endOf('year').format('YYYY-MM-DD')
+    };
+    this.planillaData = null;
+    this.isPlanillaModalOpen = true;
+  }
+
+  cerrarPlanillaModal() {
+    this.isPlanillaModalOpen = false;
+  }
+
+  generarPlanilla() {
+    if (!this.planillaDto.periodo_id) {
+      this.alertService.successOrError('Debes seleccionar un período');
+      return;
+    }
+    if (!this.planillaDto.grupo_id) {
+      this.alertService.successOrError('Debes seleccionar un grupo');
+      return;
+    }
+    if (!this.planillaDto.fecha_inicio || !this.planillaDto.fecha_fin) {
+      this.alertService.successOrError('Debes seleccionar un rango de fechas válido');
+      return;
+    }
+
+    this.planillaLoading = true;
+    const params = {
+      periodo_id: Number(this.planillaDto.periodo_id),
+      grupo_id: Number(this.planillaDto.grupo_id),
+      fecha_inicio: this.planillaDto.fecha_inicio,
+      fecha_fin: this.planillaDto.fecha_fin
+    };
+
+    this.service.getReportePlanilla(params).subscribe({
+      next: (res: any) => {
+        this.planillaLoading = false;
+        if (res.ok) {
+          this.planillaData = res.data;
+        } else {
+          this.alertService.successOrError(res.message || 'Error al generar la planilla', '', 'error');
+        }
+      },
+      error: () => {
+        this.planillaLoading = false;
+        this.alertService.successOrError('Error de conexión con el servidor', '', 'error');
+      }
+    });
+  }
+
+  descargarPlanillaPdf() {
+    if (!this.planillaData) return;
+    const data = this.planillaData;
+    
+    // Configuración A4 Horizontal (Landscape)
+    const doc = new jsPDF('l', 'mm', 'a4');
+    
+    // Logo o detalles superiores
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text(data.parroquia.toUpperCase(), 148, 14, { align: 'center' });
+    
+    doc.setFontSize(9);
+    doc.text(`ETAPA: ${data.movimiento.toUpperCase()} ${data.grupo.toUpperCase()}`, 16, 24);
+    doc.text(`CATEQUISTA: ${data.catequistas.toUpperCase()}`, 16, 29);
+    
+    doc.text(`SALON Nº ${data.salon.toUpperCase()}`, 280, 24, { align: 'right' });
+    doc.text(`AÑO ${data.anio.toUpperCase()}`, 280, 29, { align: 'right' });
+
+    // Cabecera de la tabla
+    const head = [[
+      'N°',
+      'NOMBRE Y APELLIDO',
+      ...data.fechas.map((f: string) => dayjs(f).format('DD/MM'))
+    ]];
+
+    // Filas de alumnos
+    const body = data.alumnos.map((a: any, index: number) => {
+      const row = [
+        (index + 1).toString(),
+        `${a.nombre.toUpperCase()} ${a.apellido.toUpperCase()}`
+      ];
+      data.fechas.forEach((f: string) => {
+        const state = a.asistencias[f];
+        const char = state === 'PRESENTE' ? 'P' : state === 'AUSENTE' ? 'A' : state === 'JUSTIFICADO' ? 'J' : '';
+        row.push(char);
+      });
+      return row;
+    });
+
+    // Ancho de columnas automático. N° pequeño, Nombre regular, fechas compactas e iguales
+    const columnStyles: any = {
+      0: { cellWidth: 10, halign: 'center' }, // N°
+      1: { cellWidth: 65 } // Nombre y Apellido
+    };
+    
+    // Ancho de las columnas de fecha (el resto del ancho se divide por el número de fechas)
+    const totalWidthAvailable = 264 - 75; // 264 (margins left/right 16) - 75 (N° y Nombre)
+    const dateColWidth = totalWidthAvailable / data.fechas.length;
+    data.fechas.forEach((f: string, i: number) => {
+      columnStyles[i + 2] = { cellWidth: dateColWidth, halign: 'center' };
+    });
+
+    autoTable(doc, {
+      head,
+      body,
+      startY: 34,
+      theme: 'grid',
+      styles: { 
+        fontSize: 7, 
+        cellPadding: 1.2, 
+        valign: 'middle',
+        textColor: [50, 50, 50],
+        lineColor: [180, 180, 180],
+        lineWidth: 0.1
+      },
+      headStyles: { 
+        fillColor: [245, 245, 245], 
+        textColor: [0, 0, 0], 
+        fontStyle: 'bold', 
+        fontSize: 7,
+        halign: 'center'
+      },
+      columnStyles,
+      margin: { top: 34, left: 16, right: 16, bottom: 12 }
+    });
+
+    doc.save(`Planilla_Asistencia_${data.grupo.replace(/\s+/g, '_')}_${data.anio}.pdf`);
   }
 }
