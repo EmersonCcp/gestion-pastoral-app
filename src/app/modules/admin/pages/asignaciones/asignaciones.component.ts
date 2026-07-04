@@ -21,6 +21,14 @@ export class AsignacionesComponent implements OnInit {
   page = 1;
   per_page = 20;
 
+  // Clonación
+  isClonarModalOpen = false;
+  clonarDto = {
+    periodo_origen_id: null as number | null,
+    periodo_destino_id: null as number | null,
+    copiar_personas: true
+  };
+
   constructor(
     private service: AsignacionService,
     private periodoService: PeriodoService,
@@ -84,5 +92,57 @@ export class AsignacionesComponent implements OnInit {
 
   getPersonasCount(a: Asignacion): number {
     return a.personas?.length || 0;
+  }
+
+  abrirClonarModal() {
+    this.clonarDto = {
+      periodo_origen_id: this.selectedPeriodoId,
+      periodo_destino_id: null,
+      copiar_personas: true
+    };
+    this.isClonarModalOpen = true;
+  }
+
+  cerrarClonarModal() {
+    this.isClonarModalOpen = false;
+  }
+
+  ejecutarClonar() {
+    if (!this.clonarDto.periodo_origen_id) {
+      this.alertService.successOrError('Debes seleccionar un período de origen');
+      return;
+    }
+    if (!this.clonarDto.periodo_destino_id) {
+      this.alertService.successOrError('Debes seleccionar un período de destino');
+      return;
+    }
+    if (this.clonarDto.periodo_origen_id === this.clonarDto.periodo_destino_id) {
+      this.alertService.successOrError('El período de origen y destino no pueden ser el mismo');
+      return;
+    }
+
+    const movId = this.authService.getSelectedMovimientoId();
+    if (!movId) {
+      this.alertService.successOrError('No se pudo identificar el movimiento activo');
+      return;
+    }
+
+    const payload = {
+      periodo_origen_id: Number(this.clonarDto.periodo_origen_id),
+      periodo_destino_id: Number(this.clonarDto.periodo_destino_id),
+      copiar_personas: !!this.clonarDto.copiar_personas,
+      movimiento_id: movId
+    };
+
+    this.service.clonar(payload).subscribe((res: any) => {
+      if (res.ok) {
+        this.alertService.successOrError(res.message || 'Se clonaron las asignaciones.');
+        this.cerrarClonarModal();
+        this.selectedPeriodoId = payload.periodo_destino_id;
+        this.loadData();
+      } else {
+        this.alertService.successOrError(res.message || 'Error al clonar asignaciones');
+      }
+    });
   }
 }
