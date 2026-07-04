@@ -235,10 +235,15 @@
             </table>
           </div>
 
-          <!-- Botón de Descarga -->
-          <div class="flex justify-end pt-4">
+          <!-- Botones de Descarga -->
+          <div class="flex justify-end gap-3 pt-4">
+            <button (click)="descargarPlanillaExcel()"
+              class="btn bg-emerald-600 hover:bg-emerald-700 text-white font-black px-6 py-2.5 rounded-xl flex items-center gap-2 shadow-lg hover:shadow-emerald-500/20 transition-all">
+              <span class="material-symbols-outlined text-[20px]">description</span>
+              Descargar Planilla en Excel
+            </button>
             <button (click)="descargarPlanillaPdf()"
-              class="btn bg-green-600 hover:bg-green-700 text-white font-black px-6 py-2.5 rounded-xl flex items-center gap-2 shadow-lg hover:shadow-green-500/20 transition-all">
+              class="btn bg-indigo-600 hover:bg-indigo-700 text-white font-black px-6 py-2.5 rounded-xl flex items-center gap-2 shadow-lg hover:shadow-indigo-500/20 transition-all">
               <span class="material-symbols-outlined text-[20px]">picture_as_pdf</span>
               Descargar Planilla en PDF
             </button>

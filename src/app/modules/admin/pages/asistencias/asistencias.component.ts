@@ -412,4 +412,55 @@ export class AsistenciasComponent implements OnInit {
 
     doc.save(`Planilla_Asistencia_${data.grupo.replace(/\s+/g, '_')}_${data.anio}.pdf`);
   }
+
+  descargarPlanillaExcel() {
+    if (!this.planillaData) return;
+    const data = this.planillaData;
+
+    // Fila 1: Título de la Parroquia
+    const r1 = [data.parroquia.toUpperCase()];
+    
+    // Fila 2: Etapa y Grupo | Año
+    const r2 = [`ETAPA: ${data.movimiento.toUpperCase()} ${data.grupo.toUpperCase()}`, '', '', `AÑO: ${data.anio.toUpperCase()}`];
+    
+    // Fila 3: Catequistas | Salón
+    const r3 = [`CATEQUISTA: ${data.catequistas.toUpperCase()}`, '', '', `SALÓN Nº: ${data.salon.toUpperCase()}`];
+    
+    // Fila 4: Fila vacía
+    const r4: string[] = [];
+
+    // Fila 5: Cabeceras de la Tabla
+    const header = [
+      'N°',
+      'Nombre y Apellido',
+      ...data.fechas.map((f: string) => dayjs(f).format('DD/MM'))
+    ];
+
+    const excelRows = [
+      r1,
+      r2,
+      r3,
+      r4,
+      header
+    ];
+
+    // Alumnos
+    data.alumnos.forEach((a: any, index: number) => {
+      const row = [
+        (index + 1).toString(),
+        `${a.nombre.toUpperCase()} ${a.apellido.toUpperCase()}`
+      ];
+      data.fechas.forEach((f: string) => {
+        const state = a.asistencias[f];
+        const char = state === 'PRESENTE' ? 'P' : state === 'AUSENTE' ? 'A' : state === 'JUSTIFICADO' ? 'J' : '';
+        row.push(char);
+      });
+      excelRows.push(row);
+    });
+
+    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(excelRows);
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Planilla de Asistencia');
+    XLSX.writeFile(wb, `Planilla_Asistencia_${data.grupo.replace(/\s+/g, '_')}_${data.anio}.xlsx`);
+  }
 }
