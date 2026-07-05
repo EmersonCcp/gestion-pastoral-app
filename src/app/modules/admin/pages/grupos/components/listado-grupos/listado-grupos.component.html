@@ -46,6 +46,10 @@
       </td>
       <td class="px-6 py-2">
         <div class="flex items-center gap-2">
+          <button (click)="verEstadisticas(g)" 
+                  class="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-100 rounded-full transition-colors" title="Estadísticas">
+            <span class="material-symbols-outlined text-[20px]">query_stats</span>
+          </button>
           <button *appHasPermission="'grupos.update'" (click)="editar(g)" 
                   class="p-1.5 text-slate-400 hover:text-primary-700 hover:bg-primary-100 rounded-full transition-colors" title="Editar">
             <span class="material-symbols-outlined text-[20px]">edit</span>
