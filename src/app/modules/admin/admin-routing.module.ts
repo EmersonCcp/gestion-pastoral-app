@@ -15,6 +15,7 @@ import { MovimientosComponent } from './pages/movimientos/movimientos.component'
 import { FormularioMovimientoComponent } from './pages/movimientos/components/formulario-movimiento/formulario-movimiento.component';
 import { GruposComponent } from './pages/grupos/grupos.component';
 import { FormularioGrupoComponent } from './pages/grupos/components/formulario-grupo/formulario-grupo.component';
+import { EstadisticasGrupoComponent } from './pages/grupos/components/estadisticas-grupo/estadisticas-grupo.component';
 import { PeriodosComponent } from './pages/periodos/periodos.component';
 import { FormularioPeriodoComponent } from './pages/periodos/components/formulario-periodo/formulario-periodo.component';
 import { TiposPersonasComponent } from './pages/tipos-personas/tipos-personas.component';
@@ -104,6 +105,12 @@ const routes: Routes = [
       {
         path: 'grupos',
         component: GruposComponent,
+        canActivate: [permissionGuard],
+        data: { permissions: ['grupos.read'] }
+      },
+      {
+        path: 'grupos/:id/estadisticas',
+        component: EstadisticasGrupoComponent,
         canActivate: [permissionGuard],
         data: { permissions: ['grupos.read'] }
       },

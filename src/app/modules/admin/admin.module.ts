@@ -39,6 +39,7 @@ import { FormularioMovimientoComponent } from './pages/movimientos/components/fo
 import { GruposComponent } from './pages/grupos/grupos.component';
 import { ListadoGruposComponent } from './pages/grupos/components/listado-grupos/listado-grupos.component';
 import { FormularioGrupoComponent } from './pages/grupos/components/formulario-grupo/formulario-grupo.component';
+import { EstadisticasGrupoComponent } from './pages/grupos/components/estadisticas-grupo/estadisticas-grupo.component';
 import { PeriodosComponent } from './pages/periodos/periodos.component';
 import { ListadoPeriodosComponent } from './pages/periodos/components/listado-periodos/listado-periodos.component';
 import { FormularioPeriodoComponent } from './pages/periodos/components/formulario-periodo/formulario-periodo.component';
@@ -106,6 +107,7 @@ import { UploadCsvDialogComponent } from './pages/personas/components/upload-csv
     GruposComponent,
     ListadoGruposComponent,
     FormularioGrupoComponent,
+    EstadisticasGrupoComponent,
     PeriodosComponent,
     ListadoPeriodosComponent,
     FormularioPeriodoComponent,

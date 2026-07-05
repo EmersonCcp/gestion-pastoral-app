@@ -81,6 +81,10 @@ export class ListadoGruposComponent implements OnInit {
     }, 400);
   }
 
+  verEstadisticas(grupo: Grupo) {
+    this.router.navigate([`/admin/grupos/${grupo.id}/estadisticas`]);
+  }
+
   editar(grupo: Grupo) {
     this.router.navigate([`/admin/grupos/${grupo.id}/edit`]);
   }
