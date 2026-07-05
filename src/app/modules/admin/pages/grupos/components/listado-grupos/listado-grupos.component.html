@@ -62,4 +62,49 @@
       </td>
     </tr>
   </ng-container>
+
+  <!-- Vista Móvil: Tarjetas de Grupos -->
+  <ng-container mobileCards>
+    <div *ngFor="let g of grupos" class="p-4 space-y-3 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 transition-colors">
+      <div class="flex items-start justify-between">
+        <div class="space-y-1">
+          <h3 class="text-sm font-semibold text-slate-900 dark:text-slate-100">{{ g.nombre }}</h3>
+          
+          <div class="flex flex-wrap items-center gap-1.5 mt-1">
+            <!-- Movimiento -->
+            <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-900/30 text-[9px] font-bold text-blue-700 dark:text-blue-300 border border-blue-100/50 dark:border-blue-800/30 uppercase">
+              {{ g.movimiento?.nombre || 'S/M' }}
+            </span>
+            <!-- Grupo Padre -->
+            <span *ngIf="g.parent" class="text-[10px] text-slate-400 dark:text-slate-500 italic">
+              Padre: {{ g.parent.nombre }}
+            </span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1">
+          <button (click)="verEstadisticas(g)" 
+                  class="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-full transition-colors" title="Estadísticas">
+            <span class="material-symbols-outlined text-[18px]">query_stats</span>
+          </button>
+          <button *appHasPermission="'grupos.update'" (click)="editar(g)" 
+                  class="p-1.5 text-slate-400 hover:text-primary-700 hover:bg-primary-100 dark:hover:bg-primary-900/30 rounded-full transition-colors" title="Editar">
+            <span class="material-symbols-outlined text-[18px]">edit</span>
+          </button>
+          <button *appHasPermission="'grupos.delete'" (click)="eliminar(g)" 
+                  class="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-full transition-colors" title="Eliminar">
+            <span class="material-symbols-outlined text-[18px]">delete</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between text-xs pt-1">
+        <span class="text-slate-400 font-medium">Estado:</span>
+        <span class="px-2 py-0.5 rounded-full text-[9px] font-bold text-white" 
+              [ngClass]="{'bg-primary-500': g.estado, 'bg-red-400': !g.estado}">
+          {{ g.estado ? 'ACTIVO' : 'INACTIVO' }}
+        </span>
+      </div>
+    </div>
+  </ng-container>
 </app-table-admin>

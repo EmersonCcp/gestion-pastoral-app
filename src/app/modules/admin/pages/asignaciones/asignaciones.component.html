@@ -1,4 +1,4 @@
-<div class="p-8 max-w-6xl mx-auto">
+<div class="p-4 sm:p-6 md:p-8 max-w-6xl mx-auto">
   <app-list-header-admin
     title="Asignaciones"
     subtitle="Gestiona las reuniones de catequesis: grupo, período, aula y miembros."
@@ -29,7 +29,8 @@
   </div>
 
   <!-- Table -->
-  <div class="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
+  <!-- Vista Desktop: Tabla -->
+  <div class="hidden md:block bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
     <table class="w-full text-left border-collapse">
       <thead>
         <tr class="bg-slate-50 border-b border-slate-200">
@@ -90,6 +91,59 @@
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- Vista Móvil: Tarjetas -->
+  <div class="block md:hidden space-y-3">
+    <div *ngFor="let a of asignaciones" class="bg-white rounded-xl p-4 border border-slate-150 shadow-sm space-y-3">
+      <div class="flex justify-between items-start">
+        <div>
+          <h3 class="text-sm font-bold text-slate-800">{{ a.grupo?.nombre || '—' }}</h3>
+          <span class="text-xs text-slate-400">{{ a.grupo?.movimiento?.nombre || '' }}</span>
+        </div>
+        <div class="flex items-center gap-1">
+          <button (click)="editar(a)" class="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+            <span class="material-symbols-outlined text-[18px]">edit</span>
+          </button>
+          <button (click)="eliminar(a)" class="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+            <span class="material-symbols-outlined text-[18px]">delete</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 text-xs text-slate-600">
+        <div>
+          <span class="text-slate-400 font-medium block">Período</span>
+          <span class="inline-block mt-0.5 px-2 py-0.5 bg-primary-50 text-primary-700 rounded text-[9px] font-bold uppercase">
+            {{ a.periodo?.nombre || '—' }}
+          </span>
+        </div>
+        <div>
+          <span class="text-slate-400 font-medium block">Reunión</span>
+          <span class="font-semibold block mt-0.5" *ngIf="a.dia_reunion">
+            {{ a.dia_reunion }} <span class="text-slate-400 font-normal">({{ a.frecuencia || '—' }})</span>
+          </span>
+          <span class="italic text-slate-300 block mt-0.5" *ngIf="!a.dia_reunion">Sin definir</span>
+        </div>
+        <div class="mt-1">
+          <span class="text-slate-400 font-medium block">Aula</span>
+          <span class="italic text-slate-500 block mt-0.5">{{ a.aula?.nombre || '—' }}</span>
+        </div>
+        <div class="mt-1">
+          <span class="text-slate-400 font-medium block">Personas</span>
+          <span class="inline-flex items-center gap-1 mt-0.5 px-2 py-0.5 bg-slate-100 rounded-full text-[10px] font-bold text-slate-600">
+            <span class="material-symbols-outlined text-[12px]">group</span>
+            {{ getPersonasCount(a) }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vacío -->
+    <div *ngIf="asignaciones.length === 0 && !loading" class="bg-white rounded-xl p-8 text-center border border-slate-150 shadow-sm flex flex-col items-center gap-2 text-slate-400">
+      <span class="material-symbols-outlined text-[40px]">assignment</span>
+      <p class="font-semibold text-sm">No hay asignaciones registradas.</p>
+    </div>
   </div>
 
   <!-- Modal para clonar asignaciones -->

@@ -4,6 +4,8 @@ import { hasPermission } from 'src/app/shared/utils/auth.utils';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { Subscription } from 'rxjs';
 
+import { SidebarService } from 'src/app/shared/services/sidebar.service';
+
 @Component({
   selector: 'app-sidebar-admin',
   templateUrl: './sidebar-admin.component.html',
@@ -11,10 +13,17 @@ import { Subscription } from 'rxjs';
 })
 export class SidebarAdminComponent implements OnInit {
   isCollapsed = false;
+  isOpenMobile = false;
   private sub?: Subscription;
+  private sidebarSub1?: Subscription;
+  private sidebarSub2?: Subscription;
 
   toggleSidebar() {
-    this.isCollapsed = !this.isCollapsed;
+    this.sidebarService.toggleCollapsed();
+  }
+
+  closeMobileSidebar() {
+    this.sidebarService.setMobileOpen(false);
   }
 
   menuItems = [
@@ -39,11 +48,23 @@ export class SidebarAdminComponent implements OnInit {
 
   filteredMenuItems = [...this.menuItems];
 
-  constructor(private router: Router, private authService: AuthService) { }
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private sidebarService: SidebarService
+  ) { }
 
   ngOnInit() {
     this.sub = this.authService.permissions$.subscribe(() => {
       this.refreshMenu();
+    });
+
+    this.sidebarSub1 = this.sidebarService.collapsed$.subscribe(val => {
+      this.isCollapsed = val;
+    });
+
+    this.sidebarSub2 = this.sidebarService.openMobile$.subscribe(val => {
+      this.isOpenMobile = val;
     });
   }
 
@@ -55,10 +76,13 @@ export class SidebarAdminComponent implements OnInit {
 
   ngOnDestroy() {
     this.sub?.unsubscribe();
+    this.sidebarSub1?.unsubscribe();
+    this.sidebarSub2?.unsubscribe();
   }
 
   goTo(route: string) {
-    this.router.navigate([`/admin/${route}`])
+    this.closeMobileSidebar();
+    this.router.navigate([`/admin/${route}`]);
   }
 
   isActive(route: string): boolean {

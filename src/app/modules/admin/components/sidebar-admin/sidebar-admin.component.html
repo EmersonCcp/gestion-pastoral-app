@@ -1,10 +1,23 @@
-<nav [ngClass]="isCollapsed ? 'w-[80px]' : 'w-[250px]'"
-  class="px-4 py-4 border-r-2 border-slate-200 dark:border-slate-700 h-full flex flex-col transition-all duration-300 relative bg-white dark:bg-slate-900">
+<!-- Overlay Oscuro Móvil (se muestra solo en móviles cuando está abierto) -->
+<div 
+  *ngIf="isOpenMobile" 
+  (click)="closeMobileSidebar()"
+  class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 md:hidden transition-opacity duration-300">
+</div>
+
+<nav [ngClass]="[
+    isCollapsed ? 'md:w-[80px]' : 'md:w-[250px]',
+    isOpenMobile ? 'translate-x-0' : '-translate-x-full'
+  ]"
+  class="fixed md:relative inset-y-0 left-0 z-50 w-[260px] md:w-auto px-4 py-4 border-r-2 border-slate-200 dark:border-slate-700 h-screen md:h-auto flex flex-col transition-all duration-300 bg-white dark:bg-slate-900 md:translate-x-0">
   <!-- Top: Menu Icon -->
-  <div class="flex items-center mb-6" [ngClass]="isCollapsed ? 'justify-center' : 'justify-between'">
+  <div class="flex items-center mb-6 justify-between" [ngClass]="isCollapsed ? 'md:justify-center' : 'md:justify-between'">
     <span *ngIf="!isCollapsed" class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ml-2">Menú</span>
-    <button (click)="toggleSidebar()" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-500 dark:text-slate-400 transition-colors flex items-center justify-center">
+    <button (click)="toggleSidebar()" class="hidden md:flex p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-500 dark:text-slate-400 transition-colors items-center justify-center">
       <span class="material-symbols-outlined">menu</span>
+    </button>
+    <button (click)="closeMobileSidebar()" class="flex md:hidden p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-500 dark:text-slate-400 transition-colors items-center justify-center">
+      <span class="material-symbols-outlined">close</span>
     </button>
   </div>
 
