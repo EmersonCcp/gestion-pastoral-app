@@ -6,4 +6,5 @@ export interface IUsuario {
   estado: boolean;
   usuarioRoles: any[];
   usuarioMovimientos?: any[];
+  grupos?: any[];
 }

@@ -10,6 +10,7 @@ import { UsuariosService } from 'src/app/shared/services/usuarios.service';
 import { RolesService } from 'src/app/shared/services/roles.service';
 import { MovimientoService } from 'src/app/shared/services/movimiento.service';
 import { ParroquiaService } from 'src/app/shared/services/parroquia.service';
+import { GrupoService } from 'src/app/shared/services/grupo.service';
 
 @Component({
   selector: 'app-formulario-usuario',
@@ -28,6 +29,8 @@ export class FormularioUsuarioComponent implements OnInit {
   roles: IRol[] = [];
   movimientos: Movimiento[] = [];
   parroquias: any[] = [];
+  grupos: any[] = [];
+  activeMovimientoTabId: number | null = null;
 
   constructor(
     private service: UsuariosService,
@@ -37,7 +40,8 @@ export class FormularioUsuarioComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private fb: FormBuilder,
     private alertService: AlertService,
-    private parroquiaService: ParroquiaService
+    private parroquiaService: ParroquiaService,
+    private grupoService: GrupoService
   ) {
     this.form = this.initForm();
   }
@@ -46,6 +50,7 @@ export class FormularioUsuarioComponent implements OnInit {
     this.loadRoles();
     this.loadMovimientos();
     this.loadParroquias();
+    this.loadGrupos();
 
     this.activatedRoute.params.pipe(take(1)).subscribe((param) => {
       this.handleParams(param);
@@ -79,10 +84,19 @@ export class FormularioUsuarioComponent implements OnInit {
           (um: any) => um.movimiento?.id
         ).filter(Boolean);
 
+        const grupoIds = (res.data.grupos || []).map(
+          (g: any) => g.id
+        ).filter(Boolean);
+
+        if (movimientoIds.length > 0) {
+          this.activeMovimientoTabId = movimientoIds[0];
+        }
+ 
         this.form.patchValue({
           ...res.data,
           rol_id: res.data.usuarioRoles?.[0]?.rol?.id,
           movimiento_ids: movimientoIds,
+          grupo_ids: grupoIds,
         });
       } else {
         const errorMsg = res?.error?.message || res?.error?.code || 'Error inesperado';
@@ -98,6 +112,7 @@ export class FormularioUsuarioComponent implements OnInit {
       password_encrypted: [''],
       rol_id: [null, this.id === 0 ? [Validators.required] : []],
       movimiento_ids: [[]],
+      grupo_ids: [[]],
       is_super_user: [false],
       parroquia_id: [null],
       estado: [true],
@@ -147,10 +162,59 @@ export class FormularioUsuarioComponent implements OnInit {
     const index = ids.indexOf(movimientoId);
     if (index === -1) {
       ids.push(movimientoId);
+      if (!this.activeMovimientoTabId) {
+        this.activeMovimientoTabId = movimientoId;
+      }
+    } else {
+      ids.splice(index, 1);
+      // Limpiar grupos de este movimiento si el usuario pierde acceso
+      const actualGrupoIds = this.form.get('grupo_ids')?.value || [];
+      const gruposDelMovimiento = this.grupos.filter(g => g.movimiento_id === movimientoId);
+      const gruposDelMovimientoIds = gruposDelMovimiento.map(g => g.id);
+      const nuevosGrupoIds = actualGrupoIds.filter((id: number) => !gruposDelMovimientoIds.includes(id));
+      this.form.get('grupo_ids')?.setValue(nuevosGrupoIds);
+
+      // Re-evaluar tab activa
+      if (this.activeMovimientoTabId === movimientoId) {
+        this.activeMovimientoTabId = ids.length > 0 ? ids[0] : null;
+      }
+    }
+    this.form.get('movimiento_ids')?.setValue(ids);
+  }
+
+  get selectedMovimientos(): Movimiento[] {
+    const ids: number[] = this.form.get('movimiento_ids')?.value || [];
+    return this.movimientos.filter(m => ids.includes(m.id));
+  }
+
+  setActiveMovimientoTab(id: number) {
+    this.activeMovimientoTabId = id;
+  }
+
+  loadGrupos() {
+    this.grupoService.getAll({ page: 1, per_page: 500 }).subscribe((res) => {
+      if (res.ok) {
+        // Mostramos solo grupos reales (que tengan un padre, ej. no categorías raíces)
+        this.grupos = res.data.filter((g: any) => g.parent_id !== null);
+      }
+    });
+  }
+
+  isGrupoSelected(grupoId: number): boolean {
+    const ids: number[] = this.form.get('grupo_ids')?.value || [];
+    return ids.includes(grupoId);
+  }
+
+  toggleGrupo(grupoId: number) {
+    if (this.disabled) return;
+    const ids: number[] = [...(this.form.get('grupo_ids')?.value || [])];
+    const index = ids.indexOf(grupoId);
+    if (index === -1) {
+      ids.push(grupoId);
     } else {
       ids.splice(index, 1);
     }
-    this.form.get('movimiento_ids')?.setValue(ids);
+    this.form.get('grupo_ids')?.setValue(ids);
   }
 
   goBack() {
@@ -194,6 +258,7 @@ export class FormularioUsuarioComponent implements OnInit {
       ...this.form.value,
       rol_id: this.form.value.rol_id ? Number(this.form.value.rol_id) : undefined,
       movimiento_ids: (this.form.value.movimiento_ids || []).map(Number),
+      grupo_ids: (this.form.value.grupo_ids || []).map(Number),
     };
 
     // Eliminar password vacío en edición
