@@ -83,4 +83,58 @@
       </td>
     </tr>
   </ng-container>
+
+  <!-- Vista Móvil: Tarjetas de Personas -->
+  <ng-container mobileCards>
+    <div *ngFor="let p of personas" class="p-4 space-y-3 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 transition-colors">
+      <div class="flex items-start justify-between">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="text-slate-900 dark:text-slate-100 text-sm font-semibold">{{ p.nombre }} {{ p.apellido }}</span>
+            <div class="flex items-center gap-0.5">
+              <span *ngIf="p.bautismo" class="material-symbols-outlined text-[13px] text-blue-500" title="Bautizado">water_drop</span>
+              <span *ngIf="p.primera_comunion" class="material-symbols-outlined text-[13px] text-amber-500" title="Primera Comunión">restaurant</span>
+              <span *ngIf="p.confirmacion" class="material-symbols-outlined text-[13px] text-rose-500" title="Confirmado">auto_awesome</span>
+            </div>
+          </div>
+          <!-- Tipos -->
+          <div class="flex flex-wrap gap-1">
+            <span *ngFor="let t of p.tiposPersonas"
+              class="inline-flex items-center px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/30 text-[9px] font-bold text-indigo-700 dark:text-indigo-300 border border-indigo-100/50 dark:border-indigo-800/30 uppercase">
+              {{ t.nombre }}
+            </span>
+          </div>
+        </div>
+        
+        <!-- Acciones rápidas -->
+        <div class="flex items-center gap-1">
+          <button (click)="verPerfil(p)"
+            class="p-1.5 text-slate-400 hover:text-green-600 dark:hover:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-full transition-colors"
+            title="Ver Perfil">
+            <span class="material-symbols-outlined text-[18px]">account_circle</span>
+          </button>
+          <button *appHasPermission="'personas.update'" (click)="editar(p)"
+            class="p-1.5 text-slate-400 hover:text-primary-700 dark:hover:text-primary-400 hover:bg-primary-100 dark:hover:bg-primary-900/30 rounded-full transition-colors"
+            title="Editar">
+            <span class="material-symbols-outlined text-[18px]">edit</span>
+          </button>
+          <button *appHasPermission="'personas.delete'" (click)="eliminar(p)"
+            class="p-1.5 text-slate-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-full transition-colors"
+            title="Eliminar">
+            <span class="material-symbols-outlined text-[18px]">delete</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Contacto -->
+      <div class="flex flex-col gap-1 text-[11px] text-slate-500 dark:text-slate-400" *ngIf="p.email || p.telefono">
+        <span class="flex items-center gap-1" *ngIf="p.email">
+          <span class="material-symbols-outlined text-[13px]">mail</span> {{ p.email }}
+        </span>
+        <span class="flex items-center gap-1" *ngIf="p.telefono">
+          <span class="material-symbols-outlined text-[13px]">call</span> {{ p.telefono }}
+        </span>
+      </div>
+    </div>
+  </ng-container>
 </app-table-admin>

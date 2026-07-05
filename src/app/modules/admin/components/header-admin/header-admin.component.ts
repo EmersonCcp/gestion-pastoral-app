@@ -4,6 +4,8 @@ import { AlertService } from 'src/app/shared/services/alert.service';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { ThemeService } from 'src/app/shared/services/theme.service';
 
+import { SidebarService } from 'src/app/shared/services/sidebar.service';
+
 @Component({
   selector: 'app-header-admin',
   templateUrl: './header-admin.component.html',
@@ -19,7 +21,12 @@ export class HeaderAdminComponent implements OnInit {
     private router: Router,
     private authService: AuthService,
     public themeService: ThemeService,
+    private sidebarService: SidebarService
   ) {}
+
+  toggleMobileSidebar() {
+    this.sidebarService.toggleMobile();
+  }
 
   ngOnInit(): void {
     this.loadData();

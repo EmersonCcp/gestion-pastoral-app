@@ -1,21 +1,26 @@
 <header *ngIf="!loading"
-  class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-6 py-3 lg:px-10 transition-colors">
-  <div class="flex items-center gap-4 text-primary-700">
-    <div class="flex flex-col">
-      <h2 class="text-lg font-bold leading-tight tracking-tight text-slate-800 dark:text-slate-100">
+  class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 lg:px-10 transition-colors">
+  <div class="flex items-center gap-3">
+    <!-- Hamburguesa Móvil -->
+    <button (click)="toggleMobileSidebar()" 
+            class="flex md:hidden items-center justify-center p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-500 dark:text-slate-400 transition-colors">
+      <span class="material-symbols-outlined">menu</span>
+    </button>
+    <div class="flex flex-col text-primary-700">
+      <h2 class="text-sm sm:text-lg font-bold leading-tight tracking-tight text-slate-800 dark:text-slate-100 truncate max-w-[120px] sm:max-w-none">
         {{ user.parroquia || "Gestión Pastoral" }}
       </h2>
-      <span class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Sistema de Gestión</span>
+      <span class="text-[9px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Sistema de Gestión</span>
     </div>
   </div>
 
-  <div class="flex ml-6 items-center gap-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5"
+  <div class="flex ml-2 sm:ml-6 items-center gap-1 sm:gap-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 sm:px-3 sm:py-1.5 max-w-[130px] sm:max-w-none"
     *ngIf="movimientos.length > 0">
-    <span class="material-symbols-outlined text-slate-400 text-lg">sync_alt</span>
-    <div class="flex flex-col">
-      <span class="text-[10px] font-bold text-slate-400 uppercase leading-none mb-1">Movimiento Activo</span>
+    <span class="material-symbols-outlined text-slate-400 text-sm sm:text-lg">sync_alt</span>
+    <div class="flex flex-col min-w-0">
+      <span class="text-[8px] sm:text-[10px] font-bold text-slate-400 uppercase leading-none mb-0.5 truncate">Mov. Activo</span>
       <select
-        class="bg-white dark:bg-slate-800 dark:text-slate-100 select select-sm border-none font-bold text-slate-700 outline-none cursor-pointer"
+        class="bg-white dark:bg-slate-800 dark:text-slate-100 select select-xs sm:select-sm border-none font-bold text-slate-700 outline-none cursor-pointer text-[10px] sm:text-xs p-0 max-w-[100px] sm:max-w-none truncate"
         [(ngModel)]="selectedMovimientoId" (change)="onMovimientoChange()">
         <option *ngFor="let mov of movimientos" [value]="mov.id">
           {{ mov.nombre }}
