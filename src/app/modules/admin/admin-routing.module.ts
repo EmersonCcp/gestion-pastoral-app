@@ -24,8 +24,10 @@ import { FormularioPersonaComponent } from './pages/personas/components/formular
 import { AulasComponent } from './pages/aulas/aulas.component';
 import { AsignacionesComponent } from './pages/asignaciones/asignaciones.component';
 import { FormularioAsignacionComponent } from './pages/asignaciones/components/formulario-asignacion/formulario-asignacion.component';
+import { ClonarAsignacionesComponent } from './pages/asignaciones/components/clonar-asignaciones/clonar-asignaciones.component';
 import { AsistenciasComponent } from './pages/asistencias/asistencias.component';
 import { FormularioAsistenciaComponent } from './pages/asistencias/components/formulario-asistencia/formulario-asistencia.component';
+import { GenerarPlanillaComponent } from './pages/asistencias/components/generar-planilla/generar-planilla.component';
 import { PersonaPerfilComponent } from './pages/personas/components/persona-perfil/persona-perfil.component';
 import { LibrosComponent } from './pages/libros/libros.component';
 import { FormularioLibroComponent } from './pages/libros/components/formulario-libro/formulario-libro.component';
@@ -169,6 +171,12 @@ const routes: Routes = [
         data: { permissions: ['asistencias.read'] }
       },
       {
+        path: 'asistencias/generar-planilla',
+        component: GenerarPlanillaComponent,
+        canActivate: [permissionGuard],
+        data: { permissions: ['asistencias.read'] }
+      },
+      {
         path: 'asistencias/:id/:mode',
         component: FormularioAsistenciaComponent,
         canActivate: [permissionGuard],
@@ -177,6 +185,12 @@ const routes: Routes = [
       {
         path: 'asignaciones',
         component: AsignacionesComponent,
+        canActivate: [permissionGuard],
+        data: { permissions: ['asignaciones.read'] }
+      },
+      {
+        path: 'asignaciones/clonar',
+        component: ClonarAsignacionesComponent,
         canActivate: [permissionGuard],
         data: { permissions: ['asignaciones.read'] }
       },

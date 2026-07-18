@@ -52,8 +52,10 @@ import { AulasComponent } from './pages/aulas/aulas.component';
 import { FormularioAulaComponent } from './pages/aulas/components/formulario-aula/formulario-aula.component';
 import { AsignacionesComponent } from './pages/asignaciones/asignaciones.component';
 import { FormularioAsignacionComponent } from './pages/asignaciones/components/formulario-asignacion/formulario-asignacion.component';
+import { ClonarAsignacionesComponent } from './pages/asignaciones/components/clonar-asignaciones/clonar-asignaciones.component';
 import { AsistenciasComponent } from './pages/asistencias/asistencias.component';
 import { FormularioAsistenciaComponent } from './pages/asistencias/components/formulario-asistencia/formulario-asistencia.component';
+import { GenerarPlanillaComponent } from './pages/asistencias/components/generar-planilla/generar-planilla.component';
 import { PersonaPerfilComponent } from './pages/personas/components/persona-perfil/persona-perfil.component';
 import { SkeletonFormAdminComponent } from './components/skeletons/skeleton-form-admin/skeleton-form-admin.component';
 import { LibrosComponent } from './pages/libros/libros.component';
@@ -120,8 +122,10 @@ import { UploadCsvDialogComponent } from './pages/personas/components/upload-csv
     FormularioAulaComponent,
     AsignacionesComponent,
     FormularioAsignacionComponent,
+    ClonarAsignacionesComponent,
     AsistenciasComponent,
     FormularioAsistenciaComponent,
+    GenerarPlanillaComponent,
     PersonaPerfilComponent,
     SkeletonFormAdminComponent,
     LibrosComponent,

@@ -21,7 +21,7 @@
 
     <!-- Clonar Asignaciones -->
     <div class="flex items-center gap-2">
-      <button (click)="abrirClonarModal()" class="px-3 py-2 border border-slate-200 rounded-lg flex items-center gap-1.5 text-slate-700 font-semibold hover:bg-slate-50 text-sm transition-colors shadow-sm bg-white">
+      <button (click)="irAClonar()" class="px-3 py-2 border border-slate-200 rounded-lg flex items-center gap-1.5 text-slate-700 font-semibold hover:bg-slate-50 text-sm transition-colors shadow-sm bg-white">
         <span class="material-symbols-outlined text-[18px]">content_copy</span>
         Clonar de Período
       </button>
@@ -146,60 +146,5 @@
     </div>
   </div>
 
-  <!-- Modal para clonar asignaciones -->
-  <div *ngIf="isClonarModalOpen" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-xl border border-slate-100 max-w-md w-full overflow-hidden animate__animated animate__fadeIn animate__faster">
-      <div class="p-6 border-b border-slate-100 flex items-center justify-between">
-        <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
-          <span class="material-symbols-outlined text-primary-600 text-[22px]">content_copy</span>
-          Clonar Asignaciones
-        </h3>
-        <button (click)="cerrarClonarModal()" class="text-slate-400 hover:text-slate-600 rounded-lg p-1 hover:bg-slate-50 transition-all flex items-center">
-          <span class="material-symbols-outlined">close</span>
-        </button>
-      </div>
 
-      <div class="p-6 flex flex-col gap-4">
-        <p class="text-sm text-slate-500">
-          Esta función creará nuevas asignaciones para el período destino basándose en la estructura del período origen seleccionado.
-        </p>
-
-        <!-- Período Origen -->
-        <div class="flex flex-col gap-1.5">
-          <label class="text-xs font-bold text-slate-600 uppercase">Período Origen (Desde donde copiar)</label>
-          <select class="select w-full border border-slate-200 rounded-lg text-sm p-2 bg-white" [(ngModel)]="clonarDto.periodo_origen_id">
-            <option [ngValue]="null" disabled>Seleccionar período origen...</option>
-            <option *ngFor="let p of periodos" [ngValue]="p.id">{{ p.nombre }}</option>
-          </select>
-        </div>
-
-        <!-- Período Destino -->
-        <div class="flex flex-col gap-1.5">
-          <label class="text-xs font-bold text-slate-600 uppercase">Período Destino (Hacia donde copiar)</label>
-          <select class="select w-full border border-slate-200 rounded-lg text-sm p-2 bg-white" [(ngModel)]="clonarDto.periodo_destino_id">
-            <option [ngValue]="null" disabled>Seleccionar período destino...</option>
-            <option *ngFor="let p of periodos" [ngValue]="p.id">{{ p.nombre }}</option>
-          </select>
-        </div>
-
-        <!-- Opción copiar personas -->
-        <div class="flex items-center gap-3 bg-slate-50 p-3 rounded-lg border border-slate-100 mt-2">
-          <input type="checkbox" id="copiarPersonas" class="rounded border-slate-300 text-primary-600 focus:ring-primary-500 h-4 w-4" [(ngModel)]="clonarDto.copiar_personas">
-          <label for="copiarPersonas" class="text-sm font-semibold text-slate-700 cursor-pointer select-none">
-            Copiar también las personas asignadas
-          </label>
-        </div>
-      </div>
-
-      <div class="p-6 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-3">
-        <button (click)="cerrarClonarModal()" class="px-4 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-white text-sm font-semibold transition-colors">
-          Cancelar
-        </button>
-        <button (click)="ejecutarClonar()" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 rounded-lg text-white text-sm font-semibold transition-colors flex items-center gap-1.5 shadow-sm">
-          <span class="material-symbols-outlined text-[16px]">done</span>
-          Clonar Estructura
-        </button>
-      </div>
-    </div>
-  </div>
 </div>
