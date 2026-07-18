@@ -29,7 +29,13 @@ export class EscanearPlanillaComponent implements OnInit, OnDestroy {
   alumnosAsistencias: any[] = [];
 
   tipo_escaneo: 'TODAS' | 'INDIVIDUAL' = 'TODAS';
-  fecha_especifica: string | null = null;
+  fecha_especifica: string = (() => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  })();
 
   cameraActive = false;
   videoStream: MediaStream | null = null;
@@ -110,14 +116,14 @@ export class EscanearPlanillaComponent implements OnInit, OnDestroy {
           this.fechasSeleccionadas = new Set<string>(this.fechas);
           this.alumnosAsistencias = res.data.asistencias || [];
 
-          if (this.fechas.length === 0) {
-            this.alertService.successOrError('Atención', 'No se detectó ninguna columna de fecha en la planilla.', 'warning');
+          if (this.fechas.length === 0 || !this.fechas.includes(this.fecha_especifica)) {
+            this.alertService.successOrError('Atención', 'No hay asistencias registradas en esa fecha', 'warning');
           } else if (this.tipo_escaneo === 'INDIVIDUAL' && this.fecha_especifica) {
             const hasData = this.alumnosAsistencias.some(
-              a => a.asistencias && a.asistencias[this.fecha_especifica!] && a.asistencias[this.fecha_especifica!] !== 'VACIO'
+              a => a.asistencias && a.asistencias[this.fecha_especifica] && a.asistencias[this.fecha_especifica] !== 'VACIO'
             );
             if (!hasData) {
-              this.alertService.successOrError('Atención', 'No hay asistencias registradas para la fecha seleccionada en esta planilla.', 'warning');
+              this.alertService.successOrError('Atención', 'No hay asistencias registradas en esa fecha', 'warning');
             } else {
               this.alertService.successOrError('Éxito', 'Planilla escaneada correctamente. Por favor verifica los datos.', 'success');
             }
