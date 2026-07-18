@@ -28,6 +28,9 @@ export class EscanearPlanillaComponent implements OnInit, OnDestroy {
   fechasSeleccionadas: Set<string> = new Set<string>();
   alumnosAsistencias: any[] = [];
 
+  tipo_escaneo: 'TODAS' | 'INDIVIDUAL' = 'TODAS';
+  fecha_especifica: string | null = null;
+
   cameraActive = false;
   videoStream: MediaStream | null = null;
 
@@ -81,6 +84,11 @@ export class EscanearPlanillaComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (this.tipo_escaneo === 'INDIVIDUAL' && !this.fecha_especifica) {
+      this.alertService.successOrError('Atención', 'Por favor selecciona una fecha específica para escanear.', 'warning');
+      return;
+    }
+
     this.scanning = true;
     this.alertService.loader('Escaneando planilla...', 'Este proceso con IA puede tardar unos segundos, por favor aguarde.', null);
 
@@ -88,6 +96,10 @@ export class EscanearPlanillaComponent implements OnInit, OnDestroy {
     formData.append('periodo_id', this.periodo_id.toString());
     formData.append('grupo_id', this.grupo_id.toString());
     formData.append('file', this.selectedFile);
+    formData.append('tipo_escaneo', this.tipo_escaneo);
+    if (this.tipo_escaneo === 'INDIVIDUAL' && this.fecha_especifica) {
+      formData.append('fecha_especifica', this.fecha_especifica);
+    }
 
     this.asistenciaService.scanPlanilla(formData).subscribe({
       next: (res: any) => {
@@ -97,7 +109,21 @@ export class EscanearPlanillaComponent implements OnInit, OnDestroy {
           this.fechas = res.data.fechas_detectadas || [];
           this.fechasSeleccionadas = new Set<string>(this.fechas);
           this.alumnosAsistencias = res.data.asistencias || [];
-          this.alertService.successOrError('Éxito', 'Planilla escaneada correctamente. Por favor verifica los datos.', 'success');
+
+          if (this.fechas.length === 0) {
+            this.alertService.successOrError('Atención', 'No se detectó ninguna columna de fecha en la planilla.', 'warning');
+          } else if (this.tipo_escaneo === 'INDIVIDUAL' && this.fecha_especifica) {
+            const hasData = this.alumnosAsistencias.some(
+              a => a.asistencias && a.asistencias[this.fecha_especifica!] && a.asistencias[this.fecha_especifica!] !== 'VACIO'
+            );
+            if (!hasData) {
+              this.alertService.successOrError('Atención', 'No hay asistencias registradas para la fecha seleccionada en esta planilla.', 'warning');
+            } else {
+              this.alertService.successOrError('Éxito', 'Planilla escaneada correctamente. Por favor verifica los datos.', 'success');
+            }
+          } else {
+            this.alertService.successOrError('Éxito', 'Planilla escaneada correctamente. Por favor verifica los datos.', 'success');
+          }
         } else {
           this.alertService.successOrError('Error', res.error?.message || 'Error al escanear', 'error');
         }
