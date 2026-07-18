@@ -27,6 +27,7 @@ import { FormularioAsignacionComponent } from './pages/asignaciones/components/f
 import { ClonarAsignacionesComponent } from './pages/asignaciones/components/clonar-asignaciones/clonar-asignaciones.component';
 import { AsistenciasComponent } from './pages/asistencias/asistencias.component';
 import { FormularioAsistenciaComponent } from './pages/asistencias/components/formulario-asistencia/formulario-asistencia.component';
+import { GenerarPlanillaComponent } from './pages/asistencias/components/generar-planilla/generar-planilla.component';
 import { PersonaPerfilComponent } from './pages/personas/components/persona-perfil/persona-perfil.component';
 import { LibrosComponent } from './pages/libros/libros.component';
 import { FormularioLibroComponent } from './pages/libros/components/formulario-libro/formulario-libro.component';
@@ -166,6 +167,12 @@ const routes: Routes = [
       {
         path: 'asistencias',
         component: AsistenciasComponent,
+        canActivate: [permissionGuard],
+        data: { permissions: ['asistencias.read'] }
+      },
+      {
+        path: 'asistencias/generar-planilla',
+        component: GenerarPlanillaComponent,
         canActivate: [permissionGuard],
         data: { permissions: ['asistencias.read'] }
       },
