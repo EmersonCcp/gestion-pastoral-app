@@ -39,12 +39,17 @@
       </span>
     </div>
 
-    <!-- Generar Planilla Action -->
-    <div *ngIf="selectedIds.size === 0" class="ml-auto">
+    <!-- Generar / Escanear Planilla Actions -->
+    <div *ngIf="selectedIds.size === 0" class="ml-auto flex gap-2">
       <button routerLink="/admin/asistencias/generar-planilla"
         class="btn btn-sm bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100 hover:border-indigo-300 flex items-center gap-2 normal-case font-black">
         <span class="material-symbols-outlined text-[18px]">calendar_month</span>
         Generar Planilla
+      </button>
+      <button routerLink="/admin/asistencias/escanear"
+        class="btn btn-sm bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100 hover:border-indigo-300 flex items-center gap-2 normal-case font-black">
+        <span class="material-symbols-outlined text-[18px]">document_scanner</span>
+        Escanear Planilla
       </button>
     </div>
   </div>

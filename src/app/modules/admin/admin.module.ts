@@ -56,6 +56,7 @@ import { ClonarAsignacionesComponent } from './pages/asignaciones/components/clo
 import { AsistenciasComponent } from './pages/asistencias/asistencias.component';
 import { FormularioAsistenciaComponent } from './pages/asistencias/components/formulario-asistencia/formulario-asistencia.component';
 import { GenerarPlanillaComponent } from './pages/asistencias/components/generar-planilla/generar-planilla.component';
+import { EscanearPlanillaComponent } from './pages/asistencias/components/escanear-planilla/escanear-planilla.component';
 import { PersonaPerfilComponent } from './pages/personas/components/persona-perfil/persona-perfil.component';
 import { SkeletonFormAdminComponent } from './components/skeletons/skeleton-form-admin/skeleton-form-admin.component';
 import { LibrosComponent } from './pages/libros/libros.component';
@@ -126,6 +127,7 @@ import { UploadCsvDialogComponent } from './pages/personas/components/upload-csv
     AsistenciasComponent,
     FormularioAsistenciaComponent,
     GenerarPlanillaComponent,
+    EscanearPlanillaComponent,
     PersonaPerfilComponent,
     SkeletonFormAdminComponent,
     LibrosComponent,
