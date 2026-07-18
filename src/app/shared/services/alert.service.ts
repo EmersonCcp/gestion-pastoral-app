@@ -7,12 +7,12 @@ import Swal, { SweetAlertIcon } from 'sweetalert2';
 export class AlertService {
   constructor() { }
 
-  loader() {
+  loader(title: string = 'Aguarde!', text: string = 'Se está realizando el proceso.', timer: number | null = 10000) {
     Swal.fire({
-      title: 'Aguarde!',
-      html: 'Se está realizando el proceso.',
-      timer: 10000,
-      timerProgressBar: true,
+      title,
+      html: text,
+      timer: timer === null ? undefined : timer,
+      timerProgressBar: timer !== null && timer > 0,
       allowOutsideClick: false, // evita cerrar al hacer click fuera
       allowEscapeKey: false, // evita cerrar con ESC
       allowEnterKey: true,

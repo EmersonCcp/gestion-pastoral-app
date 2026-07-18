@@ -82,7 +82,7 @@ export class EscanearPlanillaComponent implements OnInit, OnDestroy {
     }
 
     this.scanning = true;
-    this.alertService.loader();
+    this.alertService.loader('Escaneando planilla...', 'Este proceso con IA puede tardar unos segundos, por favor aguarde.', null);
 
     const formData = new FormData();
     formData.append('periodo_id', this.periodo_id.toString());
