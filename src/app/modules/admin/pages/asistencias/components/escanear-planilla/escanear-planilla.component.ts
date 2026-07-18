@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AsistenciaService } from 'src/app/shared/services/asistencia.service';
 import { PeriodoService } from 'src/app/shared/services/periodo.service';
@@ -11,7 +11,7 @@ import { AuthService } from 'src/app/shared/services/auth.service';
   templateUrl: './escanear-planilla.component.html',
   styleUrls: ['./escanear-planilla.component.scss'],
 })
-export class EscanearPlanillaComponent implements OnInit {
+export class EscanearPlanillaComponent implements OnInit, OnDestroy {
   periodos: any[] = [];
   grupos: any[] = [];
 
@@ -27,6 +27,18 @@ export class EscanearPlanillaComponent implements OnInit {
   fechas: string[] = [];
   fechasSeleccionadas: Set<string> = new Set<string>();
   alumnosAsistencias: any[] = [];
+
+  tipo_escaneo: 'TODAS' | 'INDIVIDUAL' = 'TODAS';
+  fecha_especifica: string = (() => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  })();
+
+  cameraActive = false;
+  videoStream: MediaStream | null = null;
 
   constructor(
     private asistenciaService: AsistenciaService,
@@ -78,13 +90,22 @@ export class EscanearPlanillaComponent implements OnInit {
       return;
     }
 
+    if (this.tipo_escaneo === 'INDIVIDUAL' && !this.fecha_especifica) {
+      this.alertService.successOrError('Atención', 'Por favor selecciona una fecha específica para escanear.', 'warning');
+      return;
+    }
+
     this.scanning = true;
-    this.alertService.loader();
+    this.alertService.loader('Escaneando planilla...', 'Este proceso con IA puede tardar unos segundos, por favor aguarde.', null);
 
     const formData = new FormData();
     formData.append('periodo_id', this.periodo_id.toString());
     formData.append('grupo_id', this.grupo_id.toString());
     formData.append('file', this.selectedFile);
+    formData.append('tipo_escaneo', this.tipo_escaneo);
+    if (this.tipo_escaneo === 'INDIVIDUAL' && this.fecha_especifica) {
+      formData.append('fecha_especifica', this.fecha_especifica);
+    }
 
     this.asistenciaService.scanPlanilla(formData).subscribe({
       next: (res: any) => {
@@ -94,7 +115,21 @@ export class EscanearPlanillaComponent implements OnInit {
           this.fechas = res.data.fechas_detectadas || [];
           this.fechasSeleccionadas = new Set<string>(this.fechas);
           this.alumnosAsistencias = res.data.asistencias || [];
-          this.alertService.successOrError('Éxito', 'Planilla escaneada correctamente. Por favor verifica los datos.', 'success');
+
+          if (this.fechas.length === 0 || !this.fechas.includes(this.fecha_especifica)) {
+            this.alertService.successOrError('Atención', 'No hay asistencias registradas en esa fecha', 'warning');
+          } else if (this.tipo_escaneo === 'INDIVIDUAL' && this.fecha_especifica) {
+            const hasData = this.alumnosAsistencias.some(
+              a => a.asistencias && a.asistencias[this.fecha_especifica] && a.asistencias[this.fecha_especifica] !== 'VACIO'
+            );
+            if (!hasData) {
+              this.alertService.successOrError('Atención', 'No hay asistencias registradas en esa fecha', 'warning');
+            } else {
+              this.alertService.successOrError('Éxito', 'Planilla escaneada correctamente. Por favor verifica los datos.', 'success');
+            }
+          } else {
+            this.alertService.successOrError('Éxito', 'Planilla escaneada correctamente. Por favor verifica los datos.', 'success');
+          }
         } else {
           this.alertService.successOrError('Error', res.error?.message || 'Error al escanear', 'error');
         }
@@ -171,5 +206,66 @@ export class EscanearPlanillaComponent implements OnInit {
 
   volver() {
     this.router.navigate(['/admin/asistencias']);
+  }
+
+  ngOnDestroy(): void {
+    this.detenerCamara();
+  }
+
+  iniciarCamara() {
+    this.cameraActive = true;
+    this.selectedFile = null;
+    this.imagePreviewUrl = null;
+
+    navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: 'environment',
+        width: { ideal: 1920 },
+        height: { ideal: 1080 }
+      }
+    })
+    .then((stream) => {
+      this.videoStream = stream;
+      const videoElement = document.getElementById('cameraFeed') as HTMLVideoElement;
+      if (videoElement) {
+        videoElement.srcObject = stream;
+      }
+    })
+    .catch((err) => {
+      console.error('Error al acceder a la cámara:', err);
+      this.cameraActive = false;
+      this.alertService.successOrError('Error', 'No se pudo acceder a la cámara. Asegúrate de dar los permisos necesarios.', 'error');
+    });
+  }
+
+  capturarFoto() {
+    const videoElement = document.getElementById('cameraFeed') as HTMLVideoElement;
+    if (!videoElement || !this.videoStream) return;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = videoElement.videoWidth || 1280;
+    canvas.height = videoElement.videoHeight || 720;
+
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+      this.imagePreviewUrl = canvas.toDataURL('image/jpeg');
+
+      canvas.toBlob((blob) => {
+        if (blob) {
+          this.selectedFile = new File([blob], 'captura_planilla.jpg', { type: 'image/jpeg' });
+        }
+      }, 'image/jpeg', 0.9);
+    }
+
+    this.detenerCamara();
+  }
+
+  detenerCamara() {
+    if (this.videoStream) {
+      this.videoStream.getTracks().forEach((track) => track.stop());
+      this.videoStream = null;
+    }
+    this.cameraActive = false;
   }
 }
