@@ -40,4 +40,12 @@ export class AsistenciaService extends BaseService<Asistencia> {
       }
     });
   }
+
+  scanPlanilla(formData: FormData): Observable<any> {
+    return this.http.post<any>(`${this.endpoint}/escanear`, formData);
+  }
+
+  guardarLote(payload: any): Observable<any> {
+    return this.http.post<any>(`${this.endpoint}/guardar-lote`, payload);
+  }
 }
