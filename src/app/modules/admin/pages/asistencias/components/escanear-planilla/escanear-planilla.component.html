@@ -45,11 +45,37 @@
       
       <input type="file" id="fileInput" class="hidden" accept="image/*" (change)="onFileSelected($event)">
 
+      <!-- Dropzone de Selección de Archivos -->
       <div class="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-2xl p-6 cursor-pointer hover:border-indigo-500 transition-all bg-slate-50/50 hover:bg-indigo-50/10"
-           (click)="triggerFileInput()" *ngIf="!imagePreviewUrl">
+           (click)="triggerFileInput()" *ngIf="!imagePreviewUrl && !cameraActive">
         <span class="material-symbols-outlined text-5xl text-slate-400 mb-2">add_a_photo</span>
-        <p class="text-sm font-bold text-slate-600">Haz click para seleccionar o capturar foto</p>
+        <p class="text-sm font-bold text-slate-600">Haz click para seleccionar una foto</p>
         <p class="text-xs text-slate-400 mt-1">Soporta formatos JPG, PNG o WebP</p>
+        
+        <div class="w-full flex items-center justify-center gap-2 mt-4 border-t border-slate-100 pt-4">
+          <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">ó</span>
+        </div>
+
+        <button (click)="$event.stopPropagation(); iniciarCamara()" 
+                class="btn btn-sm bg-indigo-50 text-indigo-700 border border-indigo-100 hover:bg-indigo-100 mt-3 flex items-center gap-1.5 font-bold px-4 py-2 rounded-xl text-xs transition-all cursor-pointer">
+          <span class="material-symbols-outlined text-[18px]">photo_camera</span>
+          Usar Cámara en Vivo
+        </button>
+      </div>
+
+      <!-- Feed de la Cámara Activa -->
+      <div class="flex-1 flex flex-col items-center justify-center gap-4 bg-slate-900 rounded-2xl p-4 overflow-hidden relative min-h-[250px]" *ngIf="cameraActive">
+        <video id="cameraFeed" autoplay playsinline class="w-full max-h-[250px] object-contain rounded-xl border border-slate-700 bg-black"></video>
+        <div class="flex gap-2 justify-center w-full">
+          <button (click)="capturarFoto()" class="btn btn-sm bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-lg text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-md">
+            <span class="material-symbols-outlined text-[16px]">photo_camera</span>
+            Capturar Foto
+          </button>
+          <button (click)="detenerCamara()" class="btn btn-sm bg-slate-700 hover:bg-slate-600 text-white font-bold px-4 py-2 rounded-lg text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-md">
+            <span class="material-symbols-outlined text-[16px]">close</span>
+            Cancelar
+          </button>
+        </div>
       </div>
 
       <!-- Preview de Imagen -->
@@ -63,6 +89,9 @@
           <div class="flex flex-wrap gap-2 justify-center md:justify-start">
             <button (click)="triggerFileInput()" class="btn btn-sm bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-lg text-xs transition-all cursor-pointer">
               Cambiar Foto
+            </button>
+            <button (click)="iniciarCamara()" class="btn btn-sm bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-3 py-1.5 rounded-lg text-xs transition-all cursor-pointer">
+              Sacar Otra Foto
             </button>
             <button (click)="selectedFile = null; imagePreviewUrl = null" class="btn btn-sm bg-red-50 hover:bg-red-100 text-red-600 font-bold px-3 py-1.5 rounded-lg text-xs transition-all cursor-pointer">
               Quitar

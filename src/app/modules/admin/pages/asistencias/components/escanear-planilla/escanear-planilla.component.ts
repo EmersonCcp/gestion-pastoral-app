@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AsistenciaService } from 'src/app/shared/services/asistencia.service';
 import { PeriodoService } from 'src/app/shared/services/periodo.service';
@@ -11,7 +11,7 @@ import { AuthService } from 'src/app/shared/services/auth.service';
   templateUrl: './escanear-planilla.component.html',
   styleUrls: ['./escanear-planilla.component.scss'],
 })
-export class EscanearPlanillaComponent implements OnInit {
+export class EscanearPlanillaComponent implements OnInit, OnDestroy {
   periodos: any[] = [];
   grupos: any[] = [];
 
@@ -27,6 +27,9 @@ export class EscanearPlanillaComponent implements OnInit {
   fechas: string[] = [];
   fechasSeleccionadas: Set<string> = new Set<string>();
   alumnosAsistencias: any[] = [];
+
+  cameraActive = false;
+  videoStream: MediaStream | null = null;
 
   constructor(
     private asistenciaService: AsistenciaService,
@@ -171,5 +174,66 @@ export class EscanearPlanillaComponent implements OnInit {
 
   volver() {
     this.router.navigate(['/admin/asistencias']);
+  }
+
+  ngOnDestroy(): void {
+    this.detenerCamara();
+  }
+
+  iniciarCamara() {
+    this.cameraActive = true;
+    this.selectedFile = null;
+    this.imagePreviewUrl = null;
+
+    navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: 'environment',
+        width: { ideal: 1920 },
+        height: { ideal: 1080 }
+      }
+    })
+    .then((stream) => {
+      this.videoStream = stream;
+      const videoElement = document.getElementById('cameraFeed') as HTMLVideoElement;
+      if (videoElement) {
+        videoElement.srcObject = stream;
+      }
+    })
+    .catch((err) => {
+      console.error('Error al acceder a la cámara:', err);
+      this.cameraActive = false;
+      this.alertService.successOrError('Error', 'No se pudo acceder a la cámara. Asegúrate de dar los permisos necesarios.', 'error');
+    });
+  }
+
+  capturarFoto() {
+    const videoElement = document.getElementById('cameraFeed') as HTMLVideoElement;
+    if (!videoElement || !this.videoStream) return;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = videoElement.videoWidth || 1280;
+    canvas.height = videoElement.videoHeight || 720;
+
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+      this.imagePreviewUrl = canvas.toDataURL('image/jpeg');
+
+      canvas.toBlob((blob) => {
+        if (blob) {
+          this.selectedFile = new File([blob], 'captura_planilla.jpg', { type: 'image/jpeg' });
+        }
+      }, 'image/jpeg', 0.9);
+    }
+
+    this.detenerCamara();
+  }
+
+  detenerCamara() {
+    if (this.videoStream) {
+      this.videoStream.getTracks().forEach((track) => track.stop());
+      this.videoStream = null;
+    }
+    this.cameraActive = false;
   }
 }
