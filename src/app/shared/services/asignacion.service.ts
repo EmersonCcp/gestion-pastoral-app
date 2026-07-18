@@ -11,7 +11,14 @@ export class AsignacionService extends BaseService<Asignacion> {
   protected override endpoint = `${environment.apiUrl}/asignaciones`;
   constructor(http: HttpClient) { super(http); }
 
-  clonar(dto: { periodo_origen_id: number; periodo_destino_id: number; copiar_personas?: boolean; movimiento_id: number }) {
+  clonar(dto: {
+    periodo_origen_id: number;
+    periodo_destino_id: number;
+    copiar_personas?: boolean;
+    movimiento_id: number;
+    grupo_id?: number | null;
+    persona_ids?: number[];
+  }) {
     return this.http.post<any>(`${this.endpoint}/clonar`, dto);
   }
 }

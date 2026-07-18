@@ -81,7 +81,8 @@
         <label class="text-sm font-semibold text-slate-700">Nueva Contraseña</label>
         <input 
           type="password" 
-          [(ngModel)]="newPassword" 
+          [value]="newPassword"
+          (input)="newPassword = $any($event.target).value" 
           placeholder="Mínimo 6 caracteres"
           class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all text-sm"
         >

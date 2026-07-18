@@ -1,0 +1,251 @@
+<div class="p-8">
+  <!-- Header -->
+  <div
+    class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6"
+  >
+    <div class="flex items-center gap-3">
+      <button
+        (click)="volver()"
+        class="text-slate-400 hover:text-slate-600 rounded-lg p-2 hover:bg-slate-50 transition-all flex items-center shadow-sm border border-slate-200 bg-white"
+      >
+        <span class="material-symbols-outlined">arrow_back</span>
+      </button>
+      <div>
+        <h1 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary-600"
+            >content_copy</span
+          >
+          Clonar Asignación por Grupo
+        </h1>
+        <p class="text-sm text-slate-500 mt-1">
+          Copia la estructura de un grupo de un período a otro y selecciona qué
+          participantes migrar.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Configuración del Período -->
+    <div class="md:col-span-1 flex flex-col gap-6">
+      <div
+        class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 flex flex-col gap-5"
+      >
+        <h3
+          class="font-bold text-slate-800 text-sm uppercase tracking-wider flex items-center gap-1.5"
+        >
+          <span class="material-symbols-outlined text-slate-400 text-lg"
+            >settings</span
+          >
+          Configuración
+        </h3>
+
+        <!-- Período Origen -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-bold text-slate-600 uppercase"
+            >Período Origen</label
+          >
+          <select
+            class="select w-full border border-slate-200 rounded-lg text-sm p-2.5 bg-white focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+            [(ngModel)]="periodoOrigenId"
+            (change)="onPeriodoOrigenChange()"
+          >
+            <option [ngValue]="null" disabled>Seleccionar origen...</option>
+            <option *ngFor="let p of periodos" [ngValue]="p.id">
+              {{ p.nombre }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Período Destino -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-bold text-slate-600 uppercase"
+            >Período Destino</label
+          >
+          <select
+            class="select w-full border border-slate-200 rounded-lg text-sm p-2.5 bg-white focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+            [(ngModel)]="periodoDestinoId"
+          >
+            <option [ngValue]="null" disabled>Seleccionar destino...</option>
+            <option *ngFor="let p of periodos" [ngValue]="p.id">
+              {{ p.nombre }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Grupo a clonar -->
+        <div class="flex flex-col gap-1.5" *ngIf="periodoOrigenId">
+          <label class="text-xs font-bold text-slate-600 uppercase"
+            >Grupo</label
+          >
+          <div
+            *ngIf="loadingAsignaciones"
+            class="text-sm text-slate-400 flex items-center gap-1.5 py-1"
+          >
+            <span class="animate-spin text-xs">⏳</span> Cargando grupos...
+          </div>
+          <select
+            *ngIf="!loadingAsignaciones"
+            class="select w-full border border-slate-200 rounded-lg text-sm p-2.5 bg-white focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+            [(ngModel)]="grupoId"
+            (change)="onGrupoChange()"
+          >
+            <option [ngValue]="null">Seleccionar grupo...</option>
+            <option *ngFor="let g of gruposOrigen" [ngValue]="g.id">
+              {{ g.nombre }}
+            </option>
+          </select>
+          <p
+            class="text-xs text-amber-600 font-medium mt-1"
+            *ngIf="
+              !loadingAsignaciones &&
+              gruposOrigen.length === 0 &&
+              periodoOrigenId
+            "
+          >
+            No hay grupos asignados en el período origen.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Participantes del Grupo -->
+    <div class="md:col-span-2 flex flex-col gap-6">
+      <!-- Estado vacío antes de seleccionar grupo -->
+      <div
+        *ngIf="!grupoId"
+        class="bg-white rounded-2xl border border-slate-100 shadow-sm p-8 text-center flex flex-col items-center justify-center min-h-[300px]"
+      >
+        <div
+          class="bg-slate-50 text-slate-400 p-4 rounded-full mb-3 flex items-center justify-center"
+        >
+          <span class="material-symbols-outlined text-[40px]">group_add</span>
+        </div>
+        <h3 class="font-bold text-slate-700 text-lg">Seleccioná un grupo</h3>
+        <p class="text-slate-400 text-sm max-w-sm mt-1">
+          Elegí el período de origen y luego el grupo del que querés seleccionar
+          participantes para el nuevo período.
+        </p>
+      </div>
+
+      <!-- Tabla de Participantes -->
+      <div
+        *ngIf="grupoId"
+        class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col"
+      >
+        <div
+          class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50"
+        >
+          <div>
+            <h3 class="font-bold text-slate-800 text-base">
+              Participantes del Grupo
+            </h3>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Marcá los participantes que querés transferir al período destino.
+            </p>
+          </div>
+          <div
+            class="text-sm font-semibold text-slate-600 bg-white border border-slate-200 px-3 py-1 rounded-full shadow-sm"
+          >
+            {{ selectedPersonaIds.size }} de
+            {{ participantes.length }} seleccionados
+          </div>
+        </div>
+
+        <div class="overflow-x-auto max-h-[400px]">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr
+                class="border-b border-slate-100 text-xs font-bold text-slate-500 uppercase bg-slate-50"
+              >
+                <th class="px-6 py-4 w-12 text-center">
+                  <input
+                    type="checkbox"
+                    class="rounded border-slate-300 text-primary-600 focus:ring-primary-500 h-4 w-4 cursor-pointer"
+                    [checked]="isAllSelected()"
+                    (change)="toggleAll()"
+                  />
+                </th>
+                <th class="px-6 py-4">Participante</th>
+                <th class="px-6 py-4">Documento / Teléfono</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngIf="participantes.length === 0" class="text-center">
+                <td
+                  colspan="3"
+                  class="px-6 py-12 text-slate-400 text-sm font-medium"
+                >
+                  Este grupo no tiene participantes asignados en el período
+                  origen.
+                </td>
+              </tr>
+              <tr
+                *ngFor="let p of participantes"
+                class="border-b border-slate-100 hover:bg-slate-50/50 transition-colors"
+              >
+                <td class="px-6 py-4 text-center">
+                  <input
+                    type="checkbox"
+                    class="rounded border-slate-300 text-primary-600 focus:ring-primary-500 h-4 w-4 cursor-pointer"
+                    [checked]="isPersonaSelected(p.id)"
+                    (change)="togglePersonaSelection(p.id)"
+                  />
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3">
+                    <div
+                      class="w-8 h-8 rounded-full bg-primary-50 text-primary-700 font-bold text-xs flex items-center justify-center uppercase shadow-sm"
+                    >
+                      {{ p.nombre.charAt(0) }}{{ p.apellido.charAt(0) }}
+                    </div>
+                    <div>
+                      <div class="font-bold text-slate-800 text-sm">
+                        {{ p.nombre }} {{ p.apellido }}
+                      </div>
+                      <div class="text-xs text-slate-400">
+                        {{ p.email || "Sin correo registrado" }}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="text-sm text-slate-600 font-medium">
+                    {{ p.documento || "-" }}
+                  </div>
+                  <div class="text-xs text-slate-400">
+                    {{ p.telefono || "-" }}
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div
+          class="p-6 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-3"
+        >
+          <button
+            (click)="volver()"
+            class="px-4 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-white text-sm font-semibold transition-all"
+          >
+            Cancelar
+          </button>
+          <button
+            (click)="ejecutarClonar()"
+            [disabled]="submitting"
+            class="px-4 py-2 bg-primary-600 hover:bg-primary-700 disabled:bg-primary-400 rounded-lg text-white text-sm font-semibold transition-all flex items-center gap-1.5 shadow-sm"
+          >
+            <span
+              class="material-symbols-outlined text-[18px]"
+              *ngIf="!submitting"
+              >done</span
+            >
+            <span class="animate-spin text-xs" *ngIf="submitting">⏳</span>
+            {{ submitting ? "Clonando..." : "Clonar Asignación" }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
