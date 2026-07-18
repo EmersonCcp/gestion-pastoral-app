@@ -266,6 +266,16 @@ export class AsistenciasComponent implements OnInit {
       });
     });
 
+    // Rellenar con 'A' (Ausente) para aquellas fechas donde la persona no posea registro individual
+    personMap.forEach(person => {
+      dates.forEach(date => {
+        if (person.attendance[date] === undefined) {
+          person.attendance[date] = 'A';
+          person.totals.ausente++;
+        }
+      });
+    });
+
     const rows = Array.from(personMap.values()).sort((a, b) => a.name.localeCompare(b.name));
     return { dates, rows };
   }
