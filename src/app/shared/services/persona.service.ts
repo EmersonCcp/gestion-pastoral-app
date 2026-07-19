@@ -24,4 +24,21 @@ export class PersonaService extends BaseService<Persona> {
     formData.append('file', file);
     return this.http.post(`${this.endpoint}/upload-csv`, formData);
   }
+
+  scanLista(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+    const movementId = this.authService.getSelectedMovimientoId();
+    if (movementId) {
+      formData.append('movimiento_id', movementId.toString());
+    }
+    return this.http.post<any>(`${this.endpoint}/escanear-lista`, formData);
+  }
+
+  crearPersonasLote(movimiento_id: number, personas: { nombre: string; apellido: string }[]) {
+    return this.http.post<any>(`${this.endpoint}/crear-lote`, {
+      movimiento_id,
+      personas,
+    });
+  }
 }

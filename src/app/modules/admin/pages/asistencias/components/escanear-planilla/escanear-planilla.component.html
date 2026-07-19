@@ -128,6 +128,21 @@
       </div>
     </div>
 
+    <!-- Banner de Alumnos Agregados a Mano -->
+    <div *ngIf="obtenerNombresNoRegistrados().length > 0" class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="flex items-start gap-3">
+        <span class="material-symbols-outlined text-amber-600 mt-0.5">warning</span>
+        <div>
+          <h4 class="font-bold text-amber-900 text-sm">Alumnos Agregados a Mano</h4>
+          <p class="text-xs text-amber-700">Se detectaron {{ obtenerNombresNoRegistrados().length }} alumnos que no están registrados en la base de datos de este grupo.</p>
+        </div>
+      </div>
+      <button (click)="registrarAlumnosNoEncontrados()" [disabled]="saving" class="btn btn-sm bg-amber-600 hover:bg-amber-700 border-none text-white font-bold px-4 py-2 rounded-lg text-xs cursor-pointer shadow-md w-full sm:w-auto flex items-center justify-center gap-1.5 transition-all">
+        <span class="material-symbols-outlined text-[16px]">person_add</span>
+        Registrar Todos en DB y Grupo
+      </button>
+    </div>
+
     <!-- Tabla -->
     <div class="overflow-x-auto rounded-xl border border-slate-200">
       <table class="table-auto w-full text-left border-collapse bg-white">
@@ -189,7 +204,7 @@
         class="btn w-full sm:w-auto bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-6 py-2.5 rounded-xl transition-all cursor-pointer">
         Limpiar
       </button>
-      <button (click)="guardar()" [disabled]="saving"
+      <button (click)="guardar()" [disabled]="saving || obtenerNombresNoRegistrados().length > 0"
         class="btn w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-200 disabled:text-slate-400 text-white font-black px-6 py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-lg hover:shadow-emerald-500/20 transition-all cursor-pointer">
         <span class="material-symbols-outlined text-[20px]">save</span>
         Guardar Asistencias en Lote

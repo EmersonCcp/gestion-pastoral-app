@@ -258,8 +258,24 @@ export class FormularioAsignacionComponent implements OnInit, OnDestroy {
     });
   }
 
+  onPersonasEscaneadas(personas: Persona[]) {
+    for (const p of personas) {
+      if (!this.selectedPersonas.find((sp) => sp.id === p.id)) {
+        this.selectedPersonas = [...this.selectedPersonas, p];
+      }
+    }
+    this.selectedAgrupados = this.agruparPorTipo(this.selectedPersonas);
+  }
+
   goBack() {
     this.router.navigate(['/admin/asignaciones']);
+  }
+
+  obtenerMovimientoId(): number | null {
+    const grupoId = this.form.value.grupo_id;
+    if (!grupoId) return null;
+    const grupo = this.grupos.find((g) => g.id === grupoId);
+    return grupo ? grupo.movimiento_id : null;
   }
 
   get grupoControl() {

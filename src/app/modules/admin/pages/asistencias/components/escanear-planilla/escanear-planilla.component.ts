@@ -268,4 +268,64 @@ export class EscanearPlanillaComponent implements OnInit, OnDestroy {
     }
     this.cameraActive = false;
   }
+
+  obtenerNombresNoRegistrados(): string[] {
+    return this.alumnosAsistencias
+      .filter((a) => a.persona_id === null && a.nombre_detectado)
+      .map((a) => a.nombre_detectado!);
+  }
+
+  registrarAlumnosNoEncontrados() {
+    const nombres = this.obtenerNombresNoRegistrados();
+    if (nombres.length === 0 || !this.periodo_id || !this.grupo_id) return;
+
+    this.alertService.confirmAction(
+      () => {
+        this.saving = true;
+        this.alertService.loader('Registrando alumnos...', 'Creando personas en la base de datos e integrándolas al grupo, por favor aguarde.', null);
+
+        this.asistenciaService.crearPersonasPlanilla(this.periodo_id!, this.grupo_id!, nombres).subscribe({
+          next: (res: any) => {
+            this.saving = false;
+            this.alertService.close();
+
+            if (res.ok && res.data) {
+              const creados = res.data; // array de { id, nombre, apellido, nombre_detectado }
+              
+              // Mapear y actualizar alumnosAsistencias en el frontend
+              this.alumnosAsistencias = this.alumnosAsistencias.map((alumno) => {
+                if (alumno.persona_id === null && alumno.nombre_detectado) {
+                  const match = creados.find((c: any) => c.nombre_detectado === alumno.nombre_detectado);
+                  if (match) {
+                    return {
+                      ...alumno,
+                      persona_id: match.id,
+                      nombre: match.nombre,
+                      apellido: match.apellido
+                    };
+                  }
+                }
+                return alumno;
+              });
+
+              this.alertService.successOrError(
+                'Registro Completo',
+                `Se crearon y asociaron correctamente ${creados.length} alumnos en la base de datos.`,
+                'success'
+              );
+            } else {
+              this.alertService.successOrError('Error', res.error?.message || 'No se pudieron registrar las personas', 'error');
+            }
+          },
+          error: (err: any) => {
+            this.saving = false;
+            this.alertService.close();
+            this.alertService.successOrError('Error', err?.error?.error?.message || 'Error al conectar con el servidor', 'error');
+          }
+        });
+      },
+      '¿Registrar nuevos alumnos?',
+      `Se crearán ${nombres.length} personas en el sistema y se agregarán a este grupo.`
+    );
+  }
 }
