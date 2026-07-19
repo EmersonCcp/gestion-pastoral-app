@@ -53,6 +53,7 @@ import { FormularioAulaComponent } from './pages/aulas/components/formulario-aul
 import { AsignacionesComponent } from './pages/asignaciones/asignaciones.component';
 import { FormularioAsignacionComponent } from './pages/asignaciones/components/formulario-asignacion/formulario-asignacion.component';
 import { ClonarAsignacionesComponent } from './pages/asignaciones/components/clonar-asignaciones/clonar-asignaciones.component';
+import { EscanearListaComponent } from './pages/asignaciones/components/escanear-lista/escanear-lista.component';
 import { AsistenciasComponent } from './pages/asistencias/asistencias.component';
 import { FormularioAsistenciaComponent } from './pages/asistencias/components/formulario-asistencia/formulario-asistencia.component';
 import { GenerarPlanillaComponent } from './pages/asistencias/components/generar-planilla/generar-planilla.component';
@@ -124,6 +125,7 @@ import { UploadCsvDialogComponent } from './pages/personas/components/upload-csv
     AsignacionesComponent,
     FormularioAsignacionComponent,
     ClonarAsignacionesComponent,
+    EscanearListaComponent,
     AsistenciasComponent,
     FormularioAsistenciaComponent,
     GenerarPlanillaComponent,

@@ -48,4 +48,12 @@ export class AsistenciaService extends BaseService<Asistencia> {
   guardarLote(payload: any): Observable<any> {
     return this.http.post<any>(`${this.endpoint}/guardar-lote`, payload);
   }
+
+  crearPersonasPlanilla(periodo_id: number, grupo_id: number, nombres: string[]): Observable<any> {
+    return this.http.post<any>(`${this.endpoint}/crear-personas-planilla`, {
+      periodo_id,
+      grupo_id,
+      nombres,
+    });
+  }
 }
