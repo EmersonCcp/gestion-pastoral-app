@@ -145,4 +145,27 @@ export class AsignacionesComponent implements OnInit {
   irAClonar() {
     this.router.navigate(['/admin/asignaciones/clonar']);
   }
+
+  generarPlanilla(a: Asignacion) {
+    const periodo = a.periodo;
+    const fechaInicio = periodo?.fecha_inicio
+      ? typeof periodo.fecha_inicio === 'string'
+        ? periodo.fecha_inicio.split('T')[0]
+        : (periodo.fecha_inicio as Date).toISOString().split('T')[0]
+      : '';
+    const fechaFin = periodo?.fecha_fin
+      ? typeof periodo.fecha_fin === 'string'
+        ? periodo.fecha_fin.split('T')[0]
+        : (periodo.fecha_fin as Date).toISOString().split('T')[0]
+      : '';
+
+    this.router.navigate(['/admin/asistencias/generar-planilla'], {
+      queryParams: {
+        grupo_id: a.grupo_id,
+        periodo_id: a.periodo_id,
+        fecha_inicio: fechaInicio,
+        fecha_fin: fechaFin,
+      },
+    });
+  }
 }
