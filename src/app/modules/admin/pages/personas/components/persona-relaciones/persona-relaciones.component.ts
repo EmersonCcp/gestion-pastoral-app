@@ -52,7 +52,7 @@ export class PersonaRelacionesComponent implements OnInit {
   }
 
   goToProfile(id: number) {
-    this.router.navigate(['/admin/personas/perfil', id]);
+    this.router.navigate(['/admin/personas', id, 'perfil']);
   }
 
   getInverseParentesco(parentesco: string): string {
@@ -69,5 +69,10 @@ export class PersonaRelacionesComponent implements OnInit {
       'TUTOR': 'PROTEGIDO/A'
     };
     return map[parentesco] || 'PARIENTE';
+  }
+
+  copiarTelefono(telefono: string) {
+    navigator.clipboard.writeText(telefono);
+    this.alertService.successOrError('Teléfono copiado');
   }
 }

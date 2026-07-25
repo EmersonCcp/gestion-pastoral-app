@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Grupo } from 'src/app/shared/interfaces/entities/grupo.entity';
 import { Periodo } from 'src/app/shared/interfaces/entities/periodo.entity';
 import { AlertService } from 'src/app/shared/services/alert.service';
@@ -88,13 +88,25 @@ export class GenerarPlanillaComponent implements OnInit {
     private grupoService: GrupoService,
     private authService: AuthService,
     private alertService: AlertService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
   ) { }
 
   ngOnInit(): void {
     this.planillaDto.fecha_inicio = dayjs().startOf('year').format('YYYY-MM-DD');
     this.planillaDto.fecha_fin = dayjs().endOf('year').format('YYYY-MM-DD');
     this.loadCatalogs();
+
+    this.route.queryParams.subscribe((params: any) => {
+      if (params.grupo_id) this.planillaDto.grupo_id = Number(params.grupo_id);
+      if (params.periodo_id) this.planillaDto.periodo_id = Number(params.periodo_id);
+      if (params.fecha_inicio) this.planillaDto.fecha_inicio = params.fecha_inicio;
+      if (params.fecha_fin) this.planillaDto.fecha_fin = params.fecha_fin;
+
+      if (params.grupo_id && params.periodo_id) {
+        setTimeout(() => this.generarPlanilla(), 500);
+      }
+    });
   }
 
   loadCatalogs() {
