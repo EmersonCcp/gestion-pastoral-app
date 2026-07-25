@@ -60,6 +60,28 @@ export class GenerarPlanillaComponent implements OnInit {
     alumno.apellido = parts.slice(1).join(' ') || '';
   }
 
+  onFechaCambiada(indice: number, nuevaFecha: string) {
+    const fechas = this.planillaData.fechas;
+    const viejaFecha = fechas[indice];
+    if (viejaFecha === nuevaFecha || !nuevaFecha) return;
+
+    fechas[indice] = nuevaFecha;
+
+    if (this.planillaData.alumnos) {
+      for (const a of this.planillaData.alumnos) {
+        if (a.asistencias && viejaFecha in a.asistencias) {
+          a.asistencias[nuevaFecha] = a.asistencias[viejaFecha];
+          delete a.asistencias[viejaFecha];
+        }
+      }
+    }
+
+    if (this.selectedFechas.has(viejaFecha)) {
+      this.selectedFechas.delete(viejaFecha);
+      this.selectedFechas.add(nuevaFecha);
+    }
+  }
+
   constructor(
     private service: AsistenciaService,
     private periodoService: PeriodoService,
