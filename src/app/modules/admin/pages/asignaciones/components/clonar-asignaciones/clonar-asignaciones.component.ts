@@ -29,6 +29,11 @@ export class ClonarAsignacionesComponent implements OnInit {
   personaSeleccionadaId: number | null = null;
   personasBusqueda: Persona[] = [];
 
+  // Pestañas y selección masiva
+  tabActivo: 'individual' | 'masivo' = 'individual';
+  selectedGrupoIds = new Set<number>();
+  copiarPersonasMasivo = true;
+
   loadingPeriodos = false;
   loadingAsignaciones = false;
   submitting = false;
@@ -227,6 +232,93 @@ export class ClonarAsignacionesComponent implements OnInit {
       this.personaSeleccionadaId = null;
       this.personasBusqueda = [];
     }
+  }
+
+  setTab(tab: 'individual' | 'masivo') {
+    this.tabActivo = tab;
+    this.selectedGrupoIds.clear();
+    this.grupoId = null;
+    this.participantes = [];
+    this.selectedPersonaIds.clear();
+  }
+
+  toggleGrupoSelection(id: number) {
+    if (this.selectedGrupoIds.has(id)) {
+      this.selectedGrupoIds.delete(id);
+    } else {
+      this.selectedGrupoIds.add(id);
+    }
+  }
+
+  isGrupoSelected(id: number): boolean {
+    return this.selectedGrupoIds.has(id);
+  }
+
+  toggleAllGrupos() {
+    if (this.isAllGruposSelected()) {
+      this.selectedGrupoIds.clear();
+    } else {
+      this.gruposOrigen.forEach(g => this.selectedGrupoIds.add(g.id));
+    }
+  }
+
+  isAllGruposSelected(): boolean {
+    return this.gruposOrigen.length > 0 && this.selectedGrupoIds.size === this.gruposOrigen.length;
+  }
+
+  ejecutarClonarMasivo() {
+    if (!this.periodoOrigenId) {
+      this.alertService.successOrError('Debes seleccionar un período de origen');
+      return;
+    }
+    if (!this.periodoDestinoId) {
+      this.alertService.successOrError('Debes seleccionar un período de destino');
+      return;
+    }
+    if (this.periodoOrigenId === this.periodoDestinoId) {
+      this.alertService.successOrError('El período de origen y destino no pueden ser el mismo');
+      return;
+    }
+    if (this.selectedGrupoIds.size === 0) {
+      this.alertService.successOrError('Debes seleccionar al menos un grupo para clonar');
+      return;
+    }
+
+    const movId = this.authService.getSelectedMovimientoId();
+    if (!movId) {
+      this.alertService.successOrError('No se pudo identificar el movimiento activo');
+      return;
+    }
+
+    const payload = {
+      periodo_origen_id: Number(this.periodoOrigenId),
+      periodo_destino_id: Number(this.periodoDestinoId),
+      movimiento_id: movId,
+      grupo_ids: Array.from(this.selectedGrupoIds),
+      copiar_personas: this.copiarPersonasMasivo
+    };
+
+    this.submitting = true;
+    this.asignacionService.clonar(payload).subscribe({
+      next: (res: any) => {
+        this.submitting = false;
+        if (res.ok) {
+          this.alertService.successOrError(res.message || 'Grupos clonados exitosamente.');
+          this.router.navigate(['/admin/asignaciones']);
+        } else {
+          this.alertService.successOrError(res.message || 'Error al clonar asignaciones');
+        }
+      },
+      error: (err) => {
+        this.submitting = false;
+        this.alertService.successOrError(err.error?.message || 'Error al clonar asignaciones');
+      }
+    });
+  }
+
+  getCantidadIntegrantesGrupo(grupoId: number): number {
+    const asignacion = this.asignacionesOrigen.find(a => a.grupo_id === grupoId);
+    return asignacion?.personas?.length || 0;
   }
 
   volver() {
