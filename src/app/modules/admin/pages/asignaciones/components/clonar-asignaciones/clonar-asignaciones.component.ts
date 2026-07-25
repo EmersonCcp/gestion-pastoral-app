@@ -8,6 +8,7 @@ import { AlertService } from 'src/app/shared/services/alert.service';
 import { AsignacionService } from 'src/app/shared/services/asignacion.service';
 import { PeriodoService } from 'src/app/shared/services/periodo.service';
 import { AuthService } from 'src/app/shared/services/auth.service';
+import { PersonaService } from 'src/app/shared/services/persona.service';
 
 @Component({
   selector: 'app-clonar-asignaciones',
@@ -25,6 +26,9 @@ export class ClonarAsignacionesComponent implements OnInit {
   grupoId: number | null = null;
   selectedPersonaIds = new Set<number>();
 
+  personaSeleccionadaId: number | null = null;
+  personasBusqueda: Persona[] = [];
+
   loadingPeriodos = false;
   loadingAsignaciones = false;
   submitting = false;
@@ -32,6 +36,7 @@ export class ClonarAsignacionesComponent implements OnInit {
   constructor(
     private asignacionService: AsignacionService,
     private periodoService: PeriodoService,
+    private personaService: PersonaService,
     private authService: AuthService,
     private alertService: AlertService,
     private router: Router
@@ -182,6 +187,46 @@ export class ClonarAsignacionesComponent implements OnInit {
         this.alertService.successOrError(err.error?.message || 'Error al clonar asignación');
       }
     });
+  }
+
+  buscarPersonas(termino: string) {
+    if (termino.length < 3) {
+      this.personasBusqueda = [];
+      return;
+    }
+
+    this.personaService.getAll({ page: 1, per_page: 20, nombre: termino }).subscribe((res: any) => {
+      if (res.ok) {
+        this.personasBusqueda = res.data.map((p: any) => ({
+          ...p,
+          nombre_completo: `${p.nombre} ${p.apellido}`
+        }));
+      }
+    });
+  }
+
+  onPersonaSeleccionadaChange(id: any) {
+    if (!id) return;
+
+    // Buscar si ya está en la lista de participantes para evitar duplicados
+    const yaExiste = this.participantes.some(p => p.id === id);
+    if (yaExiste) {
+      this.alertService.successOrError('Esta persona ya está en la lista de participantes.', '', 'warning');
+      this.personaSeleccionadaId = null;
+      return;
+    }
+
+    // Buscar en el array de personas encontradas por la búsqueda
+    const persona = this.personasBusqueda.find(p => p.id === id);
+    if (persona) {
+      // Agregar a participantes y seleccionarla por defecto
+      this.participantes.push(persona);
+      this.selectedPersonaIds.add(persona.id);
+      
+      // Limpiar selección del buscador para poder buscar de nuevo
+      this.personaSeleccionadaId = null;
+      this.personasBusqueda = [];
+    }
   }
 
   volver() {

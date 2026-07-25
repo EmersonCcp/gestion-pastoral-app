@@ -134,21 +134,37 @@
         class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col"
       >
         <div
-          class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50"
+          class="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between bg-slate-50/50 gap-4"
         >
-          <div>
+          <div class="flex-1">
             <h3 class="font-bold text-slate-800 text-base">
               Participantes del Grupo
             </h3>
             <p class="text-xs text-slate-500 mt-0.5">
-              Marcá los participantes que querés transferir al período destino.
+              Marcá los participantes que querés transferir al período destino o buscá nuevos para agregar.
             </p>
           </div>
-          <div
-            class="text-sm font-semibold text-slate-600 bg-white border border-slate-200 px-3 py-1 rounded-full shadow-sm"
-          >
-            {{ selectedPersonaIds.size }} de
-            {{ participantes.length }} seleccionados
+          
+          <div class="flex items-center gap-4 flex-wrap sm:flex-nowrap w-full md:w-auto">
+            <!-- Buscador para agregar personas -->
+            <div class="w-full sm:w-64 min-w-[200px]">
+              <app-search-select-admin 
+                [(ngModel)]="personaSeleccionadaId"
+                [items]="personasBusqueda"
+                labelKey="nombre_completo"
+                placeholder="Buscar y agregar persona..."
+                [showAdd]="false"
+                (search)="buscarPersonas($event)"
+                (ngModelChange)="onPersonaSeleccionadaChange($event)"
+              ></app-search-select-admin>
+            </div>
+            
+            <div
+              class="text-sm font-semibold text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-full shadow-sm whitespace-nowrap"
+            >
+              {{ selectedPersonaIds.size }} de
+              {{ participantes.length }} seleccionados
+            </div>
           </div>
         </div>
 
