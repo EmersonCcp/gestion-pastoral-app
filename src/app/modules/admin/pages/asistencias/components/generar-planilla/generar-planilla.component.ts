@@ -32,16 +32,18 @@ export class GenerarPlanillaComponent implements OnInit {
 
   // Checkbox selection for preview
   selectedParticipantIds = new Set<number>();
+  selectedFechas = new Set<string>();
+  todasFechasSeleccionadas = true;
 
   // Additional empty rows for manual input
   cantFilasVacias = 0;
-  filasVaciasData: { nombre: string; apellido: string }[] = [];
+  filasVaciasData: { nombre_completo: string }[] = [];
   modoEdicion = true;
 
   actualizarFilasVacias() {
     const cant = Math.max(0, Number(this.cantFilasVacias) || 0);
     while (this.filasVaciasData.length < cant) {
-      this.filasVaciasData.push({ nombre: '', apellido: '' });
+      this.filasVaciasData.push({ nombre_completo: '' });
     }
     if (this.filasVaciasData.length > cant) {
       this.filasVaciasData = this.filasVaciasData.slice(0, cant);
@@ -50,6 +52,12 @@ export class GenerarPlanillaComponent implements OnInit {
 
   toggleModoEdicion() {
     this.modoEdicion = !this.modoEdicion;
+  }
+
+  onNombreCompletoChange(alumno: any, value: string) {
+    const parts = value.trim().split(/\s+/);
+    alumno.nombre = parts[0] || '';
+    alumno.apellido = parts.slice(1).join(' ') || '';
   }
 
   constructor(
@@ -107,13 +115,18 @@ export class GenerarPlanillaComponent implements OnInit {
         if (res.ok) {
           this.planillaData = res.data;
           this.actualizarFilasVacias();
-          // By default, select all participants
+          // By default, select all participants and all dates
           this.selectedParticipantIds.clear();
           if (this.planillaData.alumnos) {
             this.planillaData.alumnos.forEach((a: any) => {
               this.selectedParticipantIds.add(a.id);
             });
           }
+          this.selectedFechas.clear();
+          if (this.planillaData.fechas) {
+            this.planillaData.fechas.forEach((f: string) => this.selectedFechas.add(f));
+          }
+          this.todasFechasSeleccionadas = true;
         } else {
           this.alertService.successOrError(res.message || 'Error al generar la planilla', '', 'error');
         }
@@ -123,6 +136,33 @@ export class GenerarPlanillaComponent implements OnInit {
         this.alertService.successOrError('Error de conexión con el servidor', '', 'error');
       }
     });
+  }
+
+  // Date selection helpers
+  toggleFecha(fecha: string) {
+    if (this.selectedFechas.has(fecha)) {
+      this.selectedFechas.delete(fecha);
+    } else {
+      this.selectedFechas.add(fecha);
+    }
+    this.todasFechasSeleccionadas = this.selectedFechas.size === this.planillaData.fechas.length;
+  }
+
+  isFechaSelected(fecha: string): boolean {
+    return this.selectedFechas.has(fecha);
+  }
+
+  toggleTodasFechas() {
+    this.todasFechasSeleccionadas = !this.todasFechasSeleccionadas;
+    if (this.todasFechasSeleccionadas) {
+      this.planillaData.fechas.forEach((f: string) => this.selectedFechas.add(f));
+    } else {
+      this.selectedFechas.clear();
+    }
+  }
+
+  getFechasFiltradas(): string[] {
+    return (this.planillaData?.fechas || []).filter((f: string) => this.selectedFechas.has(f));
   }
 
   // Selection helpers
@@ -187,11 +227,18 @@ export class GenerarPlanillaComponent implements OnInit {
     doc.text(`SALON Nº ${(data.salon || '').toUpperCase()}`, 280, 24, { align: 'right' });
     doc.text(`AÑO ${(data.anio || '').toUpperCase()}`, 280, 29, { align: 'right' });
 
+    // Only include selected dates
+    const fechasFiltradas = this.getFechasFiltradas();
+    if (fechasFiltradas.length === 0) {
+      this.alertService.successOrError('Debes seleccionar al menos una fecha para exportar');
+      return;
+    }
+
     // Cabecera de la tabla
     const head = [[
       'N°',
       'NOMBRE Y APELLIDO',
-      ...data.fechas.map((f: string) => dayjs(f).format('DD/MM'))
+      ...fechasFiltradas.map((f: string) => dayjs(f).format('DD/MM'))
     ]];
 
     // Filas de alumnos
@@ -200,7 +247,7 @@ export class GenerarPlanillaComponent implements OnInit {
         (index + 1).toString(),
         `${a.nombre.toUpperCase()} ${a.apellido.toUpperCase()}`
       ];
-      data.fechas.forEach((f: string) => {
+      fechasFiltradas.forEach((f: string) => {
         const state = a.asistencias[f];
         const char = state === 'PRESENTE' ? 'P' : state === 'AUSENTE' ? 'A' : state === 'JUSTIFICADO' ? 'J' : '';
         row.push(char);
@@ -211,12 +258,12 @@ export class GenerarPlanillaComponent implements OnInit {
     // Filas vacías adicionales
     const baseIndex = data.alumnos.length;
     this.filasVaciasData.forEach((fVacia: any, i: number) => {
-      const nombreCompleto = `${(fVacia.nombre || '').trim()} ${(fVacia.apellido || '').trim()}`.trim();
+      const nombreCompleto = (fVacia.nombre_completo || '').trim();
       const emptyRow = [
         (baseIndex + i + 1).toString(),
         nombreCompleto.toUpperCase()
       ];
-      data.fechas.forEach(() => {
+      fechasFiltradas.forEach(() => {
         emptyRow.push('');
       });
       body.push(emptyRow);
@@ -229,8 +276,8 @@ export class GenerarPlanillaComponent implements OnInit {
     };
     
     const totalWidthAvailable = 264 - 75;
-    const dateColWidth = totalWidthAvailable / data.fechas.length;
-    data.fechas.forEach((f: string, i: number) => {
+    const dateColWidth = totalWidthAvailable / fechasFiltradas.length;
+    fechasFiltradas.forEach((f: string, i: number) => {
       columnStyles[i + 2] = { cellWidth: dateColWidth, halign: 'center' };
     });
 
@@ -288,11 +335,18 @@ export class GenerarPlanillaComponent implements OnInit {
     // Fila 4: Fila vacía
     const r4: string[] = [];
 
+    // Only include selected dates
+    const fechasFiltradas = this.getFechasFiltradas();
+    if (fechasFiltradas.length === 0) {
+      this.alertService.successOrError('Debes seleccionar al menos una fecha para exportar');
+      return;
+    }
+
     // Fila 5: Cabeceras de la Tabla
     const header = [
       'N°',
       'Nombre y Apellido',
-      ...data.fechas.map((f: string) => dayjs(f).format('DD/MM'))
+      ...fechasFiltradas.map((f: string) => dayjs(f).format('DD/MM'))
     ];
 
     const excelRows = [
@@ -309,7 +363,7 @@ export class GenerarPlanillaComponent implements OnInit {
         (index + 1).toString(),
         `${a.nombre.toUpperCase()} ${a.apellido.toUpperCase()}`
       ];
-      data.fechas.forEach((f: string) => {
+      fechasFiltradas.forEach((f: string) => {
         const state = a.asistencias[f];
         const char = state === 'PRESENTE' ? 'P' : state === 'AUSENTE' ? 'A' : state === 'JUSTIFICADO' ? 'J' : '';
         row.push(char);
@@ -320,12 +374,12 @@ export class GenerarPlanillaComponent implements OnInit {
     // Filas vacías adicionales
     const baseIndex = data.alumnos.length;
     this.filasVaciasData.forEach((fVacia: any, i: number) => {
-      const nombreCompleto = `${(fVacia.nombre || '').trim()} ${(fVacia.apellido || '').trim()}`.trim();
+      const nombreCompleto = (fVacia.nombre_completo || '').trim();
       const emptyRow = [
         (baseIndex + i + 1).toString(),
         nombreCompleto.toUpperCase()
       ];
-      data.fechas.forEach(() => {
+      fechasFiltradas.forEach(() => {
         emptyRow.push('');
       });
       excelRows.push(emptyRow);
