@@ -35,9 +35,21 @@ export class GenerarPlanillaComponent implements OnInit {
 
   // Additional empty rows for manual input
   cantFilasVacias = 0;
+  filasVaciasData: { nombre: string; apellido: string }[] = [];
+  modoEdicion = true;
 
-  get emptyRowsArray() {
-    return Array(Math.max(0, Number(this.cantFilasVacias) || 0)).fill(0);
+  actualizarFilasVacias() {
+    const cant = Math.max(0, Number(this.cantFilasVacias) || 0);
+    while (this.filasVaciasData.length < cant) {
+      this.filasVaciasData.push({ nombre: '', apellido: '' });
+    }
+    if (this.filasVaciasData.length > cant) {
+      this.filasVaciasData = this.filasVaciasData.slice(0, cant);
+    }
+  }
+
+  toggleModoEdicion() {
+    this.modoEdicion = !this.modoEdicion;
   }
 
   constructor(
@@ -94,6 +106,7 @@ export class GenerarPlanillaComponent implements OnInit {
         this.planillaLoading = false;
         if (res.ok) {
           this.planillaData = res.data;
+          this.actualizarFilasVacias();
           // By default, select all participants
           this.selectedParticipantIds.clear();
           if (this.planillaData.alumnos) {
@@ -168,11 +181,11 @@ export class GenerarPlanillaComponent implements OnInit {
     doc.text(data.parroquia.toUpperCase(), 148, 14, { align: 'center' });
     
     doc.setFontSize(9);
-    doc.text(`ETAPA: ${data.movimiento.toUpperCase()} ${data.grupo.toUpperCase()}`, 16, 24);
-    doc.text(`CATEQUISTA: ${data.catequistas.toUpperCase()}`, 16, 29);
+    doc.text(`ETAPA: ${(data.movimiento || '').toUpperCase()} ${(data.grupo || '').toUpperCase()}`, 16, 24);
+    doc.text(`CATEQUISTA: ${(data.catequistas || '').toUpperCase()}`, 16, 29);
     
-    doc.text(`SALON Nº ${data.salon.toUpperCase()}`, 280, 24, { align: 'right' });
-    doc.text(`AÑO ${data.anio.toUpperCase()}`, 280, 29, { align: 'right' });
+    doc.text(`SALON Nº ${(data.salon || '').toUpperCase()}`, 280, 24, { align: 'right' });
+    doc.text(`AÑO ${(data.anio || '').toUpperCase()}`, 280, 29, { align: 'right' });
 
     // Cabecera de la tabla
     const head = [[
@@ -197,16 +210,17 @@ export class GenerarPlanillaComponent implements OnInit {
 
     // Filas vacías adicionales
     const baseIndex = data.alumnos.length;
-    for (let i = 0; i < Math.max(0, Number(this.cantFilasVacias) || 0); i++) {
+    this.filasVaciasData.forEach((fVacia: any, i: number) => {
+      const nombreCompleto = `${(fVacia.nombre || '').trim()} ${(fVacia.apellido || '').trim()}`.trim();
       const emptyRow = [
         (baseIndex + i + 1).toString(),
-        ''
+        nombreCompleto.toUpperCase()
       ];
       data.fechas.forEach(() => {
         emptyRow.push('');
       });
       body.push(emptyRow);
-    }
+    });
 
     // Ancho de columnas automático
     const columnStyles: any = {
@@ -244,7 +258,7 @@ export class GenerarPlanillaComponent implements OnInit {
       margin: { top: 34, left: 16, right: 16, bottom: 12 }
     });
 
-    doc.save(`Planilla_Asistencia_${data.grupo.replace(/\s+/g, '_')}_${data.anio}.pdf`);
+    doc.save(`Planilla_Asistencia_${(data.grupo || '').replace(/\s+/g, '_')}_${data.anio || ''}.pdf`);
   }
 
   descargarPlanillaExcel() {
@@ -266,10 +280,10 @@ export class GenerarPlanillaComponent implements OnInit {
     const r1 = [data.parroquia.toUpperCase()];
     
     // Fila 2: Etapa y Grupo | Año
-    const r2 = [`ETAPA: ${data.movimiento.toUpperCase()} ${data.grupo.toUpperCase()}`, '', '', `AÑO: ${data.anio.toUpperCase()}`];
+    const r2 = [`ETAPA: ${(data.movimiento || '').toUpperCase()} ${(data.grupo || '').toUpperCase()}`, '', '', `AÑO: ${(data.anio || '').toUpperCase()}`];
     
     // Fila 3: Catequistas | Salón
-    const r3 = [`CATEQUISTA: ${data.catequistas.toUpperCase()}`, '', '', `SALÓN Nº: ${data.salon.toUpperCase()}`];
+    const r3 = [`CATEQUISTA: ${(data.catequistas || '').toUpperCase()}`, '', '', `SALÓN Nº: ${(data.salon || '').toUpperCase()}`];
     
     // Fila 4: Fila vacía
     const r4: string[] = [];
@@ -305,21 +319,22 @@ export class GenerarPlanillaComponent implements OnInit {
 
     // Filas vacías adicionales
     const baseIndex = data.alumnos.length;
-    for (let i = 0; i < Math.max(0, Number(this.cantFilasVacias) || 0); i++) {
+    this.filasVaciasData.forEach((fVacia: any, i: number) => {
+      const nombreCompleto = `${(fVacia.nombre || '').trim()} ${(fVacia.apellido || '').trim()}`.trim();
       const emptyRow = [
         (baseIndex + i + 1).toString(),
-        ''
+        nombreCompleto.toUpperCase()
       ];
       data.fechas.forEach(() => {
         emptyRow.push('');
       });
       excelRows.push(emptyRow);
-    }
+    });
 
     const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(excelRows);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Planilla de Asistencia');
-    XLSX.writeFile(wb, `Planilla_Asistencia_${data.grupo.replace(/\s+/g, '_')}_${data.anio}.xlsx`);
+    XLSX.writeFile(wb, `Planilla_Asistencia_${(data.grupo || '').replace(/\s+/g, '_')}_${data.anio || ''}.xlsx`);
   }
 
   volver() {
