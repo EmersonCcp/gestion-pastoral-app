@@ -63,7 +63,7 @@ export class EscanearPlanillaComponent implements OnInit, OnDestroy {
   loadGrupos() {
     const movId = this.authService.getSelectedMovimientoId();
     if (!movId) return;
-    this.grupoService.getAll({ movimiento_id: movId }).subscribe((res: any) => {
+    this.grupoService.getAll({ movimiento_id: movId, per_page: 200 }).subscribe((res: any) => {
       if (res.ok) this.grupos = res.data;
     });
   }
