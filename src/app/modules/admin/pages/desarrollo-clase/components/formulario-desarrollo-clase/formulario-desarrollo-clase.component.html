@@ -1,14 +1,14 @@
 <div class="flex-1 overflow-y-auto p-8">
     <!-- Header -->
-    <div class="flex items-center justify-between mb-8 pb-8 border-b border-slate-100 dark:border-slate-800 transition-colors">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 pb-8 border-b border-slate-100 dark:border-slate-800 gap-4 transition-colors">
       <div>
-        <h2 class="text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tight">{{ editMode ? 'Editar Clase' : 'Registrar Nueva
+        <h2 class="text-2xl sm:text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tight">{{ editMode ? 'Editar Clase' : 'Registrar Nueva
           Clase' }}</h2>
         <p class="text-slate-500 dark:text-slate-400 font-medium">Planifica los temas a desarrollar y toma asistencia de forma integrada.
         </p>
       </div>
       <button (click)="goBack()"
-        class="flex items-center gap-2 px-6 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-bold text-sm shadow-sm">
+        class="flex items-center justify-center gap-2 px-6 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-bold text-sm shadow-sm w-full sm:w-auto">
         <span class="material-symbols-outlined text-xl">arrow_back</span>
         Cancelar
       </button>
@@ -156,48 +156,48 @@
               </div>
             </div>
 
-            <div class="overflow-hidden border border-slate-100 dark:border-slate-800 rounded-2xl">
-              <table class="w-full text-left">
+            <div class="overflow-x-auto border border-slate-100 dark:border-slate-800 rounded-2xl">
+              <table class="w-full text-left min-w-[500px]">
                 <thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 uppercase text-[10px] font-black tracking-widest transition-colors">
                   <tr>
-                    <th class="px-6 py-4">Persona / Integrante</th>
-                    <th class="px-6 py-4 text-center">Estado</th>
-                    <th class="px-6 py-4 whitespace-nowrap">Nota / Observación</th>
+                    <th class="px-4 sm:px-6 py-4">Persona</th>
+                    <th class="px-4 sm:px-6 py-4 text-center">Estado</th>
+                    <th class="px-4 sm:px-6 py-4 whitespace-nowrap">Observación</th>
                   </tr>
                 </thead>
                 <tbody formArrayName="asistencia_personas" class="divide-y divide-slate-50 dark:divide-slate-800">
                   <tr *ngFor="let p of asistenciaPersonas.controls; let i = index" [formGroupName]="i"
                     class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                    <td class="px-6 py-4">
+                    <td class="px-4 sm:px-6 py-4">
                       <div class="flex flex-col">
                         <span class="text-sm font-bold text-slate-800 dark:text-slate-100 transition-colors">{{ p.get('nombre_completo')?.value }}</span>
                         <span class="text-[10px] text-primary-600 dark:text-primary-400 font-bold uppercase tracking-tight transition-colors">Miembro</span>
                       </div>
                     </td>
-                    <td class="px-6 py-4">
-                      <div class="flex items-center justify-center gap-1 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl transition-colors">
+                    <td class="px-4 sm:px-6 py-4">
+                      <div class="flex items-center justify-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl transition-colors">
                         <label *ngFor="let estado of estadosAsistencia" class="flex-1 relative cursor-pointer group">
                           <input type="radio" formControlName="estado" [value]="estado" class="peer sr-only">
                           <div
-                            class="px-4 py-2 text-[10px] font-black text-center rounded-xl transition-all duration-200"
+                            class="px-2 sm:px-4 py-2 text-[9px] sm:text-[10px] font-black text-center rounded-xl transition-all duration-200 truncate"
                             [ngClass]="{
                                  'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300': p.get('estado')?.value !== estado,
                                  'bg-emerald-500 text-white shadow-lg shadow-emerald-200 dark:shadow-none ring-2 ring-emerald-100 dark:ring-emerald-900/30 scale-105': p.get('estado')?.value === 'PRESENTE' && estado === 'PRESENTE',
                                  'bg-rose-500 text-white shadow-lg shadow-rose-200 dark:shadow-none ring-2 ring-rose-100 dark:ring-rose-900/30 scale-105': p.get('estado')?.value === 'AUSENTE' && estado === 'AUSENTE',
                                  'bg-amber-500 text-white shadow-lg shadow-amber-200 dark:shadow-none ring-2 ring-amber-100 dark:ring-amber-900/30 scale-105': p.get('estado')?.value === 'JUSTIFICADO' && estado === 'JUSTIFICADO'
                                }">
-                            {{ estado }}
+                            {{ estado === 'PRESENTE' ? 'P' : estado === 'AUSENTE' ? 'A' : 'J' }}
                           </div>
                         </label>
                       </div>
                     </td>
-                    <td class="px-6 py-4">
-                      <input type="text" formControlName="observacion" placeholder="Ej: Llegó tarde"
-                        class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 text-xs transition-all font-medium text-slate-700 dark:text-slate-100 placeholder:text-slate-300 dark:placeholder:text-slate-600">
+                    <td class="px-4 sm:px-6 py-4">
+                      <input type="text" formControlName="observacion" placeholder="Nota"
+                        class="w-full min-w-[100px] px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 text-xs transition-all font-medium text-slate-700 dark:text-slate-100 placeholder:text-slate-300 dark:placeholder:text-slate-600">
                     </td>
                   </tr>
                   <tr *ngIf="asistenciaPersonas.length === 0 && !loadingPersonas">
-                    <td colspan="2" class="px-6 py-12 text-center text-slate-400 dark:text-slate-600 italic text-sm transition-colors">
+                    <td colspan="3" class="px-6 py-12 text-center text-slate-400 dark:text-slate-600 italic text-sm transition-colors">
                       Completa la configuración para cargar la lista de asistencia.
                     </td>
                   </tr>

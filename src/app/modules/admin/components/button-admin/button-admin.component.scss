@@ -1,0 +1,11 @@
+:host { display: block; }
+
+:host button {
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  :host button {
+    width: auto;
+  }
+}

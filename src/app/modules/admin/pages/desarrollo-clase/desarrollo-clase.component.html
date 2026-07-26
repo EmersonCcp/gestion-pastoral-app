@@ -77,5 +77,63 @@
         </td>
       </tr>
     </ng-container>
+
+    <!-- Vista Móvil: Tarjetas de Sesión -->
+    <ng-container mobileCards>
+      <div *ngFor="let s of sesiones" class="p-4 space-y-3 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 transition-colors">
+        <div class="flex items-start justify-between">
+          <div class="space-y-1">
+            <!-- Fecha y Grupo -->
+            <h3 class="text-sm font-semibold text-slate-900 dark:text-slate-100">
+              {{ s.fecha | date:'dd/MM/yyyy' }} - {{ s.grupo?.nombre }}
+            </h3>
+            <!-- Libro -->
+            <p *ngIf="s.libro" class="text-xs text-slate-500 dark:text-slate-400 italic">
+              Libro: {{ s.libro.nombre }}
+            </p>
+            <!-- Temas Desarrollados -->
+            <div class="flex flex-wrap gap-1 mt-2">
+              <span *ngFor="let t of s.temas" 
+                    class="px-2 py-0.5 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-[10px] font-bold rounded">
+                {{ t.titulo }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Acciones -->
+          <div class="flex items-center gap-1">
+            <button *appHasPermission="'desarrollo_clase.update'" (click)="editar(s)"
+              class="p-1.5 text-slate-400 hover:text-primary-700 hover:bg-primary-100 dark:hover:bg-primary-900/30 rounded-full transition-colors"
+              title="Editar">
+              <span class="material-symbols-outlined text-[18px]">edit</span>
+            </button>
+            <button *appHasPermission="'desarrollo_clase.delete'" (click)="eliminar(s)"
+              class="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-full transition-colors"
+              title="Eliminar">
+              <span class="material-symbols-outlined text-[18px]">delete</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Resumen de Asistencia -->
+        <div class="flex items-center justify-between text-xs pt-2 border-t border-slate-50 dark:border-slate-800">
+          <span class="text-slate-400 font-medium">Asistencia:</span>
+          <div class="flex items-center gap-1.5">
+            <span class="px-2 py-0.5 bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-300 rounded-full text-[10px] font-black border border-green-100 dark:border-green-900/30"
+                  title="Presentes">
+              P: {{ s.asistencia?.total_presente || 0 }}
+            </span>
+            <span class="px-2 py-0.5 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-300 rounded-full text-[10px] font-black border border-red-100 dark:border-red-900/30"
+                  title="Ausentes">
+              A: {{ s.asistencia?.total_ausente || 0 }}
+            </span>
+            <span class="px-2 py-0.5 bg-yellow-50 dark:bg-yellow-950/30 text-yellow-700 dark:text-yellow-300 rounded-full text-[10px] font-black border border-yellow-100 dark:border-yellow-900/30"
+                  title="Justificados">
+              J: {{ s.asistencia?.total_justificado || 0 }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
   </app-table-admin>
 </div>
