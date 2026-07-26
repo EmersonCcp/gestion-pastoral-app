@@ -1,26 +1,26 @@
 <header *ngIf="!loading"
-  class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 lg:px-10 transition-colors">
-  <div class="flex items-center gap-3">
+  class="flex items-center justify-between border-b border-solid border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 sm:px-6 sm:py-3 lg:px-10 transition-colors gap-2 sm:gap-4">
+  <div class="flex items-center gap-2 sm:gap-3 min-w-0">
     <!-- Hamburguesa Móvil -->
     <button (click)="toggleMobileSidebar()" 
-            class="flex md:hidden items-center justify-center p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-500 dark:text-slate-400 transition-colors">
-      <span class="material-symbols-outlined">menu</span>
+            class="flex md:hidden items-center justify-center p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-500 dark:text-slate-400 transition-colors">
+      <span class="material-symbols-outlined text-xl sm:text-2xl">menu</span>
     </button>
-    <div class="flex flex-col text-primary-700">
-      <h2 class="text-sm sm:text-lg font-bold leading-tight tracking-tight text-slate-800 dark:text-slate-100 truncate max-w-[120px] sm:max-w-none">
+    <div class="flex flex-col text-primary-700 min-w-0">
+      <h2 class="text-xs sm:text-base md:text-lg font-bold leading-tight tracking-tight text-slate-800 dark:text-slate-100 truncate max-w-[80px] xs:max-w-[120px] sm:max-w-none">
         {{ user.parroquia || "Gestión Pastoral" }}
       </h2>
-      <span class="text-[9px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Sistema de Gestión</span>
+      <span class="text-[8px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider truncate">Sistema de Gestión</span>
     </div>
   </div>
 
-  <div class="flex ml-2 sm:ml-6 items-center gap-1 sm:gap-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 sm:px-3 sm:py-1.5 max-w-[130px] sm:max-w-none"
+  <div class="flex ml-1 sm:ml-4 items-center gap-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-1.5 py-0.5 sm:px-3 sm:py-1.5 max-w-[110px] xs:max-w-[135px] sm:max-w-none min-w-0"
     *ngIf="movimientos.length > 0">
-    <span class="material-symbols-outlined text-slate-400 text-sm sm:text-lg">sync_alt</span>
+    <span class="material-symbols-outlined text-slate-400 text-sm sm:text-lg hidden sm:inline-block">sync_alt</span>
     <div class="flex flex-col min-w-0">
-      <span class="text-[8px] sm:text-[10px] font-bold text-slate-400 uppercase leading-none mb-0.5 truncate">Mov. Activo</span>
+      <span class="text-[7px] sm:text-[10px] font-bold text-slate-400 uppercase leading-none mb-0.5 truncate hidden sm:block">Mov. Activo</span>
       <select
-        class="bg-white dark:bg-slate-800 dark:text-slate-100 select select-xs sm:select-sm border-none font-bold text-slate-700 outline-none cursor-pointer text-[10px] sm:text-xs p-0 max-w-[100px] sm:max-w-none truncate"
+        class="bg-white dark:bg-slate-800 dark:text-slate-100 select select-xs sm:select-sm border-none font-bold text-slate-700 outline-none cursor-pointer text-[9px] sm:text-xs p-0 max-w-[80px] xs:max-w-[100px] sm:max-w-none truncate"
         [(ngModel)]="selectedMovimientoId" (change)="onMovimientoChange()">
         <option *ngFor="let mov of movimientos" [value]="mov.id">
           {{ mov.nombre }}
@@ -29,24 +29,24 @@
     </div>
   </div>
 
-  <div class="flex flex-1 justify-end gap-4 items-center">
-    <div class="flex gap-2">
+  <div class="flex flex-shrink-0 justify-end gap-1.5 sm:gap-4 items-center">
+    <div class="flex gap-1 sm:gap-2">
       <button
-        class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-        <span class="material-symbols-outlined">notifications</span>
+        class="flex items-center justify-center rounded-lg h-8 w-8 sm:h-10 sm:w-10 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+        <span class="material-symbols-outlined text-lg sm:text-xl">notifications</span>
       </button>
 
       <!-- Dark Mode Toggle -->
       <button
         (click)="toggleDarkMode()"
         title="{{ themeService.isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro' }}"
-        class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-amber-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-        <span class="material-symbols-outlined">{{ themeService.isDark ? 'light_mode' : 'dark_mode' }}</span>
+        class="flex items-center justify-center rounded-lg h-8 w-8 sm:h-10 sm:w-10 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-amber-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+        <span class="material-symbols-outlined text-lg sm:text-xl">{{ themeService.isDark ? 'light_mode' : 'dark_mode' }}</span>
       </button>
     </div>
-    <div class="h-10 w-px bg-slate-200 dark:bg-slate-700 mx-2"></div>
+    <div class="h-8 w-px bg-slate-200 dark:bg-slate-700 mx-1 hidden sm:block"></div>
 
-    <button style="anchor-name: --anchor-1" popovertarget="popover-1" class="flex items-center gap-3">
+    <button style="anchor-name: --anchor-1" popovertarget="popover-1" class="flex items-center gap-1.5 sm:gap-3">
       <div class="text-right hidden sm:block">
         <p class="text-[13px] font-bold text-slate-800 dark:text-slate-100 leading-none">
           {{ user.nombre | titlecase }}
@@ -56,9 +56,9 @@
         </p>
       </div>
       <div
-        class="bg-primary-700/10 dark:bg-primary-400/10 rounded-full size-10 flex items-center justify-center border-2 border-primary-700/20 dark:border-primary-400/20"
+        class="bg-primary-700/10 dark:bg-primary-400/10 rounded-full size-8 sm:size-10 flex items-center justify-center border-2 border-primary-700/20 dark:border-primary-400/20"
         data-alt="Avatar circular del administrador">
-        <span class="material-symbols-outlined text-primary-700 dark:text-primary-400">person</span>
+        <span class="material-symbols-outlined text-primary-700 dark:text-primary-400 text-lg sm:text-xl">person</span>
       </div>
     </button>
 
