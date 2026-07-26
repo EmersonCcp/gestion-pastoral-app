@@ -2,13 +2,12 @@
   <!-- Actions & Filters -->
   <div class="flex items-center justify-between">
     <div class="flex items-center gap-4">
-      <!-- Search/Filters can go here -->
     </div>
   </div>
 
-  <!-- Table Card -->
-  <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden transition-colors">
-    <table class="w-full text-left border-collapse">
+  <!-- Table Desktop -->
+  <div class="hidden md:block bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-x-auto transition-colors">
+    <table class="w-full text-left border-collapse min-w-[700px]">
       <thead>
         <tr class="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
           <th class="px-8 py-5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Fecha</th>
@@ -57,24 +56,43 @@
             <span *ngIf="!m.persona" class="text-xs text-slate-300 dark:text-slate-700 italic transition-colors">No aplica</span>
           </td>
         </tr>
-
-        <!-- Empty State -->
-        <tr *ngIf="movimientos.length === 0 && !loading">
-          <td colspan="6" class="px-8 py-20 text-center">
-            <div class="flex flex-col items-center gap-2 text-slate-400 dark:text-slate-600">
-              <span class="material-symbols-outlined text-4xl">history_toggle_off</span>
-              <p class="text-sm font-medium">No se han registrado movimientos de inventario aún.</p>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Loading State -->
-        <tr *ngIf="loading">
-          <td colspan="6" class="px-8 py-4 text-center text-slate-400 dark:text-slate-600 animate-pulse text-xs font-bold uppercase tracking-tight">
-            Cargando historial...
-          </td>
-        </tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- Mobile Cards -->
+  <div class="block md:hidden space-y-4">
+    <div *ngFor="let m of movimientos" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-4 space-y-3 shadow-sm">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ m.fecha | date: 'dd/MM/yyyy' }}</span>
+        <span [ngClass]="getBadgeClass(m.tipo)" 
+              class="px-3 py-1 rounded-full text-[10px] font-black border uppercase transition-colors">
+          {{ m.tipo }}
+        </span>
+      </div>
+      <div>
+        <span class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ m.libro?.nombre }}</span>
+      </div>
+      <div class="flex items-center justify-between text-xs">
+        <span class="text-slate-500 dark:text-slate-400">{{ getMotivoLabel(m.motivo) }}</span>
+        <span class="font-black" [ngClass]="m.tipo === 'INGRESO' ? 'text-emerald-600' : 'text-rose-600'">
+          {{ m.tipo === 'INGRESO' ? '+' : '-' }}{{ m.cantidad }}
+        </span>
+      </div>
+      <div *ngIf="m.persona" class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2">
+        <span class="font-medium">{{ m.persona.nombre }} {{ m.persona.apellido }}</span>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="movimientos.length === 0 && !loading" class="flex flex-col items-center gap-2 py-16 text-slate-400 dark:text-slate-600">
+      <span class="material-symbols-outlined text-4xl">history_toggle_off</span>
+      <p class="text-sm font-medium">No se han registrado movimientos.</p>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="text-center py-8 text-xs font-bold text-slate-400 dark:text-slate-600 animate-pulse uppercase">
+      Cargando historial...
+    </div>
   </div>
 </div>
