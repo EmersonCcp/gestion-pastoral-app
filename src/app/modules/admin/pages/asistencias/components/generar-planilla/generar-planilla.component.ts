@@ -259,8 +259,8 @@ export class GenerarPlanillaComponent implements OnInit {
     doc.text(`ETAPA: ${(data.movimiento || '').toUpperCase()} ${(data.grupo || '').toUpperCase()}`, 16, 24);
     doc.text(`CATEQUISTA: ${(data.catequistas || '').toUpperCase()}`, 16, 29);
     
-    doc.text(`SALON Nº ${(data.salon || '').toUpperCase()}`, 280, 24, { align: 'right' });
-    doc.text(`AÑO ${(data.anio || '').toUpperCase()}`, 280, 29, { align: 'right' });
+    doc.text(`${(data.salon || '').toUpperCase()}`, 280, 24, { align: 'right' });
+    doc.text(`${(data.anio || '').toUpperCase()}`, 280, 29, { align: 'right' });
 
     // Only include selected dates
     const fechasFiltradas = this.getFechasFiltradas();
