@@ -28,6 +28,7 @@
     "crypto-js": "^4.2.0",
     "daisyui": "^5.5.19",
     "dayjs": "^1.11.20",
+    "exceljs": "^4.4.0",
     "firebase": "^9.23.0",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
