@@ -8,6 +8,7 @@ import { GrupoService } from 'src/app/shared/services/grupo.service';
 import { PeriodoService } from 'src/app/shared/services/periodo.service';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as dayjs from 'dayjs';
@@ -342,87 +343,170 @@ export class GenerarPlanillaComponent implements OnInit {
     doc.save(`Planilla_Asistencia_${(data.grupo || '').replace(/\s+/g, '_')}_${data.anio || ''}.pdf`);
   }
 
-  descargarPlanillaExcel() {
+  async descargarPlanillaExcel() {
     if (!this.planillaData) return;
 
-    // Filter to only checked participants
     const filteredAlumnos = this.planillaData.alumnos.filter((a: any) => this.selectedParticipantIds.has(a.id));
     if (filteredAlumnos.length === 0) {
       this.alertService.successOrError('Debes seleccionar al menos un participante para exportar');
       return;
     }
 
-    const data = {
-      ...this.planillaData,
-      alumnos: filteredAlumnos
-    };
-
-    // Fila 1: Título de la Parroquia
-    const r1 = [data.parroquia.toUpperCase()];
-    
-    // Fila 2: Etapa y Grupo | Año
-    const r2 = [`ETAPA: ${(data.movimiento || '').toUpperCase()} ${(data.grupo || '').toUpperCase()}`, '', '', `AÑO: ${(data.anio || '').toUpperCase()}`];
-    
-    // Fila 3: Catequistas | Salón
-    const r3 = [`CATEQUISTA: ${(data.catequistas || '').toUpperCase()}`, '', '', `SALÓN Nº: ${(data.salon || '').toUpperCase()}`];
-    
-    // Fila 4: Fila vacía
-    const r4: string[] = [];
-
-    // Only include selected dates
+    const data = { ...this.planillaData, alumnos: filteredAlumnos };
     const fechasFiltradas = this.getFechasFiltradas();
     if (fechasFiltradas.length === 0) {
       this.alertService.successOrError('Debes seleccionar al menos una fecha para exportar');
       return;
     }
 
-    // Fila 5: Cabeceras de la Tabla
-    const header = [
-      'N°',
-      'Nombre y Apellido',
-      ...fechasFiltradas.map((f: string) => dayjs(f).format('DD/MM'))
-    ];
+    const totalCols = 2 + fechasFiltradas.length; // N° + Nombre + fechas
 
-    const excelRows = [
-      r1,
-      r2,
-      r3,
-      r4,
-      header
-    ];
+    const wb = new ExcelJS.Workbook();
+    wb.creator = 'Gestión Pastoral';
+    wb.created = new Date();
+    const ws = wb.addWorksheet('Planilla de Asistencia');
 
-    // Alumnos
+    // Page setup for printing
+    ws.pageSetup.orientation = 'landscape';
+    ws.pageSetup.fitToPage = true;
+    ws.pageSetup.fitToWidth = 1;
+    ws.pageSetup.fitToHeight = 0;
+    ws.pageSetup.margins = {
+      left: 0.5, right: 0.5, top: 0.6, bottom: 0.6,
+      header: 0.3, footer: 0.3,
+    };
+    ws.pageSetup.paperSize = 9; // A4
+    ws.pageSetup.printTitlesRow = '6:6'; // repeat header row on each page
+
+    // Column widths
+    ws.getColumn(1).width = 4;   // N°
+    ws.getColumn(2).width = 35;  // Nombre
+    for (let i = 0; i < fechasFiltradas.length; i++) {
+      ws.getColumn(3 + i).width = 6;
+    }
+
+    // Styles
+    const titleFont: Partial<ExcelJS.Font> = { bold: true, size: 14, name: 'Arial' };
+    const infoFont: Partial<ExcelJS.Font> = { bold: true, size: 10, name: 'Arial' };
+    const infoFontNormal: Partial<ExcelJS.Font> = { size: 10, name: 'Arial' };
+    const headerFont: Partial<ExcelJS.Font> = { bold: true, size: 9, name: 'Arial' };
+    const bodyFont: Partial<ExcelJS.Font> = { size: 9, name: 'Arial' };
+    const headerFill: ExcelJS.Fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF0F0F0' } };
+    const thinBorder: Partial<ExcelJS.Borders> = {
+      top: { style: 'thin' as const, color: { argb: 'FF999999' } },
+      left: { style: 'thin' as const, color: { argb: 'FF999999' } },
+      bottom: { style: 'thin' as const, color: { argb: 'FF999999' } },
+      right: { style: 'thin' as const, color: { argb: 'FF999999' } },
+    };
+    const centerAlign: Partial<ExcelJS.Alignment> = { horizontal: 'center', vertical: 'middle' };
+
+    // Row 1: Parroquia (merged)
+    ws.mergeCells(1, 1, 1, totalCols);
+    const r1 = ws.getCell(1, 1);
+    r1.value = data.parroquia.toUpperCase();
+    r1.font = titleFont;
+    r1.alignment = { horizontal: 'center', vertical: 'middle' };
+    ws.getRow(1).height = 30;
+
+    const lastMergeCol = Math.max(totalCols - 3, 2); // leave 3 cols for year/salon
+    
+    // Row 2: Etapa + Grupo (left) / Año (right)
+    ws.mergeCells(2, 1, 2, lastMergeCol);
+    const r2g = ws.getCell(2, 1);
+    r2g.value = `ETAPA: ${(data.movimiento || '').toUpperCase()} - ${(data.grupo || '').toUpperCase()}`;
+    r2g.font = infoFont;
+    r2g.alignment = { vertical: 'middle' };
+    if (lastMergeCol < totalCols) {
+      ws.mergeCells(2, lastMergeCol + 1, 2, totalCols);
+      const r2a = ws.getCell(2, lastMergeCol + 1);
+      r2a.value = `${(data.anio || '').toUpperCase()}`;
+      r2a.font = infoFont;
+      r2a.alignment = { horizontal: 'right', vertical: 'middle' };
+    }
+    ws.getRow(2).height = 20;
+
+    // Row 3: Catequistas (left) / Salón (right)
+    ws.mergeCells(3, 1, 3, lastMergeCol);
+    const r3g = ws.getCell(3, 1);
+    r3g.value = `CATEQUISTA: ${(data.catequistas || '').toUpperCase()}`;
+    r3g.font = infoFontNormal;
+    r3g.alignment = { vertical: 'middle' };
+    if (lastMergeCol < totalCols) {
+      ws.mergeCells(3, lastMergeCol + 1, 3, totalCols);
+      const r3a = ws.getCell(3, lastMergeCol + 1);
+      r3a.value = `${(data.salon || '').toUpperCase()}`;
+      r3a.font = infoFontNormal;
+      r3a.alignment = { horizontal: 'right', vertical: 'middle' };
+    }
+    ws.getRow(3).height = 18;
+
+    // Row 4: empty spacer
+    ws.getRow(4).height = 6;
+
+    // Row 5: Separator line (blank)
+    ws.getRow(5).height = 2;
+
+    // Row 6: Table header
+    const headerRow = ws.getRow(6);
+    headerRow.height = 22;
+    const headerValues = ['N°', 'NOMBRE Y APELLIDO', ...fechasFiltradas.map((f: string) => dayjs(f).format('DD/MM'))];
+    headerValues.forEach((val, colIdx) => {
+      const cell = headerRow.getCell(colIdx + 1);
+      cell.value = val;
+      cell.font = headerFont;
+      cell.fill = headerFill;
+      cell.border = thinBorder;
+      cell.alignment = { ...centerAlign, wrapText: true };
+    });
+
+    // Data rows
+    let rowIdx = 7;
+    const applyRow = (values: string[], isBold: boolean) => {
+      const row = ws.getRow(rowIdx);
+      row.height = 18;
+      values.forEach((val, colIdx) => {
+        const cell = row.getCell(colIdx + 1);
+        cell.value = val;
+        cell.font = { ...bodyFont, bold: isBold };
+        cell.border = thinBorder;
+        cell.alignment = colIdx === 1 ? { vertical: 'middle' } : centerAlign;
+      });
+      rowIdx++;
+    };
+
     data.alumnos.forEach((a: any, index: number) => {
       const row = [
         (index + 1).toString(),
-        `${a.nombre.toUpperCase()} ${a.apellido.toUpperCase()}`
+        `${a.nombre.toUpperCase()} ${a.apellido.toUpperCase()}`,
+        ...fechasFiltradas.map((f: string) => {
+          const state = a.asistencias[f];
+          return state === 'PRESENTE' ? 'P' : state === 'AUSENTE' ? 'A' : state === 'JUSTIFICADO' ? 'J' : '';
+        }),
       ];
-      fechasFiltradas.forEach((f: string) => {
-        const state = a.asistencias[f];
-        const char = state === 'PRESENTE' ? 'P' : state === 'AUSENTE' ? 'A' : state === 'JUSTIFICADO' ? 'J' : '';
-        row.push(char);
-      });
-      excelRows.push(row);
+      applyRow(row, true);
     });
 
-    // Filas vacías adicionales
+    // Empty rows for manual completion
     const baseIndex = data.alumnos.length;
     this.filasVaciasData.forEach((fVacia: any, i: number) => {
       const nombreCompleto = (fVacia.nombre_completo || '').trim();
-      const emptyRow = [
+      const row = [
         (baseIndex + i + 1).toString(),
-        nombreCompleto.toUpperCase()
+        nombreCompleto.toUpperCase(),
+        ...fechasFiltradas.map(() => ''),
       ];
-      fechasFiltradas.forEach(() => {
-        emptyRow.push('');
-      });
-      excelRows.push(emptyRow);
+      applyRow(row, false);
     });
 
-    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(excelRows);
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Planilla de Asistencia');
-    XLSX.writeFile(wb, `Planilla_Asistencia_${(data.grupo || '').replace(/\s+/g, '_')}_${data.anio || ''}.xlsx`);
+    // Generate buffer and download
+    const buffer = await wb.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Planilla_Asistencia_${(data.grupo || '').replace(/\s+/g, '_')}_${data.anio || ''}.xlsx`;
+    a.click();
+    window.URL.revokeObjectURL(url);
   }
 
   volver() {
